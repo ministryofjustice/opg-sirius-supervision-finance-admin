@@ -1,0 +1,18 @@
+services:
+  finance-admin:
+    build:
+      target: dev
+    ports:
+      - '2345:2345'
+    volumes:
+      - ./.air.toml:/app/.air.toml
+      - ./go.mod:/app/go.mod
+      - ./go.sum:/app/go.sum
+      - ./internal:/app/internal
+      - ./main_test.go:/app/main_test.go
+      - ./main.go:/app/main.go
+      - ./web/static:/app/web/static
+      - ./web/template:/app/web/template
+
+  yarn:
+    command: watch

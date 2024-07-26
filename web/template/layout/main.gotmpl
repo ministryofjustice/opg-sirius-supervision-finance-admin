@@ -1,0 +1,10 @@
+{{- /*gotype: github.com/ministryofjustice/opg-sirius-supervision-finance-admin/internal/server.PageData*/ -}}
+{{ define "main" }}
+    <div id="main-container" class="govuk-width-container app-width-container">
+        <main class="govuk-main-wrapper app-main-class" role="main">
+            <div id="main-content">
+                {{ block "main-content" . }}{{ end }}
+            </div>
+        </main>
+    </div>
+{{ end }}
