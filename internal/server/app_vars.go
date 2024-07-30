@@ -69,3 +69,5 @@ func (a *AppVars) selectTab(s string) {
 		}
 	}
 }
+
+var x = map[string]string{}
