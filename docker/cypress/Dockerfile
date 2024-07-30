@@ -11,4 +11,5 @@ ENV CYPRESS_VIDEO=false
 ENV CYPRESS_baseUrl=http://finance-admin:8888/finance-admin
 
 COPY cypress.config.js .
+COPY tsconfig.json .
 COPY cypress cypress

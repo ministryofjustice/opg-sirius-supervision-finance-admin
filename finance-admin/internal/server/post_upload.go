@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/opg-sirius-finance-admin/finance-admin/internal/api"
+	"github.com/opg-sirius-finance-admin/finance-admin/internal/components"
 	"github.com/opg-sirius-finance-admin/finance-admin/internal/model"
 	"github.com/opg-sirius-finance-admin/shared"
 	"net/http"
@@ -14,7 +15,7 @@ type UploadFormHandler struct {
 	router
 }
 
-func (h *UploadFormHandler) render(v AppVars, w http.ResponseWriter, r *http.Request) error {
+func (h *UploadFormHandler) render(v components.AppVars, w http.ResponseWriter, r *http.Request) error {
 	ctx := getContext(r)
 
 	reportUploadType := shared.ParseReportUploadType(r.PostFormValue("reportUploadType"))
@@ -61,9 +62,7 @@ func (h *UploadFormHandler) handleError(w http.ResponseWriter, r *http.Request, 
 	fileError := model.ValidationErrors{
 		"FileUpload": map[string]string{"required": msg},
 	}
-	data := AppVars{ValidationErrors: RenameErrors(fileError)}
-	w.WriteHeader(code)
-	return h.execute(w, r, data)
+	return h.execute(w, r, components.ValidationSummary(RenameErrors(fileError)))
 }
 
 // handleUploadError processes specific upload-related errors.
@@ -73,13 +72,10 @@ func (h *UploadFormHandler) handleUploadError(w http.ResponseWriter, r *http.Req
 		stErr  api.StatusError
 	)
 	if errors.As(err, &valErr) {
-		data := AppVars{ValidationErrors: RenameErrors(valErr.Errors)}
 		w.WriteHeader(http.StatusUnprocessableEntity)
-		return h.execute(w, r, data)
+		err = h.execute(w, r, components.ValidationSummary(RenameErrors(valErr.Errors)))
 	} else if errors.As(err, &stErr) {
-		data := AppVars{Error: stErr.Error()}
-		w.WriteHeader(stErr.Code)
-		return h.execute(w, r, data)
+		err = h.execute(w, r, components.ErrorSummary(stErr))
 	}
 
 	return err

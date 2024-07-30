@@ -1,0 +1,62 @@
+package components
+
+import (
+	"fmt"
+	"github.com/opg-sirius-finance-admin/shared"
+)
+
+type UploadTabVars struct {
+	ReportsUploadTypes []shared.ReportUploadType
+	AppVars
+}
+
+templ UploadsTab(vars UploadTabVars) {
+	<div id="error-summary"></div>
+	<div class="govuk-grid-row">
+		<div class="govuk-grid-column-full">
+			<h1 class="govuk-heading-m  govuk-!-margin-bottom-1">Upload a report</h1>
+			<div class="govuk-grid-row">
+				<form
+					class="govuk-grid-column-one-third"
+					method="post"
+					hx-post={ string(templ.URL(fmt.Sprintf("%s/uploads", vars.EnvironmentVars.Prefix))) }
+					hx-target="#error-summary"
+					enctype="multipart/form-data"
+				>
+					<input type="hidden" name="xsrfToken" value={ vars.AppVars.XSRFToken }/>
+					@dropdown("reports-upload-type", "ReportUploadType", "Select a report type", vars.ReportsUploadTypes)
+					@hiddenFieldWrapper("upload-date") {
+						@dateField("upload-date", "UploadDate", "Date")
+					}
+					<div class="hide govuk-!-margin-top-5" id="file-upload-input">
+						<div class="govuk-form-group" id="f-FileUpload">
+							<label class="govuk-label" for="file-upload">
+								Upload a file
+								<span id="error-message__FileUpload"></span>
+							</label>
+							<input class="govuk-file-upload" id="file-upload" name="fileUpload" type="file"/>
+						</div>
+					</div>
+					<div class="hide govuk-!-margin-top-5" id="email-field-input">
+						<div class="govuk-form-group" id="f-Email">
+							<label class="govuk-label" for="email-field">
+								Email address
+								<span id="error-message__Email"></span>
+							</label>
+							<div id="email-hint" class="govuk-hint">
+								We’ll only use this to send you the finished report
+							</div>
+							<input disabled class="govuk-input" id="email-field" name="email" type="email" spellcheck="false" aria-describedby="email-hint" autocomplete="email"/>
+						</div>
+					</div>
+					<div class="govuk-button-group govuk-!-margin-top-5">
+						<button class="govuk-button" data-module="govuk-button">
+							Upload report
+						</button>
+						<a class="govuk-link" href={ templ.URL(fmt.Sprintf("%s/uploads", vars.EnvironmentVars.Prefix)) }>Cancel</a>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+}

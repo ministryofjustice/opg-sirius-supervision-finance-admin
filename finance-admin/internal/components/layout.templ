@@ -1,0 +1,77 @@
+package components
+
+type PageVars struct {
+	SuccessMessage string
+	Title string
+	EnvironmentVars
+}
+
+templ Page(vars PageVars, comp templ.Component) {
+	<!DOCTYPE html>
+      <html lang="en" class="govuk-template app-html-class">
+        <head>
+          <meta charset="utf-8">
+          <title>{ vars.Title }</title>
+          <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+          <meta name="api-base-uri" content={ vars.SiriusPublicURL }>
+          <meta name="theme-color" content="blue">
+
+          <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+          <link href={ vars.Prefix + "/stylesheets/all.css"} rel="stylesheet"/>
+        </head>
+
+        <body class="govuk-template__body sirius-finance">
+            <sirius-header></sirius-header>
+
+            <div class="govuk-width-container app-width-container">
+                <main class="govuk-main-wrapper app-main-class" role="main">
+                    if vars.SuccessMessage != "" {
+                        <h1>{ vars.SuccessMessage }</h1>
+                   }
+                   @contentHeader()
+                   @navigation(vars.Prefix)
+                   <div id="main-content">
+                       @comp
+                   </div>
+                </main>
+            </div>
+
+          <footer class="govuk-footer" role="contentinfo"> </footer>
+          <script src={ vars.Prefix + "/javascript/all.js" }></script>
+        </body>
+      </html>
+}
+
+templ contentHeader() {
+    <div data-testid="content-header-template">
+        <h2 class="govuk-heading-l">Finance Admin</h2>
+    </div>
+}
+
+templ navigation(prefix string) {
+	<div class="govuk-grid-row govuk-!-margin-top-5  govuk-!-margin-bottom-0">
+        <div class="govuk-grid-column-full">
+            <nav class="moj-sub-navigation" aria-label="Secondary navigation">
+                <ul class="moj-sub-navigation__list">
+                    @tab("Downloads", prefix, "downloads")
+                    @tab("Uploads", prefix, "uploads")
+                    @tab("Annual Invoicing Letters", prefix, "annual-invoicing-letters")
+                </ul>
+            </nav>
+        </div>
+    </div>
+}
+
+templ tab(title string, prefix string, path string) {
+    <li class="moj-sub-navigation__item" data-cy={ path + "-tab" }>
+        <a
+                class="moj-sub-navigation__link selectable-nav"
+                hx-get={ prefix + "/" + path }
+                hx-target="#main-content"
+                hx-push-url={ prefix + "/" + path }
+        >
+            { title }
+        </a>
+    </li>
+}

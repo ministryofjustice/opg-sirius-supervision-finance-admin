@@ -1,62 +1,56 @@
 package server
 
 import (
-	"github.com/stretchr/testify/assert"
+	"github.com/PuerkitoBio/goquery"
+	"github.com/opg-sirius-finance-admin/finance-admin/internal/components"
+	"io"
 	"net/http"
-	"net/http/httptest"
 	"testing"
 )
 
-type mockRouteData struct {
-	stuff string
-	AppVars
+func TestRoute_fullPage(t *testing.T) {
+	sut := route{client: mockApiClient{}}
+	req, _ := http.NewRequest(http.MethodGet, "", nil)
+
+	r, w := io.Pipe()
+	go func() {
+		_ = sut.execute(w, req, components.Error(components.ErrorVars{}))
+		_ = w.Close()
+	}()
+	doc, err := goquery.NewDocumentFromReader(r)
+	if err != nil {
+		t.Fatalf("failed to read template: %v", err)
+	}
+	// Expect the component to be present.
+	if doc.Find(`[data-testid="error-template"]`).Length() == 0 {
+		t.Error("expected data-testid attribute to be rendered, but it wasn't")
+	}
+	// Expect the parent to also be present
+	if doc.Find(`[data-testid="content-header-template"]`).Length() == 0 {
+		t.Error("expected data-testid attribute to not be rendered, but it was")
+	}
 }
 
 func TestRoute_htmxRequest(t *testing.T) {
-	client := mockApiClient{}
-	template := &mockTemplate{}
+	sut := route{client: mockApiClient{}}
+	req, _ := http.NewRequest(http.MethodGet, "", nil)
+	req.Header.Add("HX-Request", "true")
 
-	w := httptest.NewRecorder()
-	r, _ := http.NewRequest(http.MethodGet, "", nil)
-	r.Header.Add("HX-Request", "true")
-
-	data := mockRouteData{
-		stuff:   "abc",
-		AppVars: AppVars{Path: "/path"},
+	r, w := io.Pipe()
+	go func() {
+		_ = sut.execute(w, req, components.Error(components.ErrorVars{}))
+		_ = w.Close()
+	}()
+	doc, err := goquery.NewDocumentFromReader(r)
+	if err != nil {
+		t.Fatalf("failed to read template: %v", err)
 	}
-
-	sut := route{client: client, tmpl: template, partial: "test"}
-
-	err := sut.execute(w, r, data)
-
-	assert.Nil(t, err)
-	assert.True(t, template.executedTemplate)
-	assert.False(t, template.executed)
-
-	assert.Equal(t, data, template.lastVars)
-}
-
-func TestRoute_fullPage(t *testing.T) {
-	client := mockApiClient{}
-	template := &mockTemplate{}
-
-	w := httptest.NewRecorder()
-	r, _ := http.NewRequest(http.MethodGet, "", nil)
-
-	data := PageData{
-		Data: mockRouteData{
-			stuff:   "abc",
-			AppVars: AppVars{Path: "/path/"},
-		},
+	// Expect the component to be present.
+	if doc.Find(`[data-testid="error-template"]`).Length() == 0 {
+		t.Error("expected data-testid attribute to be rendered, but it wasn't")
 	}
-
-	sut := route{client: client, tmpl: template, partial: "test"}
-
-	err := sut.execute(w, r, data.Data)
-
-	assert.Nil(t, err)
-	assert.True(t, template.executed)
-	assert.False(t, template.executedTemplate)
-
-	assert.Equal(t, data, template.lastVars)
+	// Expect the parent to NOT be present
+	if doc.Find(`[data-testid="content-header-template"]`).Length() > 0 {
+		t.Error("expected data-testid attribute to not be rendered, but it was")
+	}
 }

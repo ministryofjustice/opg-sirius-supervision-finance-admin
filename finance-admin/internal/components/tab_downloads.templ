@@ -1,0 +1,76 @@
+package components
+
+import (
+	"fmt"
+	"github.com/opg-sirius-finance-admin/finance-admin/internal/model"
+)
+
+type DownloadsTabVars struct {
+	ReportsTypes        []model.ReportsType
+	ReportJournalTypes  []model.ReportJournalType
+	ReportScheduleTypes []model.ReportScheduleType
+	ReportAccountTypes  []model.ReportAccountType
+	ReportDebtTypes     []model.ReportDebtType
+	AppVars
+}
+
+templ DownloadsTab(vars DownloadsTabVars) {
+	<div id="error-summary"></div>
+	<div class="govuk-grid-row">
+		<div class="govuk-grid-column-full">
+			<h1 class="govuk-heading-m  govuk-!-margin-bottom-1">Download a report</h1>
+			<div class="govuk-grid-row">
+				<form
+					class="govuk-grid-column-one-third"
+					method="get"
+					hx-post={ string(templ.URL(fmt.Sprintf("%s/downloads", vars.EnvironmentVars.Prefix))) }
+					hx-target="#error-summary"
+				>
+				<input type="hidden" name="xsrfToken" value={ vars.AppVars.XSRFToken }/>
+					<div class="govuk-form-group">
+						@dropdown("reports-type", "ReportType", "Select a report type", vars.ReportsTypes)
+						@hiddenFieldWrapper("journal-types") {
+							@dropdown("report-journal-type", "ReportSubType", "Select a report", vars.ReportJournalTypes)
+						}
+						@hiddenFieldWrapper("schedule-types") {
+							@dropdown("report-schedule-type", "ReportSubType", "Select a report", vars.ReportScheduleTypes)
+						}
+						@hiddenFieldWrapper("account-types") {
+							@dropdown("report-account-type", "ReportSubType", "Select a report", vars.ReportAccountTypes)
+						}
+						@hiddenFieldWrapper("debt-types") {
+							@dropdown("report-debt-type", "ReportSubType", "Select a report", vars.ReportDebtTypes)
+						}
+						@hiddenFieldWrapper("date") {
+							@dateField("date-field", "Date", "Date")
+						}
+						@hiddenFieldWrapper("date-from") {
+							@dateField("date-from-field", "DateFrom", "Date from")
+						}
+						@hiddenFieldWrapper("date-to") {
+							@dateField("date-to-field", "DateTo", "Date to")
+						}
+						<div class="hide govuk-!-margin-top-5" id="email-field-input">
+							<div class="govuk-form-group" id="f-Email">
+								<label class="govuk-label" for="email-field">
+									Email address
+									<span id="error-message__Email"></span>
+								</label>
+								<div id="email-hint" class="govuk-hint">
+									We’ll only use this to send you the finished report
+								</div>
+								<input disabled class="govuk-input" id="email-field" name="email" type="email" spellcheck="false" aria-describedby="email-hint" autocomplete="email"/>
+							</div>
+						</div>
+						<div class="govuk-button-group govuk-!-margin-top-5">
+							<button class="govuk-button" data-module="govuk-button">
+								Download report
+							</button>
+							<a class="govuk-link" href={ templ.URL(fmt.Sprintf("%s/downloads", vars.EnvironmentVars.Prefix)) }>Cancel</a>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+}

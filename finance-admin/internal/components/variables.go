@@ -1,6 +1,9 @@
-package server
+package components
 
 import (
+	"github.com/opg-sirius-finance-admin/finance-admin/internal/model"
+	"net/http"
+	"net/url"
 	"os"
 )
 
@@ -30,4 +33,31 @@ func getEnv(key, def string) string {
 	}
 
 	return def
+}
+
+type AppVars struct {
+	Path             string
+	XSRFToken        string
+	EnvironmentVars  EnvironmentVars
+	ValidationErrors model.ValidationErrors
+	Error            string
+}
+
+func NewAppVars(r *http.Request, envVars EnvironmentVars) AppVars {
+	var token string
+	if r.Method == http.MethodGet {
+		if cookie, err := r.Cookie("XSRF-TOKEN"); err == nil {
+			token, _ = url.QueryUnescape(cookie.Value)
+		}
+	} else {
+		token = r.FormValue("xsrfToken")
+	}
+
+	vars := AppVars{
+		Path:            r.URL.Path,
+		XSRFToken:       token,
+		EnvironmentVars: envVars,
+	}
+
+	return vars
 }

@@ -5,15 +5,10 @@ import (
 	"fmt"
 	"github.com/ministryofjustice/opg-go-common/telemetry"
 	"github.com/opg-sirius-finance-admin/finance-admin/internal/api"
+	"github.com/opg-sirius-finance-admin/finance-admin/internal/components"
 	"net/http"
 	"time"
 )
-
-type ErrorVars struct {
-	Code  int
-	Error string
-	EnvironmentVars
-}
 
 type StatusError int
 
@@ -27,15 +22,20 @@ func (e StatusError) Code() int {
 	return int(e)
 }
 
-func wrapHandler(errTmpl Template, errPartial string, envVars EnvironmentVars) func(next HtmxHandler) http.Handler {
-	return func(next HtmxHandler) http.Handler {
+type Handler interface {
+	render(app components.AppVars, w http.ResponseWriter, r *http.Request) error
+}
+
+func wrapHandler(envVars components.EnvironmentVars) func(next Handler) http.Handler {
+	return func(next Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ctx := r.Context()
 			start := time.Now()
 
-			vars := NewAppVars(r, envVars)
+			vars := components.NewAppVars(r, envVars)
 			err := next.render(vars, w, r)
 
-			logger := telemetry.LoggerFromContext(r.Context())
+			logger := telemetry.LoggerFromContext(ctx)
 
 			logger.Info(
 				"Page Request",
@@ -63,15 +63,19 @@ func wrapHandler(errTmpl Template, errPartial string, envVars EnvironmentVars) f
 
 				w.Header().Add("HX-Retarget", "#main-container")
 				w.WriteHeader(code)
-				errVars := ErrorVars{
-					Code:            code,
-					Error:           err.Error(),
-					EnvironmentVars: envVars,
+				errVars := components.ErrorVars{
+					Code:   code,
+					Error:  err.Error(),
+					Prefix: envVars.Prefix,
 				}
+				component := components.Error(errVars)
 				if IsHxRequest(r) {
-					err = errTmpl.ExecuteTemplate(w, errPartial, errVars)
+					err = component.Render(ctx, w)
 				} else {
-					err = errTmpl.Execute(w, errVars)
+					var data components.PageVars
+					data.EnvironmentVars = envVars
+
+					err = components.Page(data, component).Render(ctx, w)
 				}
 
 				if err != nil {
