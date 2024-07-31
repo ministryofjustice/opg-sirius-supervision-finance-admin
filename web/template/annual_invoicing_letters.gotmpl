@@ -1,0 +1,14 @@
+{{- /*gotype: github.com/ministryofjustice/opg-sirius-supervision-finance-admin/internal/server.GetAnnualInvoicingLettersVars*/ -}}
+{{ template "page" . }}
+{{ define "title" }}OPG Sirius Finance Admin - Annual Invoicing Letters{{ end }}
+{{ define "main-content" }}
+    {{ block "annual-invoicing-letters" .Data }}
+        {{ template "navigation" . }}
+        <div>
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full">
+                </div>
+            </div>
+        </div>
+    {{ end }}
+{{ end }}
