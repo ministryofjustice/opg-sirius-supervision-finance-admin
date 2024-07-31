@@ -6,6 +6,6 @@ import htmx from "htmx.org/dist/htmx.esm";
 document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');
 initAll();
 
-window.htmx = htmx
+window.htmx = htmx;
 htmx.logAll();
-htmx.config.responseHandling = [{code:".*", swap: true}]
+htmx.config.responseHandling = [{code:".*", swap: true}];

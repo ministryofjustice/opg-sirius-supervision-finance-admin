@@ -3,13 +3,15 @@ module github.com/opg-sirius-finance-admin
 go 1.22.0
 
 require (
+	github.com/a-h/templ v0.2.747
 	github.com/ministryofjustice/opg-go-common v1.3.0
 	github.com/stretchr/testify v1.9.0
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.49.0
-	github.com/a-h/templ v0.2.747
 )
 
 require (
+	github.com/PuerkitoBio/goquery v1.9.2 // indirect
+	github.com/andybalholm/cascadia v1.3.2 // indirect
 	github.com/brunoscheufler/aws-ecs-metadata-go v0.0.0-20221221133751-67e37ae746cd // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect

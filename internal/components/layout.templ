@@ -1,13 +1,5 @@
 package components
 
-type EnvironmentVars struct {
-	Port            string
-	WebDir          string
-	SiriusURL       string
-	SiriusPublicURL string
-	Prefix          string
-}
-
 type PageVars struct {
 	SuccessMessage string
 	Title string
@@ -52,7 +44,7 @@ templ Page(vars PageVars, comp templ.Component) {
 }
 
 templ contentHeader() {
-    <div id="team-banner">
+    <div data-testid="content-header-template">
         <h2 class="govuk-heading-l">Finance Admin</h2>
     </div>
 }
@@ -75,9 +67,9 @@ templ tab(title string, prefix string, path string) {
     <li class="moj-sub-navigation__item" data-cy={ path + "-tab" }>
         <a
                 class="moj-sub-navigation__link selectable-nav"
-                hx-get={ prefix + path }
+                hx-get={ prefix + "/" + path }
                 hx-target="#main-content"
-                hx-push-url={ prefix + path }
+                hx-push-url={ prefix + "/" + path }
         >
             { title }
         </a>
