@@ -18,7 +18,7 @@ module.exports = defineConfig({
                 failed: require("cypress-failed-log/src/failed")()
             });
         },
-        baseUrl: "http://localhost:8888/finance-admin",
+        baseUrl: "http://localhost:8887/finance-admin",
         modifyObstructiveCode: false,
     },
     viewportWidth: 1000,

@@ -5,6 +5,17 @@ tmp_dir = "tmp"
 
 [build]
 exclude_dir = ["tmp", "web/assets", "web/static", "node_modules"]
-cmd = "go build -gcflags='all=-N -l' -o /tmp/main ."
+cmd = "templ generate && go build -gcflags='all=-N -l' -o /tmp/main ."
 full_bin = "dlv exec --accept-multiclient --log --headless --continue --listen :2345 --api-version 2 /tmp/main"
-include_ext = ["go", "gotmpl"]
+include_ext = ["go", "templ"]
+exclude_regex = [".*_templ.go"]
+log = "build-errors.log"
+send_interrupt = false
+stop_on_error = true
+
+[color]
+app = ""
+build = "yellow"
+main = "magenta"
+runner = "green"
+watcher = "cyan"

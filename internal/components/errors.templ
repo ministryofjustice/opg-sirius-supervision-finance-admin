@@ -1,0 +1,40 @@
+package components
+
+type ErrorVars struct {
+    Prefix string
+    Code int
+    Error string
+}
+
+templ Error(vars ErrorVars) {
+	<div data-testid="error-template" class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            if vars.Code == 403 {
+             <h1 class="govuk-heading-l">Forbidden</h1>
+             <p class="govuk-body">
+                 You do not have access to view this page.
+             </p>
+             <p class="govuk-body">
+                 Please use your browser to go back to the previous page.
+             </p>
+             } else if vars.Code == 404 {
+                <h1 class="govuk-heading-l">Page not found</h1>
+                <p class="govuk-body">
+                    If you typed the web address, check it is correct.
+                </p>
+                <p class="govuk-body">
+                    If you pasted the web address, check you copied the entire address.
+                </p>
+                <p class="govuk-body">
+                    Please use your browser to go back to the previous page.
+                </p>
+            } else {
+                <h1 class="govuk-heading-l">Sorry, there is a problem with the service</h1>
+                <p class="govuk-body">Try again later.</p>
+                if vars.Error != "" {
+                    <p class="govuk-body"><strong>Further information:</strong>{ vars.Error }</p>
+                }
+            }
+        </div>
+    </div>
+}
