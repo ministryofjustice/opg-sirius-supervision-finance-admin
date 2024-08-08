@@ -3,14 +3,19 @@ package server
 import (
 	"github.com/ministryofjustice/opg-go-common/securityheaders"
 	"github.com/ministryofjustice/opg-go-common/telemetry"
+	"github.com/opg-sirius-finance-admin/internal/api"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"html/template"
 	"io"
 	"log/slog"
 	"net/http"
+	"net/url"
+	"strconv"
 )
 
-type ApiClient interface{}
+type ApiClient interface {
+	SubmitDownload(api.Context, string, string, string, string, string, string, string, string, string) error
+}
 
 type router interface {
 	Client() ApiClient
@@ -35,6 +40,8 @@ func New(logger *slog.Logger, client ApiClient, templates map[string]*template.T
 	handleMux("GET /uploads", &GetUploadsHandler{&route{client: client, tmpl: templates["uploads.gotmpl"], partial: "uploads"}})
 	handleMux("GET /annual-invoicing-letters", &GetAnnualInvoicingLettersHandler{&route{client: client, tmpl: templates["annual_invoicing_letters.gotmpl"], partial: "annual-invoicing-letters"}})
 
+	handleMux("POST /downloads", &SubmitDownloadHandler{&route{client: client, tmpl: templates["downloads.gotmpl"], partial: "error-summary"}})
+
 	mux.Handle("/health-check", healthCheck())
 
 	static := http.FileServer(http.Dir(envVars.WebDir + "/static"))
@@ -43,4 +50,25 @@ func New(logger *slog.Logger, client ApiClient, templates map[string]*template.T
 	mux.Handle("/stylesheets/", static)
 
 	return otelhttp.NewHandler(http.StripPrefix(envVars.Prefix, securityheaders.Use(mux)), "supervision-finance-admin")
+}
+
+func getContext(r *http.Request) api.Context {
+	token := ""
+
+	if r.Method == http.MethodGet {
+		if cookie, err := r.Cookie("XSRF-TOKEN"); err == nil {
+			token, _ = url.QueryUnescape(cookie.Value)
+		}
+	} else {
+		token = r.FormValue("xsrfToken")
+	}
+
+	clientId, _ := strconv.Atoi(r.PathValue("clientId"))
+
+	return api.Context{
+		Context:   r.Context(),
+		Cookies:   r.Cookies(),
+		XSRFToken: token,
+		ClientId:  clientId,
+	}
 }

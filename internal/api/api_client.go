@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"fmt"
+	"io"
 	"net/http"
 )
 
@@ -21,10 +22,11 @@ func (e ClientError) Error() string {
 	return string(e)
 }
 
-func NewApiClient(httpClient HTTPClient) *ApiClient {
+func NewApiClient(httpClient HTTPClient, siriusUrl string) (*ApiClient, error) {
 	return &ApiClient{
-		http: httpClient,
-	}
+		http:      httpClient,
+		siriusUrl: siriusUrl,
+	}, nil
 }
 
 type HTTPClient interface {
@@ -32,7 +34,8 @@ type HTTPClient interface {
 }
 
 type ApiClient struct {
-	http HTTPClient
+	http      HTTPClient
+	siriusUrl string
 }
 
 type StatusError struct {
@@ -47,4 +50,28 @@ func (e StatusError) Error() string {
 
 func (e StatusError) Data() interface{} {
 	return e
+}
+
+func (c *ApiClient) newSiriusRequest(ctx Context, method, path string, body io.Reader) (*http.Request, error) {
+	req, err := http.NewRequestWithContext(ctx.Context, method, c.siriusUrl+"/supervision-api/v1"+path, body)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, c := range ctx.Cookies {
+		req.AddCookie(c)
+	}
+
+	req.Header.Add("OPG-Bypass-Membrane", "1")
+	req.Header.Add("X-XSRF-TOKEN", ctx.XSRFToken)
+
+	return req, err
+}
+
+func newStatusError(resp *http.Response) StatusError {
+	return StatusError{
+		Code:   resp.StatusCode,
+		URL:    resp.Request.URL.String(),
+		Method: resp.Request.Method,
+	}
 }
