@@ -1,6 +1,7 @@
 package server
 
 import (
+	"github.com/opg-sirius-finance-admin/internal/api"
 	"io"
 	"net/http"
 )
@@ -48,4 +49,8 @@ func (r *mockRoute) execute(w http.ResponseWriter, req *http.Request, data any) 
 
 type mockApiClient struct {
 	error error //nolint:golint,unused
+}
+
+func (m mockApiClient) SubmitDownload(context api.Context, s string, s2 string, s3 string, s4 string, s5 string, s6 string, s7 string, s8 string, s9 string) error {
+	return m.error
 }
