@@ -3,7 +3,6 @@ package model
 var ReportJournalTypes = []ReportJournalType{
 	ReportTypeReceiptTransactions,
 	ReportTypeNonReceiptTransactions,
-	ReportTypeMOTOCardPayments,
 }
 
 type ReportJournalType int
@@ -12,7 +11,6 @@ const (
 	ReportTypeUnknown ReportJournalType = iota
 	ReportTypeReceiptTransactions
 	ReportTypeNonReceiptTransactions
-	ReportTypeMOTOCardPayments
 )
 
 func (i ReportJournalType) String() string {
@@ -25,8 +23,6 @@ func (i ReportJournalType) Translation() string {
 		return "Receipt Transactions"
 	case ReportTypeNonReceiptTransactions:
 		return "Non Receipt Transactions"
-	case ReportTypeMOTOCardPayments:
-		return "Accounts Receivable"
 	default:
 		return ""
 	}
@@ -38,8 +34,6 @@ func (i ReportJournalType) Key() string {
 		return "ReceiptTransactions"
 	case ReportTypeNonReceiptTransactions:
 		return "NonReceiptTransactions"
-	case ReportTypeMOTOCardPayments:
-		return "AccountsReceivable"
 	default:
 		return ""
 	}

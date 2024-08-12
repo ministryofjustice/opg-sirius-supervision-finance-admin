@@ -19,10 +19,10 @@ var validationMappings = map[string]map[string]pair{
 		"date-in-the-past": pair{"Date", "The report date must be today or in the past"},
 	},
 	"FromDate": {
-		"FromDate": pair{"FromDate", "From date must be before to date"},
+		"FromDate": pair{"FromDate", "Date From must be before Date To"},
 	},
 	"ToDate": {
-		"ToDate": pair{"ToDate", "To date must be after from date"},
+		"ToDate": pair{"ToDate", "Date To must be after Date From"},
 	},
 }
 

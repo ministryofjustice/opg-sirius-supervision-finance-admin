@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func (c *ApiClient) SubmitDownload(ctx Context, reportType string, reportJournalType string, reportScheduleType string, reportAccountType string, reportDebtType string, dateField string, dateFromField string, dateToField string, emailField string) error {
+func (c *ApiClient) Download(ctx Context, reportType string, reportJournalType string, reportScheduleType string, reportAccountType string, reportDebtType string, dateField string, dateFromField string, dateToField string, emailField string) error {
 	var body bytes.Buffer
 	var dateTransformed *model.Date
 	var toDateTransformed *model.Date
@@ -43,7 +43,7 @@ func (c *ApiClient) SubmitDownload(ctx Context, reportType string, reportJournal
 		return err
 	}
 
-	req, err := c.newSiriusRequest(ctx, http.MethodPost, "/downloads", &body)
+	req, err := c.newBackendRequest(ctx, http.MethodGet, "/downloads", &body)
 
 	if err != nil {
 		return err

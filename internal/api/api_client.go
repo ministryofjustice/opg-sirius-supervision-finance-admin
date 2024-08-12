@@ -22,10 +22,11 @@ func (e ClientError) Error() string {
 	return string(e)
 }
 
-func NewApiClient(httpClient HTTPClient, siriusUrl string) (*ApiClient, error) {
+func NewApiClient(httpClient HTTPClient, siriusUrl string, backendUrl string) (*ApiClient, error) {
 	return &ApiClient{
-		http:      httpClient,
-		siriusUrl: siriusUrl,
+		http:       httpClient,
+		siriusUrl:  siriusUrl,
+		backendUrl: backendUrl,
 	}, nil
 }
 
@@ -34,8 +35,9 @@ type HTTPClient interface {
 }
 
 type ApiClient struct {
-	http      HTTPClient
-	siriusUrl string
+	http       HTTPClient
+	siriusUrl  string
+	backendUrl string
 }
 
 type StatusError struct {
@@ -52,8 +54,8 @@ func (e StatusError) Data() interface{} {
 	return e
 }
 
-func (c *ApiClient) newSiriusRequest(ctx Context, method, path string, body io.Reader) (*http.Request, error) {
-	req, err := http.NewRequestWithContext(ctx.Context, method, c.siriusUrl+"/supervision-api/v1"+path, body)
+func (c *ApiClient) newBackendRequest(ctx Context, method, path string, body io.Reader) (*http.Request, error) {
+	req, err := http.NewRequestWithContext(ctx.Context, method, c.backendUrl+path, body)
 	if err != nil {
 		return nil, err
 	}

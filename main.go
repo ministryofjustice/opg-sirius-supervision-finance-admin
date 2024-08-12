@@ -39,7 +39,7 @@ func run(ctx context.Context, logger *slog.Logger) error {
 	}
 
 	envVars := server.NewEnvironmentVars()
-	client, err := api.NewApiClient(http.DefaultClient, envVars.SiriusURL)
+	client, err := api.NewApiClient(http.DefaultClient, envVars.SiriusURL, envVars.BackendUrl)
 	if err != nil {
 		return err
 	}

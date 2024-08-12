@@ -15,7 +15,7 @@ the source of truth for payments moving to us from SOP. We are therefore replaci
 ## Decision
 
 This will be a new Front End service following our established Golang FE pattern. The web pages it serves will have two 
-separate functions: Uploading files for processing, and downloading reports. Reportsing will be broken out into a separate
+separate functions: Uploading files for processing, and downloading reports. Reporting will be broken out into a separate
 microservice, as it has a defined scope and will allow us to provide resources for potentially long-running database queries
 without impacting other services. The architecture for processing files will depend on the file and how coupled the data
 are with existing processes.

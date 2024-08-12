@@ -14,7 +14,7 @@ import (
 
 func TestSubmitDownload(t *testing.T) {
 	mockClient := SetUpTest()
-	client, _ := NewApiClient(mockClient, "http://localhost:3000")
+	client, _ := NewApiClient(mockClient, "http://localhost:3000", "")
 
 	data := `{
 		"reportType":         "AccountsReceivable",
@@ -38,7 +38,7 @@ func TestSubmitDownload(t *testing.T) {
 		}, nil
 	}
 
-	err := client.SubmitDownload(getContext(nil), "AccountsReceivable", "", "", "BadDebtWriteOffReport", "", "11/05/2024", "01/04/2024", "31/03/2025", "SomeSortOfEmail@example.com")
+	err := client.Download(getContext(nil), "AccountsReceivable", "", "", "BadDebtWriteOffReport", "", "11/05/2024", "01/04/2024", "31/03/2025", "SomeSortOfEmail@example.com")
 	assert.Equal(t, nil, err)
 }
 
@@ -48,9 +48,9 @@ func TestSubmitDownloadUnauthorised(t *testing.T) {
 	}))
 	defer svr.Close()
 
-	client, _ := NewApiClient(http.DefaultClient, svr.URL)
+	client, _ := NewApiClient(http.DefaultClient, svr.URL, svr.URL)
 
-	err := client.SubmitDownload(getContext(nil), "AccountsReceivable", "", "", "BadDebtWriteOffReport", "", "11/05/2024", "01/04/2024", "31/03/2025", "SomeSortOfEmail@example.com")
+	err := client.Download(getContext(nil), "AccountsReceivable", "", "", "BadDebtWriteOffReport", "", "11/05/2024", "01/04/2024", "31/03/2025", "SomeSortOfEmail@example.com")
 
 	assert.Equal(t, ErrUnauthorized.Error(), err.Error())
 }
@@ -61,20 +61,20 @@ func TestSubmitDownloadReturns500Error(t *testing.T) {
 	}))
 	defer svr.Close()
 
-	client, _ := NewApiClient(http.DefaultClient, svr.URL)
+	client, _ := NewApiClient(http.DefaultClient, svr.URL, svr.URL)
 
-	err := client.SubmitDownload(getContext(nil), "AccountsReceivable", "", "", "BadDebtWriteOffReport", "", "11/05/2024", "01/04/2024", "31/03/2025", "SomeSortOfEmail@example.com")
+	err := client.Download(getContext(nil), "AccountsReceivable", "", "", "BadDebtWriteOffReport", "", "11/05/2024", "01/04/2024", "31/03/2025", "SomeSortOfEmail@example.com")
 
 	assert.Equal(t, StatusError{
 		Code:   http.StatusInternalServerError,
-		URL:    svr.URL + "/supervision-api/v1/downloads",
-		Method: http.MethodPost,
+		URL:    svr.URL + "/downloads",
+		Method: http.MethodGet,
 	}, err)
 }
 
 func TestSubmitDownloadReturnsBadRequestError(t *testing.T) {
 	mockClient := SetUpTest()
-	client, _ := NewApiClient(mockClient, "http://localhost:3000")
+	client, _ := NewApiClient(mockClient, "http://localhost:3000", "")
 
 	json := `
 		{"reasons":["StartDate","EndDate"]}
@@ -89,7 +89,7 @@ func TestSubmitDownloadReturnsBadRequestError(t *testing.T) {
 		}, nil
 	}
 
-	err := client.SubmitDownload(getContext(nil), "AccountsReceivable", "", "", "BadDebtWriteOffReport", "", "11/05/2024", "01/04/2024", "31/03/2025", "SomeSortOfEmail@example.com")
+	err := client.Download(getContext(nil), "AccountsReceivable", "", "", "BadDebtWriteOffReport", "", "11/05/2024", "01/04/2024", "31/03/2025", "SomeSortOfEmail@example.com")
 
 	expectedError := model.ValidationError{Message: "", Errors: model.ValidationErrors{"EndDate": map[string]string{"EndDate": "EndDate"}, "StartDate": map[string]string{"StartDate": "StartDate"}}}
 	assert.Equal(t, expectedError, err)
@@ -111,9 +111,9 @@ func TestSubmitDownloadReturnsValidationError(t *testing.T) {
 	}))
 	defer svr.Close()
 
-	client, _ := NewApiClient(http.DefaultClient, svr.URL)
+	client, _ := NewApiClient(http.DefaultClient, svr.URL, svr.URL)
 
-	err := client.SubmitDownload(getContext(nil), "", "", "", "", "", "", "", "", "")
+	err := client.Download(getContext(nil), "", "", "", "", "", "", "", "", "")
 	expectedError := model.ValidationError{Message: "", Errors: model.ValidationErrors{"ReportType": map[string]string{"required": "Please select a report type"}}}
 	assert.Equal(t, expectedError, err.(model.ValidationError))
 }

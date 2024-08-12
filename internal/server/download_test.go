@@ -10,7 +10,7 @@ import (
 	"testing"
 )
 
-func TestSubmitManualInvoiceSuccess(t *testing.T) {
+func TestDownloadSuccess(t *testing.T) {
 	form := url.Values{
 		"reportType":         {"AccountsReceivable"},
 		"reportJournalType":  {""},
@@ -27,7 +27,7 @@ func TestSubmitManualInvoiceSuccess(t *testing.T) {
 	ro := &mockRoute{client: client}
 
 	w := httptest.NewRecorder()
-	r, _ := http.NewRequest(http.MethodPost, "/download", strings.NewReader(form.Encode()))
+	r, _ := http.NewRequest(http.MethodGet, "/download", strings.NewReader(form.Encode()))
 	r.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	r.SetPathValue("clientId", "1")
 
@@ -37,14 +37,14 @@ func TestSubmitManualInvoiceSuccess(t *testing.T) {
 
 	appVars.EnvironmentVars.Prefix = "prefix"
 
-	sut := SubmitDownloadHandler{ro}
+	sut := DownloadHandler{ro}
 
 	err := sut.render(appVars, w, r)
 
 	assert.Nil(t, err)
 }
 
-func TestSubmitDownloadValidationErrors(t *testing.T) {
+func TestDownloadValidationErrors(t *testing.T) {
 	assert := assert.New(t)
 	client := &mockApiClient{}
 	ro := &mockRoute{client: client}
@@ -60,7 +60,7 @@ func TestSubmitDownloadValidationErrors(t *testing.T) {
 	}
 
 	w := httptest.NewRecorder()
-	r, _ := http.NewRequest(http.MethodPost, "/invoices", nil)
+	r, _ := http.NewRequest(http.MethodGet, "/download", nil)
 	r.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	r.SetPathValue("clientId", "1")
 
@@ -68,7 +68,7 @@ func TestSubmitDownloadValidationErrors(t *testing.T) {
 		Path: "/add",
 	}
 
-	sut := SubmitDownloadHandler{ro}
+	sut := DownloadHandler{ro}
 	err := sut.render(appVars, w, r)
 	assert.Nil(err)
 	assert.Equal("422 Unprocessable Entity", w.Result().Status)

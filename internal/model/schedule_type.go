@@ -1,6 +1,7 @@
 package model
 
 var ReportScheduleTypes = []ReportScheduleType{
+	ReportTypeMOTOCardPayments,
 	ReportTypeOnlineCardPayments,
 	ReportOPGBACSTransfer,
 	ReportSupervisionBACSTransfer,
@@ -33,6 +34,7 @@ type ReportScheduleType int
 
 const (
 	ReportScheduleTypeUnknown ReportScheduleType = iota
+	ReportTypeMOTOCardPayments
 	ReportTypeOnlineCardPayments
 	ReportOPGBACSTransfer
 	ReportSupervisionBACSTransfer
@@ -67,6 +69,8 @@ func (i ReportScheduleType) String() string {
 
 func (i ReportScheduleType) Translation() string {
 	switch i {
+	case ReportTypeMOTOCardPayments:
+		return "Accounts Receivable"
 	case ReportTypeOnlineCardPayments:
 		return "Online Card Payments"
 	case ReportOPGBACSTransfer:
@@ -126,6 +130,8 @@ func (i ReportScheduleType) Translation() string {
 
 func (i ReportScheduleType) Key() string {
 	switch i {
+	case ReportTypeMOTOCardPayments:
+		return "Accounts Receivable"
 	case ReportTypeOnlineCardPayments:
 		return "OnlineCardPayments"
 	case ReportOPGBACSTransfer:
