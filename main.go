@@ -39,11 +39,7 @@ func run(ctx context.Context, logger *slog.Logger) error {
 	}
 
 	envVars := server.NewEnvironmentVars()
-<<<<<<< HEAD
 	client, err := api.NewClient(http.DefaultClient, envVars.SiriusURL, envVars.BackendUrl)
-=======
-	client, err := api.NewApiClient(http.DefaultClient, envVars.SiriusURL)
->>>>>>> 9f111f2 (pfs-116 FE only for downloading a report)
 	if err != nil {
 		return err
 	}
