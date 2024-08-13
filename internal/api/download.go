@@ -7,24 +7,24 @@ import (
 	"net/http"
 )
 
-func (c *ApiClient) Download(ctx Context, reportType string, reportJournalType string, reportScheduleType string, reportAccountType string, reportDebtType string, dateField string, dateFromField string, dateToField string, emailField string) error {
+func (c *ApiClient) Download(ctx Context, reportType string, reportJournalType string, reportScheduleType string, reportAccountType string, reportDebtType string, dateOfTransaction string, dateFrom string, dateTo string, email string) error {
 	var body bytes.Buffer
 	var dateTransformed *model.Date
 	var toDateTransformed *model.Date
 	var fromDateTransformed *model.Date
 
-	if dateField != "" {
-		raisedDateFormatted := model.NewDate(dateField)
+	if dateOfTransaction != "" {
+		raisedDateFormatted := model.NewDate(dateOfTransaction)
 		dateTransformed = &raisedDateFormatted
 	}
 
-	if dateToField != "" {
-		startDateFormatted := model.NewDate(dateToField)
+	if dateTo != "" {
+		startDateFormatted := model.NewDate(dateTo)
 		toDateTransformed = &startDateFormatted
 	}
 
-	if dateFromField != "" {
-		endDateFormatted := model.NewDate(dateFromField)
+	if dateFrom != "" {
+		endDateFormatted := model.NewDate(dateFrom)
 		fromDateTransformed = &endDateFormatted
 	}
 
@@ -37,7 +37,7 @@ func (c *ApiClient) Download(ctx Context, reportType string, reportJournalType s
 		DateField:          dateTransformed,
 		ToDateField:        toDateTransformed,
 		FromDateField:      fromDateTransformed,
-		Email:              emailField,
+		Email:              email,
 	})
 	if err != nil {
 		return err

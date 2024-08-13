@@ -22,13 +22,13 @@ func (h *DownloadHandler) render(v AppVars, w http.ResponseWriter, r *http.Reque
 		reportScheduleType = params.Get("reportScheduleType")
 		reportAccountType  = params.Get("reportAccountType")
 		reportDebtType     = params.Get("reportDebtType")
-		dateField          = params.Get("dateField")
-		dateFromField      = params.Get("dateFromField")
-		dateToField        = params.Get("dateToField")
-		emailField         = params.Get("emailField")
+		dateOfTransaction  = params.Get("dateOfTransaction")
+		dateFrom           = params.Get("dateFrom")
+		dateTo             = params.Get("dateTo")
+		email              = params.Get("email")
 	)
 
-	err := h.Client().Download(ctx, reportType, reportJournalType, reportScheduleType, reportAccountType, reportDebtType, dateField, dateFromField, dateToField, emailField)
+	err := h.Client().Download(ctx, reportType, reportJournalType, reportScheduleType, reportAccountType, reportDebtType, dateOfTransaction, dateFrom, dateTo, email)
 
 	if err != nil {
 		var (

@@ -22,10 +22,10 @@ func TestSubmitDownload(t *testing.T) {
 		"reportScheduleType": "",
 		"reportAccountType":  "BadDebtWriteOffReport",
 		"reportDebtType":     "",
-		"dateField":          "11/05/2024",
-		"dateFromField":      "01/04/2024",
-		"dateToField":        "31/03/2025",
-		"emailField":         "SomeSortOfEmail@example.com",
+		"dateOfTransaction":          "11/05/2024",
+		"dateFrom":      "01/04/2024",
+		"dateTo":        "31/03/2025",
+		"email":         "SomeSortOfEmail@example.com",
 	}
 	`
 
