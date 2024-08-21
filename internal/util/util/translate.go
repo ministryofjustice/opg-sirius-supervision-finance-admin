@@ -24,6 +24,16 @@ var validationMappings = map[string]map[string]pair{
 	"ToDate": {
 		"ToDate": pair{"ToDate", "Date To must be after Date From"},
 	},
+	"ReportUploadType": {
+		"required": pair{"ReportUploadType", "Please select a report type"},
+	},
+	"UploadDate": {
+		"required":         pair{"UploadDate", "Please enter a date"},
+		"date-in-the-past": pair{"UploadDate", "The report date must be today or in the past"},
+	},
+	"Email": {
+		"required": pair{"Email", "Please enter an email address to be notified when the upload is complete"},
+	},
 }
 
 func RenameErrors(siriusError model.ValidationErrors) model.ValidationErrors {
