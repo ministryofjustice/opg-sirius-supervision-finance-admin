@@ -5,6 +5,7 @@ import (
 	"github.com/opg-sirius-finance-admin/internal/model"
 	"io"
 	"net/http"
+	"os"
 )
 
 type mockTemplate struct {
@@ -50,6 +51,10 @@ func (r *mockRoute) execute(w http.ResponseWriter, req *http.Request, data any) 
 
 type mockApiClient struct {
 	error error //nolint:golint,unused
+}
+
+func (m mockApiClient) Upload(context api.Context, s string, s2 string, s3 string, file *os.File) error {
+	return m.error
 }
 
 func (m mockApiClient) Download(context api.Context, data model.Download) error {
