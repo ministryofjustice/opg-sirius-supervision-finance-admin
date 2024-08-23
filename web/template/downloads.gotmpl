@@ -4,9 +4,143 @@
 {{ define "main-content" }}
     {{ block "downloads" .Data }}
         {{ template "navigation" . }}
-        <div>
-            <div class="govuk-grid-row">
-                <div class="govuk-grid-column-full">
+        <div id="error-summary"></div>
+        <div class="govuk-grid-row sirius-admin">
+            <div class="govuk-grid-column-full">
+                <h1 class="govuk-heading-m  govuk-!-margin-bottom-1">Download a report</h1>
+                <div class="govuk-grid-row">
+                    <form
+                            class="govuk-grid-column-one-third"
+                            method="get"
+                            hx-get="{{ prefix "/download" }}"
+                            hx-target="#error-summary"
+                    >
+                        <div class="govuk-form-group">
+
+                            <div class="govuk-form-group" id="f-ReportType">
+                                <label class="govuk-label" for="reports-type">
+                                    Select a report type
+                                    <span id="error-message__ReportType"></span>
+                                </label>
+                                <select data-cy="report-type" class="govuk-select" id="reports-type" name="reportType">
+                                    <option value=""></option>
+                                    {{ range .ReportsTypes }}
+                                        <option value="{{ .Key }}" id="{{.Key}}">{{.Translation}}</option>
+                                    {{end}}
+                                </select>
+                            </div>
+
+                            <div class="hide" id="journal-types-field-input">
+                                <div class="govuk-form-group" id="f-ReportSubType">
+                                    <label class="govuk-label" for="report-journal-type">
+                                        Select a report
+                                        <span id="error-message__ReportSubType"></span>
+                                    </label>
+                                    <select disabled data-cy="report-journal-type" class="govuk-select" id="report-journal-type" name="reportJournalType">
+                                        <option value=""></option>
+                                        {{ range .ReportJournalTypes }}
+                                            <option value="{{ .Key }}" id="{{.Key}}">{{.Translation}}</option>
+                                        {{end}}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="hide" id="schedule-types-field-input">
+                                <div class="govuk-form-group" id="f-ReportSubType">
+                                    <label class="govuk-label" for="report-schedule-type">
+                                        Select a report
+                                        <span id="error-message__ReportSubType"></span>
+                                    </label>
+                                    <select disabled data-cy="report-schedule-type" class="govuk-select" id="report-schedule-type" name="reportScheduleType">
+                                        <option value=""></option>
+                                        {{ range .ReportScheduleTypes }}
+                                            <option value="{{ .Key }}" id="{{.Key}}">{{.Translation}}</option>
+                                        {{end}}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="hide" id="account-types-field-input">
+                                <div class="govuk-form-group" id="f-ReportSubType">
+                                    <label class="govuk-label" for="report-account-type">
+                                        Select a report
+                                        <span id="error-message__ReportSubType"></span>
+                                    </label>
+                                    <select disabled class="govuk-select" id="report-account-type" name="reportAccountType">
+                                        <option value=""></option>
+                                        {{ range .ReportAccountTypes }}
+                                            <option value="{{ .Key }}" id="{{.Key}}">{{.Translation}}</option>
+                                        {{end}}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="hide" id="debt-types-field-input">
+                                <div class="govuk-form-group" id="f-ReportSubType">
+                                    <label class="govuk-label" for="report-debt-type">
+                                        Select a report
+                                        <span id="error-message__ReportSubType"></span>
+                                    </label>
+                                    <select disabled class="govuk-select" id="report-debt-type" name="reportDebtType">
+                                        <option value=""></option>
+                                        {{ range .ReportDebtTypes }}
+                                            <option value="{{ .Key }}" id="{{.Key}}">{{.Translation}}</option>
+                                        {{end}}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="hide govuk-!-margin-top-5" id="date-field-input">
+                                <div class="govuk-form-group" id="f-Date">
+                                    <label class="govuk-label" for="date-field">
+                                        Date
+                                        <span id="error-message__Date"></span>
+                                    </label>
+                                    <input disabled class="govuk-input govuk-input--width-10" id="date-field" name="dateOfTransaction" type="date">
+                                </div>
+                            </div>
+
+                            <div class="hide govuk-!-margin-top-5" id="date-from-field-input">
+                                <div class="govuk-form-group" id="f-FromDate">
+                                    <label class="govuk-label" for="date-from-field">
+                                        Date from
+                                        <span id="error-message__FromDate"></span>
+                                    </label>
+                                    <input disabled class="govuk-input govuk-input--width-10" id="date-from-field" name="dateFrom" type="date">
+                                </div>
+                            </div>
+
+                            <div class="hide govuk-!-margin-top-5" id="date-to-field-input">
+                                <div class="govuk-form-group" id="f-ToDate">
+                                    <label class="govuk-label" for="date-to-field">
+                                        Date to
+                                        <span id="error-message__ToDate"></span>
+                                    </label>
+                                    <input disabled class="govuk-input govuk-input--width-10" id="date-to-field" name="dateTo" type="date">
+                                </div>
+                            </div>
+
+                            <div class="hide govuk-!-margin-top-5" id="email-field-input">
+                                <div class="govuk-form-group" id="f-Email">
+                                    <label class="govuk-label" for="email-field">
+                                        Email address
+                                        <span id="error-message__Email"></span>
+                                    </label>
+                                    <div id="email-hint" class="govuk-hint">
+                                        We’ll only use this to send you the finished report
+                                    </div>
+                                    <input disabled class="govuk-input" id="email-field" name="email" type="email" spellcheck="false" aria-describedby="email-hint" autocomplete="email">
+                                </div>
+                            </div>
+
+                            <div class="govuk-button-group govuk-!-margin-top-5">
+                                <button class="govuk-button" data-module="govuk-button">
+                                    Download report
+                                </button>
+                                <a class="govuk-link" href="{{ prefix "/downloads" }}">Cancel</a>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
