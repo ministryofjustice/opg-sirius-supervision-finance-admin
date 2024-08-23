@@ -39,7 +39,10 @@ func run(ctx context.Context, logger *slog.Logger) error {
 	}
 
 	envVars := server.NewEnvironmentVars()
-	client := api.NewApiClient(http.DefaultClient)
+	client, err := api.NewApiClient(http.DefaultClient, envVars.SiriusURL, envVars.BackendUrl)
+	if err != nil {
+		return err
+	}
 	templates := createTemplates(envVars)
 
 	s := &http.Server{
