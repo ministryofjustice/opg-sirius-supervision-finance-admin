@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/opg-sirius-finance-admin/internal/api"
 	"github.com/opg-sirius-finance-admin/internal/model"
-	"github.com/opg-sirius-finance-admin/internal/util/util"
 	"io"
 	"net/http"
 	"os"
@@ -115,7 +114,7 @@ func (h *UploadHandler) handleError(w http.ResponseWriter, r *http.Request, msg 
 	fileError := model.ValidationErrors{
 		"FileUpload": map[string]string{"required": msg},
 	}
-	data := AppVars{Errors: util.RenameErrors(fileError)}
+	data := AppVars{ValidationErrors: RenameErrors(fileError)}
 	w.WriteHeader(code)
 	return h.execute(w, r, data)
 }
@@ -127,7 +126,7 @@ func (h *UploadHandler) handleUploadError(w http.ResponseWriter, r *http.Request
 		stErr  api.StatusError
 	)
 	if errors.As(err, &valErr) {
-		data := AppVars{Errors: util.RenameErrors(valErr.Errors)}
+		data := AppVars{ValidationErrors: RenameErrors(valErr.Errors)}
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		return h.execute(w, r, data)
 	} else if errors.As(err, &stErr) {
