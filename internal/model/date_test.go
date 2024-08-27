@@ -78,24 +78,28 @@ func TestDate_Before_And_After(t *testing.T) {
 
 func TestDate_IsNull(t *testing.T) {
 	tests := []struct {
+		name string
 		date Date
 		want bool
 	}{
 		{
+			name: "Date passed in is not null",
 			date: NewDate("01/01/2020"),
 			want: false,
 		},
 		{
+			name: "Date passed matches a nil date",
 			date: NewDate("01/01/0001"),
 			want: true,
 		},
 		{
+			name: "Date passed is null",
 			date: Date{},
 			want: true,
 		},
 	}
-	for i, test := range tests {
-		t.Run("Scenario "+strconv.Itoa(i+1), func(t *testing.T) {
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
 			assert.Equal(t, test.want, test.date.IsNull())
 		})
 	}

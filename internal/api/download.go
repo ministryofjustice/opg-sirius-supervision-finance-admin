@@ -7,26 +7,9 @@ import (
 	"net/http"
 )
 
-func (c *ApiClient) Download(ctx Context, reportType string, reportJournalType string, reportScheduleType string, reportAccountType string, reportDebtType string, dateOfTransaction string, dateFrom string, dateTo string, email string) error {
+func (c *Client) Download(ctx Context, reportType string, reportJournalType string, reportScheduleType string, reportAccountType string, reportDebtType string, dateOfTransaction string, dateFrom string, dateTo string, email string) error {
 	var body bytes.Buffer
-	var dateTransformed *model.Date
-	var toDateTransformed *model.Date
-	var fromDateTransformed *model.Date
-
-	if dateOfTransaction != "" {
-		raisedDateFormatted := model.NewDate(dateOfTransaction)
-		dateTransformed = &raisedDateFormatted
-	}
-
-	if dateTo != "" {
-		startDateFormatted := model.NewDate(dateTo)
-		toDateTransformed = &startDateFormatted
-	}
-
-	if dateFrom != "" {
-		endDateFormatted := model.NewDate(dateFrom)
-		fromDateTransformed = &endDateFormatted
-	}
+	dateTransformed, toDateTransformed, fromDateTransformed := NewDownload(dateOfTransaction, dateTo, dateFrom)
 
 	err := json.NewEncoder(&body).Encode(model.Download{
 		ReportType:         reportType,
@@ -34,7 +17,7 @@ func (c *ApiClient) Download(ctx Context, reportType string, reportJournalType s
 		ReportScheduleType: reportScheduleType,
 		ReportAccountType:  reportAccountType,
 		ReportDebtType:     reportDebtType,
-		DateField:          dateTransformed,
+		DateOfTransaction:  dateTransformed,
 		ToDateField:        toDateTransformed,
 		FromDateField:      fromDateTransformed,
 		Email:              email,
@@ -56,28 +39,26 @@ func (c *ApiClient) Download(ctx Context, reportType string, reportJournalType s
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode == http.StatusCreated {
+	switch resp.StatusCode {
+	case http.StatusCreated:
 		return nil
-	}
 
-	if resp.StatusCode == http.StatusUnauthorized {
+	case http.StatusUnauthorized:
 		return ErrUnauthorized
-	}
 
-	if resp.StatusCode == http.StatusUnprocessableEntity {
+	case http.StatusUnprocessableEntity:
 		var v model.ValidationError
 		if err := json.NewDecoder(resp.Body).Decode(&v); err == nil && len(v.Errors) > 0 {
 			return model.ValidationError{Errors: v.Errors}
 		}
-	}
 
-	if resp.StatusCode == http.StatusBadRequest {
+	case http.StatusBadRequest:
 		var badRequests model.BadRequests
 		if err := json.NewDecoder(resp.Body).Decode(&badRequests); err != nil {
 			return err
 		}
 
-		validationErrors := make(model.ValidationErrors)
+		validationErrors := model.ValidationErrors{}
 		for _, reason := range badRequests.Reasons {
 			innerMap := make(map[string]string)
 			innerMap[reason] = reason
@@ -88,4 +69,26 @@ func (c *ApiClient) Download(ctx Context, reportType string, reportJournalType s
 	}
 
 	return newStatusError(resp)
+}
+
+func NewDownload(dateOfTransaction string, dateTo string, dateFrom string) (*model.Date, *model.Date, *model.Date) {
+	var dateTransformed *model.Date
+	var toDateTransformed *model.Date
+	var fromDateTransformed *model.Date
+
+	if dateOfTransaction != "" {
+		raisedDateFormatted := model.NewDate(dateOfTransaction)
+		dateTransformed = &raisedDateFormatted
+	}
+
+	if dateTo != "" {
+		startDateFormatted := model.NewDate(dateTo)
+		toDateTransformed = &startDateFormatted
+	}
+
+	if dateFrom != "" {
+		endDateFormatted := model.NewDate(dateFrom)
+		fromDateTransformed = &endDateFormatted
+	}
+	return dateTransformed, toDateTransformed, fromDateTransformed
 }

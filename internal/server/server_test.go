@@ -51,6 +51,6 @@ type mockApiClient struct {
 	error error //nolint:golint,unused
 }
 
-func (m mockApiClient) Download(context api.Context, s string, s2 string, s3 string, s4 string, s5 string, s6 string, s7 string, s8 string, s9 string) error {
+func (m mockApiClient) Download(context api.Context, reportType string, reportJournalType string, reportScheduleType string, reportAccountType string, reportDebtType string, dateOfTransaction string, dateFrom string, dateTo string, email string) error {
 	return m.error
 }

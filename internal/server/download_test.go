@@ -1,6 +1,7 @@
 package server
 
 import (
+	"github.com/opg-sirius-finance-admin/internal/api"
 	"github.com/opg-sirius-finance-admin/internal/model"
 	"github.com/stretchr/testify/assert"
 	"net/http"
@@ -27,7 +28,7 @@ func TestDownloadSuccess(t *testing.T) {
 	ro := &mockRoute{client: client}
 
 	w := httptest.NewRecorder()
-	r, _ := http.NewRequest(http.MethodGet, "/download", strings.NewReader(form.Encode()))
+	r, _ := http.NewRequest(http.MethodPost, "/download", strings.NewReader(form.Encode()))
 	r.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	r.SetPathValue("clientId", "1")
 
@@ -37,7 +38,7 @@ func TestDownloadSuccess(t *testing.T) {
 
 	appVars.EnvironmentVars.Prefix = "prefix"
 
-	sut := DownloadHandler{ro}
+	sut := GetDownloadHandler{ro}
 
 	err := sut.render(appVars, w, r)
 
@@ -62,14 +63,38 @@ func TestDownloadValidationErrors(t *testing.T) {
 	w := httptest.NewRecorder()
 	r, _ := http.NewRequest(http.MethodGet, "/download", nil)
 	r.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	r.SetPathValue("clientId", "1")
 
 	appVars := AppVars{
 		Path: "/add",
 	}
 
-	sut := DownloadHandler{ro}
+	sut := GetDownloadHandler{ro}
 	err := sut.render(appVars, w, r)
 	assert.Nil(err)
 	assert.Equal("422 Unprocessable Entity", w.Result().Status)
+}
+
+func TestDownloadStatusError(t *testing.T) {
+	assert := assert.New(t)
+	client := &mockApiClient{}
+	ro := &mockRoute{client: client}
+
+	client.error = api.StatusError{
+		Code:   http.StatusInternalServerError,
+		URL:    "/downloads",
+		Method: http.MethodGet,
+	}
+
+	w := httptest.NewRecorder()
+	r, _ := http.NewRequest(http.MethodGet, "/download", nil)
+	r.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+
+	appVars := AppVars{
+		Path: "/add",
+	}
+
+	sut := GetDownloadHandler{ro}
+	err := sut.render(appVars, w, r)
+	assert.Nil(err)
+	assert.Equal(http.StatusInternalServerError, w.Result().StatusCode)
 }

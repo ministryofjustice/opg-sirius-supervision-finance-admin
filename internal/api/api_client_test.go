@@ -46,8 +46,3 @@ func TestStatusError(t *testing.T) {
 	assert.Equal(t, "POST /some/url returned 418", err.Error())
 	assert.Equal(t, err, err.Data())
 }
-
-func SetUpTest() *MockClient {
-	mockClient := &MockClient{}
-	return mockClient
-}

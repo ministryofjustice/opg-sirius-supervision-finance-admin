@@ -6,7 +6,7 @@ type Download struct {
 	ReportScheduleType string `json:"reportScheduleType"`
 	ReportAccountType  string `json:"reportAccountType"`
 	ReportDebtType     string `json:"reportDebtType"`
-	DateField          *Date  `json:"dateOfTransaction,omitempty"`
+	DateOfTransaction  *Date  `json:"dateOfTransaction,omitempty"`
 	ToDateField        *Date  `json:"toDateField,omitempty"`
 	FromDateField      *Date  `json:"fromDateField,omitempty"`
 	Email              string `json:"email"`

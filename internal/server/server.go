@@ -40,7 +40,7 @@ func New(logger *slog.Logger, client ApiClient, templates map[string]*template.T
 	handleMux("GET /uploads", &GetUploadsHandler{&route{client: client, tmpl: templates["uploads.gotmpl"], partial: "uploads"}})
 	handleMux("GET /annual-invoicing-letters", &GetAnnualInvoicingLettersHandler{&route{client: client, tmpl: templates["annual_invoicing_letters.gotmpl"], partial: "annual-invoicing-letters"}})
 
-	handleMux("GET /download", &DownloadHandler{&route{client: client, tmpl: templates["downloads.gotmpl"], partial: "error-summary"}})
+	handleMux("GET /download", &GetDownloadHandler{&route{client: client, tmpl: templates["downloads.gotmpl"], partial: "error-summary"}})
 
 	mux.Handle("/health-check", healthCheck())
 

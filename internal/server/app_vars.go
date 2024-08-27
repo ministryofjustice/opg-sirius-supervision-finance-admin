@@ -7,12 +7,12 @@ import (
 )
 
 type AppVars struct {
-	Path            string
-	XSRFToken       string
-	Tabs            []Tab
-	EnvironmentVars EnvironmentVars
-	Errors          model.ValidationErrors
-	Error           string
+	Path             string
+	XSRFToken        string
+	Tabs             []Tab
+	EnvironmentVars  EnvironmentVars
+	ValidationErrors model.ValidationErrors
+	Error            string
 }
 
 type Tab struct {

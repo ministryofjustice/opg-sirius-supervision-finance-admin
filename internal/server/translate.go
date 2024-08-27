@@ -1,4 +1,4 @@
-package util
+package server
 
 import "github.com/opg-sirius-finance-admin/internal/model"
 

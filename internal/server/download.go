@@ -4,17 +4,16 @@ import (
 	"errors"
 	"github.com/opg-sirius-finance-admin/internal/api"
 	"github.com/opg-sirius-finance-admin/internal/model"
-	"github.com/opg-sirius-finance-admin/internal/util/util"
 	"net/http"
 )
 
-type DownloadHandler struct {
+type GetDownloadHandler struct {
 	router
 }
 
-func (h *DownloadHandler) render(v AppVars, w http.ResponseWriter, r *http.Request) error {
+func (h *GetDownloadHandler) render(v AppVars, w http.ResponseWriter, r *http.Request) error {
 	ctx := getContext(r)
-	params := r.URL.Query()
+	params := r.Form
 
 	var (
 		reportType         = params.Get("reportType")
@@ -36,7 +35,7 @@ func (h *DownloadHandler) render(v AppVars, w http.ResponseWriter, r *http.Reque
 			stErr  api.StatusError
 		)
 		if errors.As(err, &valErr) {
-			data := AppVars{Errors: util.RenameErrors(valErr.Errors)}
+			data := AppVars{ValidationErrors: RenameErrors(valErr.Errors)}
 			w.WriteHeader(http.StatusUnprocessableEntity)
 			err = h.execute(w, r, data)
 		} else if errors.As(err, &stErr) {
