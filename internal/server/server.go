@@ -16,7 +16,7 @@ import (
 
 type ApiClient interface {
 	Download(api.Context, model.Download) error
-	Upload(api.Context, string, string, string, io.Reader) error
+	Upload(api.Context, model.Upload) error
 }
 
 type router interface {
