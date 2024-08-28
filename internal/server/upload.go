@@ -3,12 +3,10 @@ package server
 import (
 	"encoding/csv"
 	"errors"
-	"fmt"
 	"github.com/opg-sirius-finance-admin/internal/api"
 	"github.com/opg-sirius-finance-admin/internal/model"
 	"io"
 	"net/http"
-	"os"
 	"reflect"
 	"strings"
 	"unicode"
@@ -21,55 +19,20 @@ type UploadHandler struct {
 func (h *UploadHandler) render(v AppVars, w http.ResponseWriter, r *http.Request) error {
 	ctx := getContext(r)
 
-	//Create and defer cleanup of a temp directory
-	dir := "./uploads"
-	if err := os.MkdirAll(dir, os.ModePerm); err != nil {
-		http.Error(w, "Failed to create directory", http.StatusInternalServerError)
-		return err
-	}
-	defer func() {
-		if err := os.RemoveAll(dir); err != nil {
-			fmt.Println("Could not remove directory:", err)
-		}
-	}()
-
-	// Extract form data
 	reportUploadType := r.PostFormValue("reportUploadType")
 	uploadDate := r.PostFormValue("uploadDate")
 	email := r.PostFormValue("email")
 
 	// Handle file upload
-	file, headers, err := r.FormFile("fileUpload")
+	file, _, err := r.FormFile("fileUpload")
 	if err != nil {
 		return h.handleError(w, r, "No file uploaded", http.StatusBadRequest)
 	}
 	defer file.Close()
 
-	// Define the destination file path
-	dst, err := os.Create(headers.Filename)
-	if err != nil {
-		return h.handleError(w, r, "Failed to create file", http.StatusInternalServerError)
-	}
-	defer dst.Close()
-
-	// Copy the uploaded file to the destination
-	if _, err := io.Copy(dst, file); err != nil {
-		return h.handleError(w, r, "Failed to save file", http.StatusInternalServerError)
-	}
-
-	// Reopen the file to read the headers
-	if err := dst.Close(); err != nil {
-		return h.handleError(w, r, "Failed to close file", http.StatusInternalServerError)
-	}
-	uploadedFile, err := os.Open(headers.Filename)
-	if err != nil {
-		return h.handleError(w, r, "Failed to reopen file", http.StatusInternalServerError)
-	}
-	defer uploadedFile.Close()
-
+	csvReader := csv.NewReader(file)
 	expectedHeaders := reportHeadersByType(reportUploadType)
 
-	csvReader := csv.NewReader(uploadedFile)
 	readHeaders, err := csvReader.Read()
 	if err != nil {
 		return h.handleError(w, r, "Failed to read CSV headers", http.StatusBadRequest)
@@ -84,8 +47,13 @@ func (h *UploadHandler) render(v AppVars, w http.ResponseWriter, r *http.Request
 		return h.handleError(w, r, "CSV headers do not match for the file trying to be uploaded", http.StatusBadRequest)
 	}
 
+	_, err = file.Seek(0, io.SeekStart)
+	if err != nil {
+		return err
+	}
+
 	// Upload the file
-	if err := h.Client().Upload(ctx, reportUploadType, uploadDate, email, uploadedFile); err != nil {
+	if err := h.Client().Upload(ctx, reportUploadType, uploadDate, email, file); err != nil {
 		return h.handleUploadError(w, r, err)
 	}
 
