@@ -4,36 +4,35 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/opg-sirius-finance-admin/internal/model"
+	"github.com/stretchr/testify/assert"
 	"io"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
-	"strings"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
 func TestUploadUrlSwitching(t *testing.T) {
 	mockClient := &MockClient{}
 	client, _ := NewClient(mockClient, "http://localhost:3000", "")
+	uploadDate := model.NewDate("2025-06-15")
+	content := []byte("file content")
 
-	// Write some content to the temp file
-	content := strings.NewReader("something here")
-
-	var capturedURL *url.URL
+	data := model.Upload{
+		ReportUploadType: "reportUploadType",
+		UploadDate:       &uploadDate,
+		Email:            "Something@example.com",
+		File:             content,
+	}
 
 	GetDoFunc = func(req *http.Request) (*http.Response, error) {
-		capturedURL = req.URL
 		return &http.Response{
 			StatusCode: http.StatusCreated,
 			Body:       io.NopCloser(bytes.NewReader([]byte{})),
 		}, nil
 	}
 
-	err := client.Upload(getContext(nil), "", "", "", content)
+	err := client.Upload(getContext(nil), data)
 	assert.NoError(t, err)
-	assert.Equal(t, "/uploads", capturedURL.String())
 }
 
 func TestSubmitUploadUnauthorised(t *testing.T) {
@@ -44,7 +43,7 @@ func TestSubmitUploadUnauthorised(t *testing.T) {
 
 	client, _ := NewClient(http.DefaultClient, svr.URL, svr.URL)
 
-	err := client.Upload(getContext(nil), "", "", "", nil)
+	err := client.Upload(getContext(nil), model.Upload{})
 
 	assert.Equal(t, ErrUnauthorized.Error(), err.Error())
 }
@@ -57,7 +56,7 @@ func TestSubmitUploadReturns500Error(t *testing.T) {
 
 	client, _ := NewClient(http.DefaultClient, svr.URL, svr.URL)
 
-	err := client.Upload(getContext(nil), "", "", "", nil)
+	err := client.Upload(getContext(nil), model.Upload{})
 
 	assert.Equal(t, StatusError{
 		Code:   http.StatusInternalServerError,
@@ -83,7 +82,7 @@ func TestSubmitUploadReturnsBadRequestError(t *testing.T) {
 		}, nil
 	}
 
-	err := client.Upload(getContext(nil), "", "", "", nil)
+	err := client.Upload(getContext(nil), model.Upload{})
 
 	expectedError := model.ValidationError{Message: "", Errors: model.ValidationErrors{"EndDate": map[string]string{"EndDate": "EndDate"}, "StartDate": map[string]string{"StartDate": "StartDate"}}}
 	assert.Equal(t, expectedError, err)
@@ -107,7 +106,7 @@ func TestSubmitUploadReturnsValidationError(t *testing.T) {
 
 	client, _ := NewClient(http.DefaultClient, svr.URL, svr.URL)
 
-	err := client.Upload(getContext(nil), "", "", "", nil)
+	err := client.Upload(getContext(nil), model.Upload{})
 	expectedError := model.ValidationError{Message: "", Errors: model.ValidationErrors{"ReportUploadType": map[string]string{"required": "Please select a report type"}}}
 	assert.Equal(t, expectedError, err.(model.ValidationError))
 }

@@ -69,22 +69,6 @@ func (c *Client) newBackendRequest(ctx Context, method, path string, body io.Rea
 	return req, err
 }
 
-func (c *Client) newSiriusRequest(ctx Context, method, path string, body io.Reader) (*http.Request, error) {
-	req, err := http.NewRequestWithContext(ctx.Context, method, c.siriusURL+"/supervision-api/v1"+path, body)
-	if err != nil {
-		return nil, err
-	}
-
-	for _, c := range ctx.Cookies {
-		req.AddCookie(c)
-	}
-
-	req.Header.Add("OPG-Bypass-Membrane", "1")
-	req.Header.Add("X-XSRF-TOKEN", ctx.XSRFToken)
-
-	return req, err
-}
-
 func newStatusError(resp *http.Response) StatusError {
 	return StatusError{
 		Code:   resp.StatusCode,
