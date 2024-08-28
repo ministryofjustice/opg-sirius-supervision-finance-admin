@@ -1,5 +1,7 @@
 package model
 
+import "encoding/json"
+
 var ReportUploadTypes = []ReportUploadType{
 	ReportTypeUploadPaymentsMOTOCard,
 	ReportTypeUploadPaymentsOnlineCard,
@@ -20,6 +22,15 @@ const (
 	ReportTypeUploadDebtChase
 	ReportTypeUploadDeputySchedule
 )
+
+var reportTypeUploadMap = map[string]ReportUploadType{
+	"PaymentsMOTOCard":        ReportTypeUploadPaymentsMOTOCard,
+	"PaymentsOnlineCard":      ReportTypeUploadPaymentsOnlineCard,
+	"PaymentsOPGBACS":         ReportTypeUploadPaymentsOPGBACS,
+	"PaymentsSupervisionBACS": ReportTypeUploadPaymentsSupervisionBACS,
+	"DebtChase":               ReportTypeUploadDebtChase,
+	"DeputySchedule":          ReportTypeUploadDeputySchedule,
+}
 
 func (i ReportUploadType) String() string {
 	return i.Key()
@@ -63,6 +74,27 @@ func (i ReportUploadType) Key() string {
 	}
 }
 
+func ParseReportUploadType(s string) ReportUploadType {
+	value, ok := reportTypeUploadMap[s]
+	if !ok {
+		return ReportUploadType(0)
+	}
+	return value
+}
+
 func (i ReportUploadType) Valid() bool {
 	return i != ReportTypeUploadUnknown
+}
+
+func (i ReportUploadType) MarshalJSON() ([]byte, error) {
+	return json.Marshal(i.Key())
+}
+
+func (i *ReportUploadType) UnmarshalJSON(data []byte) (err error) {
+	var s string
+	if err := json.Unmarshal(data, &s); err != nil {
+		return err
+	}
+	*i = ParseReportUploadType(s)
+	return nil
 }
