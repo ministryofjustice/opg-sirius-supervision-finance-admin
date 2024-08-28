@@ -8,7 +8,7 @@ import (
 	"os"
 )
 
-func (c *ApiClient) Upload(ctx Context, reportUploadType string, uploadDate string, email string, file *os.File) error {
+func (c *Client) Upload(ctx Context, reportUploadType string, uploadDate string, email string, file *os.File) error {
 	var body bytes.Buffer
 	var uploadDateTransformed *model.Date
 	var req *http.Request
@@ -28,11 +28,12 @@ func (c *ApiClient) Upload(ctx Context, reportUploadType string, uploadDate stri
 		return err
 	}
 
-	if reportUploadType == "DebtChase" {
+	switch reportUploadType {
+	case "DebtChase":
 		req, err = c.newSiriusRequest(ctx, http.MethodPost, "/finance/reports/upload-fee-chase", &body)
-	} else if reportUploadType == "DeputySchedule" {
+	case "DeputySchedule":
 		req, err = c.newSiriusRequest(ctx, http.MethodPost, "/finance/reports/upload-deputy-billing-schedule", &body)
-	} else {
+	default:
 		req, err = c.newBackendRequest(ctx, http.MethodPost, "/uploads", &body)
 	}
 
@@ -47,28 +48,26 @@ func (c *ApiClient) Upload(ctx Context, reportUploadType string, uploadDate stri
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode == http.StatusCreated {
+	switch resp.StatusCode {
+	case http.StatusCreated:
 		return nil
-	}
 
-	if resp.StatusCode == http.StatusUnauthorized {
+	case http.StatusUnauthorized:
 		return ErrUnauthorized
-	}
 
-	if resp.StatusCode == http.StatusUnprocessableEntity {
+	case http.StatusUnprocessableEntity:
 		var v model.ValidationError
 		if err := json.NewDecoder(resp.Body).Decode(&v); err == nil && len(v.Errors) > 0 {
 			return model.ValidationError{Errors: v.Errors}
 		}
-	}
 
-	if resp.StatusCode == http.StatusBadRequest {
+	case http.StatusBadRequest:
 		var badRequests model.BadRequests
 		if err := json.NewDecoder(resp.Body).Decode(&badRequests); err != nil {
 			return err
 		}
 
-		validationErrors := make(model.ValidationErrors)
+		validationErrors := model.ValidationErrors{}
 		for _, reason := range badRequests.Reasons {
 			innerMap := make(map[string]string)
 			innerMap[reason] = reason
