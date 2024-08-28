@@ -52,8 +52,13 @@ func (h *UploadHandler) render(v AppVars, w http.ResponseWriter, r *http.Request
 		return err
 	}
 
+	data, err := model.NewUpload(reportUploadType, uploadDate, email, file)
+	if err != nil {
+		return h.handleError(w, r, "Failed to read file", http.StatusBadRequest)
+	}
+
 	// Upload the file
-	if err := h.Client().Upload(ctx, reportUploadType, uploadDate, email, file); err != nil {
+	if err := h.Client().Upload(ctx, data); err != nil {
 		return h.handleUploadError(w, r, err)
 	}
 

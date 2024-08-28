@@ -52,7 +52,7 @@ type mockApiClient struct {
 	error error //nolint:golint,unused
 }
 
-func (m mockApiClient) Upload(context api.Context, s string, s2 string, s3 string, file io.Reader) error {
+func (m mockApiClient) Upload(context api.Context, data model.Upload) error {
 	return m.error
 }
 
