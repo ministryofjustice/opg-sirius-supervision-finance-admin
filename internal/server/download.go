@@ -27,7 +27,8 @@ func (h *GetDownloadHandler) render(v AppVars, w http.ResponseWriter, r *http.Re
 		email              = params.Get("email")
 	)
 
-	err := h.Client().Download(ctx, reportType, reportJournalType, reportScheduleType, reportAccountType, reportDebtType, dateOfTransaction, dateFrom, dateTo, email)
+	data := model.NewDownload(reportType, reportJournalType, reportScheduleType, reportAccountType, reportDebtType, dateOfTransaction, dateTo, dateFrom, email)
+	err := h.Client().Download(ctx, data)
 
 	if err != nil {
 		var (

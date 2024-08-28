@@ -4,6 +4,7 @@ import (
 	"github.com/ministryofjustice/opg-go-common/securityheaders"
 	"github.com/ministryofjustice/opg-go-common/telemetry"
 	"github.com/opg-sirius-finance-admin/internal/api"
+	"github.com/opg-sirius-finance-admin/internal/model"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"html/template"
 	"io"
@@ -14,7 +15,7 @@ import (
 )
 
 type ApiClient interface {
-	Download(api.Context, string, string, string, string, string, string, string, string, string) error
+	Download(api.Context, model.Download) error
 }
 
 type router interface {

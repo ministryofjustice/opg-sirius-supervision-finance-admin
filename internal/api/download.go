@@ -7,21 +7,10 @@ import (
 	"net/http"
 )
 
-func (c *Client) Download(ctx Context, reportType string, reportJournalType string, reportScheduleType string, reportAccountType string, reportDebtType string, dateOfTransaction string, dateFrom string, dateTo string, email string) error {
+func (c *Client) Download(ctx Context, data model.Download) error {
 	var body bytes.Buffer
-	dateTransformed, toDateTransformed, fromDateTransformed := NewDownload(dateOfTransaction, dateTo, dateFrom)
 
-	err := json.NewEncoder(&body).Encode(model.Download{
-		ReportType:         reportType,
-		ReportJournalType:  reportJournalType,
-		ReportScheduleType: reportScheduleType,
-		ReportAccountType:  reportAccountType,
-		ReportDebtType:     reportDebtType,
-		DateOfTransaction:  dateTransformed,
-		ToDateField:        toDateTransformed,
-		FromDateField:      fromDateTransformed,
-		Email:              email,
-	})
+	err := json.NewEncoder(&body).Encode(data)
 	if err != nil {
 		return err
 	}
@@ -69,26 +58,4 @@ func (c *Client) Download(ctx Context, reportType string, reportJournalType stri
 	}
 
 	return newStatusError(resp)
-}
-
-func NewDownload(dateOfTransaction string, dateTo string, dateFrom string) (*model.Date, *model.Date, *model.Date) {
-	var dateTransformed *model.Date
-	var toDateTransformed *model.Date
-	var fromDateTransformed *model.Date
-
-	if dateOfTransaction != "" {
-		raisedDateFormatted := model.NewDate(dateOfTransaction)
-		dateTransformed = &raisedDateFormatted
-	}
-
-	if dateTo != "" {
-		startDateFormatted := model.NewDate(dateTo)
-		toDateTransformed = &startDateFormatted
-	}
-
-	if dateFrom != "" {
-		endDateFormatted := model.NewDate(dateFrom)
-		fromDateTransformed = &endDateFormatted
-	}
-	return dateTransformed, toDateTransformed, fromDateTransformed
 }

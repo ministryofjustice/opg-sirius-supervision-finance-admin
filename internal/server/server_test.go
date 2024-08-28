@@ -2,6 +2,7 @@ package server
 
 import (
 	"github.com/opg-sirius-finance-admin/internal/api"
+	"github.com/opg-sirius-finance-admin/internal/model"
 	"io"
 	"net/http"
 )
@@ -51,6 +52,6 @@ type mockApiClient struct {
 	error error //nolint:golint,unused
 }
 
-func (m mockApiClient) Download(context api.Context, reportType string, reportJournalType string, reportScheduleType string, reportAccountType string, reportDebtType string, dateOfTransaction string, dateFrom string, dateTo string, email string) error {
+func (m mockApiClient) Download(context api.Context, data model.Download) error {
 	return m.error
 }

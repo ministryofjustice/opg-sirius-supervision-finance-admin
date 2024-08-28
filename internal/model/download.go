@@ -11,3 +11,31 @@ type Download struct {
 	FromDateField      *Date  `json:"fromDateField,omitempty"`
 	Email              string `json:"email"`
 }
+
+func NewDownload(reportType, reportJournalType, reportScheduleType, reportAccountType, reportDebtType, dateOfTransaction, dateTo, dateFrom, email string) Download {
+	download := Download{
+		ReportType:         reportType,
+		ReportJournalType:  reportJournalType,
+		ReportScheduleType: reportScheduleType,
+		ReportAccountType:  reportAccountType,
+		ReportDebtType:     reportDebtType,
+		Email:              email,
+	}
+
+	if dateOfTransaction != "" {
+		raisedDateFormatted := NewDate(dateOfTransaction)
+		download.DateOfTransaction = &raisedDateFormatted
+	}
+
+	if dateTo != "" {
+		startDateFormatted := NewDate(dateTo)
+		download.ToDateField = &startDateFormatted
+	}
+
+	if dateFrom != "" {
+		endDateFormatted := NewDate(dateFrom)
+		download.FromDateField = &endDateFormatted
+	}
+
+	return download
+}

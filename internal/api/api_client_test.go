@@ -13,7 +13,6 @@ type MockClient struct {
 }
 
 var (
-	// GetDoFunc fetches the mock client's `Do` func. Implement this within a test to modify the client's behaviour.
 	GetDoFunc func(req *http.Request) (*http.Response, error)
 )
 
