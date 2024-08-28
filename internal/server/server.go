@@ -11,13 +11,12 @@ import (
 	"log/slog"
 	"net/http"
 	"net/url"
-	"os"
 	"strconv"
 )
 
 type ApiClient interface {
 	Download(api.Context, model.Download) error
-	Upload(api.Context, string, string, string, *os.File) error
+	Upload(api.Context, string, string, string, io.Reader) error
 }
 
 type router interface {
