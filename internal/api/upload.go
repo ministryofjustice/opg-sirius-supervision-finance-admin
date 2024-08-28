@@ -4,33 +4,18 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/opg-sirius-finance-admin/internal/model"
-	"io"
 	"net/http"
 )
 
-func (c *Client) Upload(ctx Context, reportUploadType string, uploadDate string, email string, file io.Reader) error {
+func (c *Client) Upload(ctx Context, data model.Upload) error {
 	var body bytes.Buffer
-	var uploadDateTransformed *model.Date
-	var req *http.Request
 
-	if uploadDate != "" {
-		uploadDateFormatted := model.NewDate(uploadDate)
-		uploadDateTransformed = &uploadDateFormatted
-	}
-
-	fileTransformed, err := io.ReadAll(file)
-
-	err = json.NewEncoder(&body).Encode(model.Upload{
-		ReportUploadType: reportUploadType,
-		UploadDate:       uploadDateTransformed,
-		Email:            email,
-		File:             fileTransformed,
-	})
+	err := json.NewEncoder(&body).Encode(data)
 	if err != nil {
 		return err
 	}
 
-	req, err = c.newBackendRequest(ctx, http.MethodPost, "/uploads", &body)
+	req, err := c.newBackendRequest(ctx, http.MethodPost, "/uploads", &body)
 
 	if err != nil {
 		return err
@@ -64,9 +49,7 @@ func (c *Client) Upload(ctx Context, reportUploadType string, uploadDate string,
 
 		validationErrors := model.ValidationErrors{}
 		for _, reason := range badRequests.Reasons {
-			innerMap := make(map[string]string)
-			innerMap[reason] = reason
-			validationErrors[reason] = innerMap
+			validationErrors[reason] = map[string]string{reason: reason}
 		}
 
 		return model.ValidationError{Errors: validationErrors}
