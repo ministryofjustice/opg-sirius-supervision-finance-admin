@@ -4,11 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/opg-sirius-finance-admin/internal/model"
+	"io"
 	"net/http"
-	"os"
 )
 
-func (c *Client) Upload(ctx Context, reportUploadType string, uploadDate string, email string, file *os.File) error {
+func (c *Client) Upload(ctx Context, reportUploadType string, uploadDate string, email string, file io.Reader) error {
 	var body bytes.Buffer
 	var uploadDateTransformed *model.Date
 	var req *http.Request
@@ -18,24 +18,19 @@ func (c *Client) Upload(ctx Context, reportUploadType string, uploadDate string,
 		uploadDateTransformed = &uploadDateFormatted
 	}
 
-	err := json.NewEncoder(&body).Encode(model.Upload{
+	fileTransformed, err := io.ReadAll(file)
+
+	err = json.NewEncoder(&body).Encode(model.Upload{
 		ReportUploadType: reportUploadType,
 		UploadDate:       uploadDateTransformed,
 		Email:            email,
-		File:             file,
+		File:             fileTransformed,
 	})
 	if err != nil {
 		return err
 	}
 
-	switch reportUploadType {
-	case "DebtChase":
-		req, err = c.newSiriusRequest(ctx, http.MethodPost, "/finance/reports/upload-fee-chase", &body)
-	case "DeputySchedule":
-		req, err = c.newSiriusRequest(ctx, http.MethodPost, "/finance/reports/upload-deputy-billing-schedule", &body)
-	default:
-		req, err = c.newBackendRequest(ctx, http.MethodPost, "/uploads", &body)
-	}
+	req, err = c.newBackendRequest(ctx, http.MethodPost, "/uploads", &body)
 
 	if err != nil {
 		return err

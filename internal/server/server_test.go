@@ -5,7 +5,6 @@ import (
 	"github.com/opg-sirius-finance-admin/internal/model"
 	"io"
 	"net/http"
-	"os"
 )
 
 type mockTemplate struct {
@@ -53,7 +52,7 @@ type mockApiClient struct {
 	error error //nolint:golint,unused
 }
 
-func (m mockApiClient) Upload(context api.Context, s string, s2 string, s3 string, file *os.File) error {
+func (m mockApiClient) Upload(context api.Context, s string, s2 string, s3 string, file io.Reader) error {
 	return m.error
 }
 
