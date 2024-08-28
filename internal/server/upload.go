@@ -93,20 +93,16 @@ func (h *UploadHandler) render(v AppVars, w http.ResponseWriter, r *http.Request
 }
 
 func reportHeadersByType(reportType string) []string {
-	var headers []string
-
 	switch reportType {
 	case model.ReportTypeUploadDeputySchedule.Key():
-		headers = []string{"Deputy number", "Deputy name", "Case number", "Client forename", "Client surname", "Do not invoice", "Total outstanding"}
+		return []string{"Deputy number", "Deputy name", "Case number", "Client forename", "Client surname", "Do not invoice", "Total outstanding"}
 	case model.ReportTypeUploadDebtChase.Key():
-		headers = []string{"Client_no", "Deputy_name", "Total_debt"}
+		return []string{"Client_no", "Deputy_name", "Total_debt"}
 	case model.ReportTypeUploadPaymentsOPGBACS.Key():
-		headers = []string{"Line", "Type", "Code", "Number", "Transaction", "Value Date", "Amount", "Amount Reconciled", "Charges", "Status", "Desc Flex", "Consolidated line"}
+		return []string{"Line", "Type", "Code", "Number", "Transaction", "Value Date", "Amount", "Amount Reconciled", "Charges", "Status", "Desc Flex", "Consolidated line"}
 	default:
-		headers = []string{"Unknown report type"}
+		return []string{"Unknown report type"}
 	}
-
-	return headers
 }
 
 // handleError simplifies repetitive error handling in the render method.

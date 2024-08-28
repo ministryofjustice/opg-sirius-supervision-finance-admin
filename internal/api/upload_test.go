@@ -15,10 +15,9 @@ import (
 )
 
 func TestUploadUrlSwitching(t *testing.T) {
-	mockClient := SetUpTest()
-	client, _ := NewApiClient(mockClient, "http://localhost:3000", "")
+	mockClient := &MockClient{}
+	client, _ := NewClient(mockClient, "http://localhost:3000", "")
 
-	// Create a real temporary file to pass to the Upload function
 	tempFile, err := os.CreateTemp("", "testfile")
 	if err != nil {
 		t.Fatal(err)
@@ -37,17 +36,14 @@ func TestUploadUrlSwitching(t *testing.T) {
 	}
 
 	// Define test cases
-	testCases := []struct {
-		reportUploadType string
-		expectedURL      string
-	}{
-		{"DebtChase", "http://localhost:3000/supervision-api/v1/finance/reports/upload-fee-chase"},
-		{"DeputySchedule", "http://localhost:3000/supervision-api/v1/finance/reports/upload-deputy-billing-schedule"},
-		{"OtherType", "/uploads"},
+	testCases := map[string]string{
+		"DebtChase":      "http://localhost:3000/supervision-api/v1/finance/reports/upload-fee-chase",
+		"DeputySchedule": "http://localhost:3000/supervision-api/v1/finance/reports/upload-deputy-billing-schedule",
+		"OtherType":      "/uploads",
 	}
 
-	for _, tc := range testCases {
-		t.Run(tc.reportUploadType, func(t *testing.T) {
+	for reportUploadType, expectedURL := range testCases {
+		t.Run(reportUploadType, func(t *testing.T) {
 			// Variable to capture the request URL
 			var capturedURL *url.URL
 
@@ -60,12 +56,9 @@ func TestUploadUrlSwitching(t *testing.T) {
 				}, nil
 			}
 
-			// Call the Upload function with the test case's reportUploadType
-			err := client.Upload(getContext(nil), tc.reportUploadType, "", "", tempFile)
+			err := client.Upload(getContext(nil), reportUploadType, "", "", tempFile)
 			assert.NoError(t, err)
-
-			// Verify that the correct URL was called
-			assert.Equal(t, tc.expectedURL, capturedURL.String())
+			assert.Equal(t, expectedURL, capturedURL.String())
 		})
 	}
 }
@@ -76,7 +69,7 @@ func TestSubmitUploadUnauthorised(t *testing.T) {
 	}))
 	defer svr.Close()
 
-	client, _ := NewApiClient(http.DefaultClient, svr.URL, svr.URL)
+	client, _ := NewClient(http.DefaultClient, svr.URL, svr.URL)
 
 	err := client.Upload(getContext(nil), "", "", "", nil)
 
@@ -89,7 +82,7 @@ func TestSubmitUploadReturns500Error(t *testing.T) {
 	}))
 	defer svr.Close()
 
-	client, _ := NewApiClient(http.DefaultClient, svr.URL, svr.URL)
+	client, _ := NewClient(http.DefaultClient, svr.URL, svr.URL)
 
 	err := client.Upload(getContext(nil), "", "", "", nil)
 
@@ -101,8 +94,8 @@ func TestSubmitUploadReturns500Error(t *testing.T) {
 }
 
 func TestSubmitUploadReturnsBadRequestError(t *testing.T) {
-	mockClient := SetUpTest()
-	client, _ := NewApiClient(mockClient, "http://localhost:3000", "")
+	mockClient := &MockClient{}
+	client, _ := NewClient(mockClient, "http://localhost:3000", "")
 
 	json := `
 		{"reasons":["StartDate","EndDate"]}
@@ -139,7 +132,7 @@ func TestSubmitUploadReturnsValidationError(t *testing.T) {
 	}))
 	defer svr.Close()
 
-	client, _ := NewApiClient(http.DefaultClient, svr.URL, svr.URL)
+	client, _ := NewClient(http.DefaultClient, svr.URL, svr.URL)
 
 	err := client.Upload(getContext(nil), "", "", "", nil)
 	expectedError := model.ValidationError{Message: "", Errors: model.ValidationErrors{"ReportUploadType": map[string]string{"required": "Please select a report type"}}}
