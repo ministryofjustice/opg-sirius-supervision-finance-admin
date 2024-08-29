@@ -49,9 +49,7 @@ func (c *Client) Download(ctx Context, data model.Download) error {
 
 		validationErrors := model.ValidationErrors{}
 		for _, reason := range badRequests.Reasons {
-			innerMap := make(map[string]string)
-			innerMap[reason] = reason
-			validationErrors[reason] = innerMap
+			validationErrors[reason] = map[string]string{reason: reason}
 		}
 
 		return model.ValidationError{Errors: validationErrors}

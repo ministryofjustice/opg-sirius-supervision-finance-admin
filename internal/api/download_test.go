@@ -4,21 +4,19 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/opg-sirius-finance-admin/internal/model"
+	"github.com/stretchr/testify/assert"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"time"
-
-	"github.com/stretchr/testify/assert"
 )
 
 func TestSubmitDownload(t *testing.T) {
 	mockClient := &MockClient{}
 	client, _ := NewClient(mockClient, "http://localhost:3000", "")
-	dateOfTransaction := model.Date{Time: time.Date(2024, 5, 11, 0, 0, 0, 0, time.UTC)}
-	dateTo := model.Date{Time: time.Date(2025, 6, 15, 0, 0, 0, 0, time.UTC)}
-	dateFrom := model.Date{Time: time.Date(2022, 7, 21, 0, 0, 0, 0, time.UTC)}
+	dateOfTransaction := model.NewDate("2024-05-11")
+	dateTo := model.NewDate("2025-06-15")
+	dateFrom := model.NewDate("2022-07-21")
 
 	data := model.Download{
 		ReportType:         "reportType",
