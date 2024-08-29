@@ -9,6 +9,7 @@ type EnvironmentVars struct {
 	WebDir          string
 	SiriusURL       string
 	SiriusPublicURL string
+	BackendURL      string
 	Prefix          string
 }
 
@@ -19,6 +20,7 @@ func NewEnvironmentVars() EnvironmentVars {
 		SiriusURL:       getEnv("SIRIUS_URL", "http://host.docker.internal:8080"),
 		SiriusPublicURL: getEnv("SIRIUS_PUBLIC_URL", ""),
 		Prefix:          getEnv("PREFIX", ""),
+		BackendURL:      getEnv("BACKEND_URL", ""),
 	}
 }
 
