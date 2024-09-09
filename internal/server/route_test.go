@@ -42,7 +42,6 @@ func TestRoute_fullPage(t *testing.T) {
 
 	w := httptest.NewRecorder()
 	r, _ := http.NewRequest(http.MethodGet, "", nil)
-	r.SetPathValue("clientId", "1")
 
 	data := PageData{
 		Data: mockRouteData{
