@@ -30,7 +30,6 @@ func TestDownloadSuccess(t *testing.T) {
 	w := httptest.NewRecorder()
 	r, _ := http.NewRequest(http.MethodPost, "/download", strings.NewReader(form.Encode()))
 	r.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	r.SetPathValue("clientId", "1")
 
 	appVars := AppVars{
 		Path: "/download",

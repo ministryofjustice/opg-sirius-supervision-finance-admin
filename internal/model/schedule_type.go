@@ -1,5 +1,7 @@
 package model
 
+import "encoding/json"
+
 var ReportScheduleTypes = []ReportScheduleType{
 	ReportTypeMOTOCardPayments,
 	ReportTypeOnlineCardPayments,
@@ -62,6 +64,36 @@ const (
 	ReportGeneralWriteOffReversals
 	ReportMinimalWriteOffReversals
 )
+
+var reportScheduleTypeMap = map[string]ReportScheduleType{
+	"Accounts Receivable":      ReportTypeMOTOCardPayments,
+	"OnlineCardPayments":       ReportTypeOnlineCardPayments,
+	"OPGBACSTransfer":          ReportOPGBACSTransfer,
+	"SupervisionBACSTransfer":  ReportSupervisionBACSTransfer,
+	"DirectDebitPayment":       ReportDirectDebitPayments,
+	"AdFeeInvoices":            ReportAdFeeInvoices,
+	"S2FeeInvoices":            ReportS2FeeInvoices,
+	"S3FeeInvoices":            ReportS3FeeInvoices,
+	"B2FeeInvoices":            ReportB2FeeInvoices,
+	"B3FeeInvoices":            ReportB3FeeInvoices,
+	"SFFeeInvoicesGeneral ":    ReportSFFeeInvoicesGeneral,
+	"SFFeeInvoicesMinimal":     ReportSFFeeInvoicesMinimal,
+	"SEFeeInvoicesGeneral":     ReportSEFeeInvoicesGeneral,
+	"SEFeeInvoicesMinimal":     ReportSEFeeInvoicesMinimal,
+	"SOFeeInvoicesGeneral":     ReportSOFeeInvoicesGeneral,
+	"SOFeeInvoicesMinimal":     ReportSOFeeInvoicesMinimal,
+	"ADFeeReductions":          ReportADFeeReductions,
+	"GeneralManualCredits":     ReportGeneralManualCredits,
+	"MinimalManualCredits":     ReportMinimalManualCredits,
+	"GeneralManualDebits":      ReportGeneralManualDebits,
+	"MinimalManualDebits":      ReportMinimalManualDebits,
+	"ADWrite-offs":             ReportADWriteOffs,
+	"GeneralWrite-offs":        ReportGeneralWriteOffs,
+	"MinimalWriteOffs":         ReportMinimalWriteOffs,
+	"ADWriteOffReversals":      ReportADWriteOffReversals,
+	"GeneralWriteOffReversals": ReportGeneralWriteOffReversals,
+	"MinimalWriteOffReversals": ReportMinimalWriteOffReversals,
+}
 
 func (i ReportScheduleType) String() string {
 	return i.Key()
@@ -189,6 +221,27 @@ func (i ReportScheduleType) Key() string {
 	}
 }
 
+func ParseReportScheduleType(s string) ReportScheduleType {
+	value, ok := reportScheduleTypeMap[s]
+	if !ok {
+		return ReportScheduleType(0)
+	}
+	return value
+}
+
 func (i ReportScheduleType) Valid() bool {
 	return i != ReportScheduleTypeUnknown
+}
+
+func (i ReportScheduleType) MarshalJSON() ([]byte, error) {
+	return json.Marshal(i.Key())
+}
+
+func (i *ReportScheduleType) UnmarshalJSON(data []byte) (err error) {
+	var s string
+	if err := json.Unmarshal(data, &s); err != nil {
+		return err
+	}
+	*i = ParseReportScheduleType(s)
+	return nil
 }

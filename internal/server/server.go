@@ -11,7 +11,6 @@ import (
 	"log/slog"
 	"net/http"
 	"net/url"
-	"strconv"
 )
 
 type ApiClient interface {
@@ -64,12 +63,9 @@ func getContext(r *http.Request) api.Context {
 		token = r.FormValue("xsrfToken")
 	}
 
-	clientId, _ := strconv.Atoi(r.PathValue("clientId"))
-
 	return api.Context{
 		Context:   r.Context(),
 		Cookies:   r.Cookies(),
 		XSRFToken: token,
-		ClientId:  clientId,
 	}
 }

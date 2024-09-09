@@ -11,7 +11,6 @@ type Context struct {
 	Context   context.Context
 	Cookies   []*http.Cookie
 	XSRFToken string
-	ClientId  int
 }
 
 const ErrUnauthorized ClientError = "unauthorized"

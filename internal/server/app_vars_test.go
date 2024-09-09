@@ -8,7 +8,6 @@ import (
 
 func TestNewAppVars(t *testing.T) {
 	r, _ := http.NewRequest("GET", "/path", nil)
-	r.SetPathValue("clientId", "1")
 	r.AddCookie(&http.Cookie{Name: "XSRF-TOKEN", Value: "abc123"})
 
 	envVars := EnvironmentVars{}

@@ -5,23 +5,10 @@ import (
 	"github.com/stretchr/testify/assert"
 	"strconv"
 	"testing"
-	"time"
 )
 
 type testJsonDateStruct struct {
 	TestDate Date `json:"testDate"`
-}
-
-func TestNewDate(t *testing.T) {
-	want := Date{Time: time.Date(2020, 12, 31, 0, 0, 0, 0, time.UTC)}
-	assert.Equal(t, want, NewDate("31/12/2020"))
-
-	defer func() {
-		if r := recover(); r == nil {
-			t.Errorf("NewDate should panic with incorrect date format")
-		}
-	}()
-	NewDate("12/31/2020") // wrong format should trigger a panic
 }
 
 func TestDate_Before_And_After(t *testing.T) {

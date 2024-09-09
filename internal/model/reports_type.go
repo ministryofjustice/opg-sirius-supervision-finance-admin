@@ -1,5 +1,7 @@
 package model
 
+import "encoding/json"
+
 var ReportsTypes = []ReportsType{
 	ReportsTypeJournal,
 	ReportsTypeSchedule,
@@ -16,6 +18,13 @@ const (
 	ReportsTypeAccountsReceivable
 	ReportsTypeDebt
 )
+
+var reportsTypeMap = map[string]ReportsType{
+	"Journal":            ReportsTypeJournal,
+	"Schedule":           ReportsTypeSchedule,
+	"AccountsReceivable": ReportsTypeAccountsReceivable,
+	"Debt":               ReportsTypeDebt,
+}
 
 func (i ReportsType) String() string {
 	return i.Key()
@@ -51,6 +60,14 @@ func (i ReportsType) Key() string {
 	}
 }
 
+func ParseReportsType(s string) ReportsType {
+	value, ok := reportsTypeMap[s]
+	if !ok {
+		return ReportsType(0)
+	}
+	return value
+}
+
 func (i ReportsType) Valid() bool {
 	return i != ReportsTypeUnknown
 }
@@ -61,4 +78,17 @@ func (i ReportsType) RequiresDateValidation() bool {
 		return true
 	}
 	return false
+}
+
+func (i ReportsType) MarshalJSON() ([]byte, error) {
+	return json.Marshal(i.Key())
+}
+
+func (i *ReportsType) UnmarshalJSON(data []byte) (err error) {
+	var s string
+	if err := json.Unmarshal(data, &s); err != nil {
+		return err
+	}
+	*i = ParseReportsType(s)
+	return nil
 }

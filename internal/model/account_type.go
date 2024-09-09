@@ -1,5 +1,7 @@
 package model
 
+import "encoding/json"
+
 var ReportAccountTypes = []ReportAccountType{
 	ReportAccountTypeAgedDebt,
 	ReportAccountTypeUnappliedReceipts,
@@ -9,6 +11,17 @@ var ReportAccountTypes = []ReportAccountType{
 	ReportAccountTypeTotalReceiptsReport,
 	ReportAccountTypeBadDebtWriteOffReport,
 	ReportAccountTypeFeeAccrual,
+}
+
+var reportAccountTypeMap = map[string]ReportAccountType{
+	"AgedDebt":                    ReportAccountTypeAgedDebt,
+	"UnappliedReceipts":           ReportAccountTypeUnappliedReceipts,
+	"CustomerAgeingBuckets":       ReportAccountTypeCustomerAgeingBuckets,
+	"ARPaidInvoiceReport":         ReportAccountTypeARPaidInvoiceReport,
+	"PaidInvoiceTransactionLines": ReportAccountTypePaidInvoiceTransactionLines,
+	"TotalReceiptsReport":         ReportAccountTypeTotalReceiptsReport,
+	"BadDebtWriteOffReport":       ReportAccountTypeBadDebtWriteOffReport,
+	"FeeAccrual":                  ReportAccountTypeFeeAccrual,
 }
 
 type ReportAccountType int
@@ -75,6 +88,27 @@ func (i ReportAccountType) Key() string {
 	}
 }
 
+func ParseReportAccountType(s string) ReportAccountType {
+	value, ok := reportAccountTypeMap[s]
+	if !ok {
+		return ReportAccountType(0)
+	}
+	return value
+}
+
 func (i ReportAccountType) Valid() bool {
 	return i != ReportAccountTypeUnknown
+}
+
+func (i ReportAccountType) MarshalJSON() ([]byte, error) {
+	return json.Marshal(i.Key())
+}
+
+func (i *ReportAccountType) UnmarshalJSON(data []byte) (err error) {
+	var s string
+	if err := json.Unmarshal(data, &s); err != nil {
+		return err
+	}
+	*i = ParseReportAccountType(s)
+	return nil
 }
