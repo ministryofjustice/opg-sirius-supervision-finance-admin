@@ -21,7 +21,7 @@
     </head>
 
     <body class="govuk-template__body">
-      <sirius-header></sirius-header>
+      {{ template "header" . }}
 
       {{ block "main" . }}{{ end }}
 
