@@ -21,6 +21,7 @@ func (e ClientError) Error() string {
 	return string(e)
 }
 
+
 func NewClient(httpClient HTTPClient, siriusUrl string, backendUrl string) (*Client, error) {
 	return &Client{
 		http:       httpClient,
