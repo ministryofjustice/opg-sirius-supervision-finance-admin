@@ -21,11 +21,12 @@ func (e ClientError) Error() string {
 	return string(e)
 }
 
-func NewClient(httpClient HTTPClient, siriusURL string, backendURL string) (*Client, error) {
+
+func NewClient(httpClient HTTPClient, siriusUrl string, backendUrl string) (*Client, error) {
 	return &Client{
 		http:       httpClient,
-		siriusURL:  siriusURL,
-		backendURL: backendURL,
+		siriusUrl:  siriusUrl,
+		backendUrl: backendUrl,
 	}, nil
 }
 
@@ -35,8 +36,8 @@ type HTTPClient interface {
 
 type Client struct {
 	http       HTTPClient
-	siriusURL  string
-	backendURL string
+	siriusUrl  string
+	backendUrl string
 }
 
 type StatusError struct {
@@ -54,7 +55,7 @@ func (e StatusError) Data() interface{} {
 }
 
 func (c *Client) newBackendRequest(ctx Context, method, path string, body io.Reader) (*http.Request, error) {
-	req, err := http.NewRequestWithContext(ctx.Context, method, c.backendURL+path, body)
+	req, err := http.NewRequestWithContext(ctx.Context, method, c.backendUrl+path, body)
 	if err != nil {
 		return nil, err
 	}

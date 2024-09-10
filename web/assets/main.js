@@ -10,7 +10,7 @@ window.htmx = htmx
 htmx.logAll();
 htmx.config.responseHandling = [{code:".*", swap: true}]
 
-function disableDownloadFormInputs() {
+function disableFormInputs() {
     document.querySelector('#report-journal-type').setAttribute("disabled", "true")
     document.querySelector('#report-schedule-type').setAttribute("disabled", "true")
     document.querySelector('#report-account-type').setAttribute("disabled", "true")
@@ -38,7 +38,9 @@ htmx.onLoad(content => {
                 elements.forEach(element => {
                     htmx.addClass(element, 'hide');
                 });
-                disableDownloadFormInputs();
+
+                disableFormInputs();
+
                 const form = document.querySelector('form');
                 const reportTypeSelect = document.getElementById('reports-type');
                 const reportTypeSelectValue = reportTypeSelect.value
@@ -78,7 +80,9 @@ htmx.onLoad(content => {
             const reportTypeSelect = document.getElementById('reports-type');
             const reportTypeSelectValue = reportTypeSelect.value
             const reportAccountTypeSelectValue = this.value
-            disableDownloadFormInputs();
+
+            disableFormInputs();
+
             document.querySelector('#report-account-type').removeAttribute("disabled");
 
             form.reset();

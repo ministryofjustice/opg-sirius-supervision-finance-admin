@@ -44,6 +44,8 @@ func New(logger *slog.Logger, client ApiClient, templates map[string]*template.T
 
 	handleMux("POST /uploads", &UploadHandler{&route{client: client, tmpl: templates["uploads.gotmpl"], partial: "error-summary"}})
 
+	handleMux("GET /download", &GetDownloadHandler{&route{client: client, tmpl: templates["downloads.gotmpl"], partial: "error-summary"}})
+
 	mux.Handle("/health-check", healthCheck())
 
 	static := http.FileServer(http.Dir(envVars.WebDir + "/static"))
