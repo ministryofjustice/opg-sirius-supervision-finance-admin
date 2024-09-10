@@ -15,6 +15,7 @@ import (
 
 type ApiClient interface {
 	Download(api.Context, model.Download) error
+	Upload(api.Context, model.Upload) error
 }
 
 type router interface {
@@ -39,8 +40,9 @@ func New(logger *slog.Logger, client ApiClient, templates map[string]*template.T
 	handleMux("GET /downloads", &GetDownloadsHandler{&route{client: client, tmpl: templates["downloads.gotmpl"], partial: "downloads"}})
 	handleMux("GET /uploads", &GetUploadsHandler{&route{client: client, tmpl: templates["uploads.gotmpl"], partial: "uploads"}})
 	handleMux("GET /annual-invoicing-letters", &GetAnnualInvoicingLettersHandler{&route{client: client, tmpl: templates["annual_invoicing_letters.gotmpl"], partial: "annual-invoicing-letters"}})
-
 	handleMux("GET /download", &GetDownloadHandler{&route{client: client, tmpl: templates["downloads.gotmpl"], partial: "error-summary"}})
+
+	handleMux("POST /uploads", &UploadHandler{&route{client: client, tmpl: templates["uploads.gotmpl"], partial: "error-summary"}})
 
 	mux.Handle("/health-check", healthCheck())
 

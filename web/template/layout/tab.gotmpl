@@ -7,9 +7,7 @@
                 hx-get="{{ prefix .Path }}"
                 hx-target="#main-content"
                 hx-push-url="{{ prefix .Path }}"
-                {{ if .Selected }}
-                    aria-current="page"
-                {{ end }}
+                {{ if .Selected }}aria-current="page" {{ else }}href="{{ prefix .Path }}"{{ end }}
         >
             {{ .Title }}
         </a>
