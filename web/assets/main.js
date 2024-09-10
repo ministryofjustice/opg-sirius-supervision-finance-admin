@@ -10,7 +10,7 @@ window.htmx = htmx
 htmx.logAll();
 htmx.config.responseHandling = [{code:".*", swap: true}]
 
-function disableFormInputs() {
+function disableDownloadFormInputs() {
     document.querySelector('#report-journal-type').setAttribute("disabled", "true")
     document.querySelector('#report-schedule-type').setAttribute("disabled", "true")
     document.querySelector('#report-account-type').setAttribute("disabled", "true")
@@ -18,6 +18,12 @@ function disableFormInputs() {
     document.querySelector('#date-field').setAttribute("disabled", "true")
     document.querySelector('#date-from-field').setAttribute("disabled", "true")
     document.querySelector('#date-to-field').setAttribute("disabled", "true")
+    document.querySelector('#email-field').setAttribute("disabled", "true")
+}
+
+function disableUploadFormInputs() {
+    document.querySelector('#upload-date').setAttribute("disabled", "true")
+    document.querySelector('#file-upload').setAttribute("disabled", "true")
     document.querySelector('#email-field').setAttribute("disabled", "true")
 }
 
@@ -32,7 +38,7 @@ htmx.onLoad(content => {
                 elements.forEach(element => {
                     htmx.addClass(element, 'hide');
                 });
-                disableFormInputs();
+                disableDownloadFormInputs();
                 const form = document.querySelector('form');
                 const reportTypeSelect = document.getElementById('reports-type');
                 const reportTypeSelectValue = reportTypeSelect.value
@@ -72,7 +78,7 @@ htmx.onLoad(content => {
             const reportTypeSelect = document.getElementById('reports-type');
             const reportTypeSelectValue = reportTypeSelect.value
             const reportAccountTypeSelectValue = this.value
-            disableFormInputs();
+            disableDownloadFormInputs();
             document.querySelector('#report-account-type').removeAttribute("disabled");
 
             form.reset();
@@ -111,6 +117,47 @@ htmx.onLoad(content => {
                     break;
             }
         })
+    }
+
+    if (document.getElementById('reports-upload-type')) {
+        htmx.findAll("#reports-upload-type").forEach((element) => {
+            element.addEventListener("change", function() {
+                const elements = document.querySelectorAll('[id$="-input"]');
+                elements.forEach(element => {
+                    htmx.addClass(element, 'hide');
+                });
+                disableUploadFormInputs();
+                const form = document.querySelector('form');
+                const reportUploadTypeSelect = document.getElementById('reports-upload-type');
+                const reportUploadTypeSelectValue = reportUploadTypeSelect.value
+
+                form.reset();
+                reportUploadTypeSelect.value =  reportUploadTypeSelectValue
+
+                switch (reportUploadTypeSelect.value) {
+                    case "PaymentsMOTOCard":
+                    case "PaymentsOnlineCard":
+                    case "PaymentsOPGBACS":
+                    case "PaymentsSupervisionBACS":
+                        document.querySelector('#upload-date').removeAttribute("disabled")
+                        document.querySelector('#file-upload').removeAttribute("disabled")
+                        document.querySelector('#email-field').removeAttribute("disabled")
+                        htmx.removeClass(htmx.find("#upload-date-input"), "hide")
+                        htmx.removeClass(htmx.find("#file-upload-input"), "hide")
+                        htmx.removeClass(htmx.find("#email-field-input"), "hide")
+                        break;
+                    case "DebtChase":
+                    case "DeputySchedule":
+                        document.querySelector('#file-upload').removeAttribute("disabled")
+                        htmx.addClass(htmx.find("#upload-date-input"), "hide")
+                        htmx.addClass(htmx.find("#email-field-input"), "hide")
+                        htmx.removeClass(htmx.find("#file-upload-input"), "hide")
+                        break;
+                    default:
+                        break;
+                }
+            }, false)
+        });
     }
 
     // validation errors are loaded in as a partial, with oob-swaps for the field error messages,
