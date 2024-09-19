@@ -11,13 +11,13 @@ go-lint:
 	docker compose run --rm go-lint
 
 build:
-	docker compose build --no-cache --parallel finance-admin
+	docker compose build --no-cache --parallel finance-admin finance-admin-api
 
 build-dev:
 	docker compose -f docker-compose.yml -f docker/docker-compose.dev.yml build --parallel finance-admin finance-admin-api yarn
 
 build-all:
-	docker compose build --parallel finance-admin yarn cypress
+	docker compose build --parallel finance-admin finance-admin-api yarn cypress
 
 test: setup-directories
 	go run gotest.tools/gotestsum@latest --format testname  --junitfile test-results/unit-tests.xml -- ./... -coverprofile=test-results/test-coverage.txt
