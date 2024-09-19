@@ -3,6 +3,7 @@ module github.com/opg-sirius-finance-admin
 go 1.22.0
 
 require (
+	github.com/aws/aws-sdk-go v1.55.5
 	github.com/ministryofjustice/opg-go-common v1.3.0
 	github.com/stretchr/testify v1.9.0
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.49.0
@@ -16,8 +17,8 @@ require (
 	github.com/go-logr/logr v1.4.1 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.19.1 // indirect
+	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/stretchr/objx v0.5.2 // indirect
 	go.opentelemetry.io/contrib/detectors/aws/ecs v1.26.0 // indirect
 	go.opentelemetry.io/contrib/propagators/aws v1.26.0 // indirect
 	go.opentelemetry.io/otel v1.26.0 // indirect
