@@ -1,4 +1,4 @@
-package model
+package shared
 
 import (
 	"bytes"
@@ -18,6 +18,7 @@ func TestNewUploadReturnsCorrectly(t *testing.T) {
 	email := "test@example.com"
 	uploadDate := "11/05/2024"
 	fileContent := []byte("file content")
+	fileName := "TestFile.txt"
 	fileReader := bytes.NewReader(fileContent)
 
 	// Expected result
@@ -25,11 +26,12 @@ func TestNewUploadReturnsCorrectly(t *testing.T) {
 	expectedUpload := Upload{
 		ReportUploadType: reportUploadType,
 		Email:            email,
+		Filename:         fileName,
 		File:             fileContent,
 		UploadDate:       &expectedDate,
 	}
 
-	upload, err := NewUpload(reportUploadType, uploadDate, email, fileReader)
+	upload, err := NewUpload(reportUploadType, uploadDate, email, fileReader, fileName)
 
 	assert.NoError(t, err)
 	assert.Equal(t, expectedUpload, upload)
@@ -40,16 +42,18 @@ func TestNewUploadWithNoFileReturnsCorrectly(t *testing.T) {
 	email := "test@example.com"
 	uploadDate := ""
 	fileContent := []byte("file content")
+	fileName := ""
 	fileReader := bytes.NewReader(fileContent)
 
 	expectedUpload := Upload{
 		ReportUploadType: reportUploadType,
 		Email:            email,
+		Filename:         fileName,
 		File:             fileContent,
 		UploadDate:       nil,
 	}
 
-	upload, err := NewUpload(reportUploadType, uploadDate, email, fileReader)
+	upload, err := NewUpload(reportUploadType, uploadDate, email, fileReader, fileName)
 
 	assert.NoError(t, err)
 	assert.Equal(t, expectedUpload, upload)
@@ -60,9 +64,10 @@ func TestNewUpload_ReturnsError(t *testing.T) {
 	reportUploadType := "SomeReportType"
 	email := "test@example.com"
 	uploadDate := "11/05/2024"
+	fileName := "TestFile.txt"
 	reader := &errorReader{}
 
-	upload, err := NewUpload(reportUploadType, uploadDate, email, reader)
+	upload, err := NewUpload(reportUploadType, uploadDate, email, reader, fileName)
 
 	assert.ErrorIs(t, err, io.ErrUnexpectedEOF)
 	assert.Empty(t, upload.File)

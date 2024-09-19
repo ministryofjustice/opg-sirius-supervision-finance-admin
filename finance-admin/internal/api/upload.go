@@ -4,10 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/opg-sirius-finance-admin/finance-admin/internal/model"
+	"github.com/opg-sirius-finance-admin/shared"
 	"net/http"
 )
 
-func (c *Client) Upload(ctx Context, data model.Upload) error {
+func (c *Client) Upload(ctx Context, data shared.Upload) error {
 	var body bytes.Buffer
 
 	err := json.NewEncoder(&body).Encode(data)

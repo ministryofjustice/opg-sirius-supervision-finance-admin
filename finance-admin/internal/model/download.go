@@ -1,15 +1,17 @@
 package model
 
+import "github.com/opg-sirius-finance-admin/shared"
+
 type Download struct {
-	ReportType         string `json:"reportType"`
-	ReportJournalType  string `json:"reportJournalType"`
-	ReportScheduleType string `json:"reportScheduleType"`
-	ReportAccountType  string `json:"reportAccountType"`
-	ReportDebtType     string `json:"reportDebtType"`
-	DateOfTransaction  *Date  `json:"dateOfTransaction,omitempty"`
-	ToDateField        *Date  `json:"toDateField,omitempty"`
-	FromDateField      *Date  `json:"fromDateField,omitempty"`
-	Email              string `json:"email"`
+	ReportType         string       `json:"reportType"`
+	ReportJournalType  string       `json:"reportJournalType"`
+	ReportScheduleType string       `json:"reportScheduleType"`
+	ReportAccountType  string       `json:"reportAccountType"`
+	ReportDebtType     string       `json:"reportDebtType"`
+	DateOfTransaction  *shared.Date `json:"dateOfTransaction,omitempty"`
+	ToDateField        *shared.Date `json:"toDateField,omitempty"`
+	FromDateField      *shared.Date `json:"fromDateField,omitempty"`
+	Email              string       `json:"email"`
 }
 
 func NewDownload(reportType, reportJournalType, reportScheduleType, reportAccountType, reportDebtType, dateOfTransaction, dateTo, dateFrom, email string) Download {
@@ -23,17 +25,17 @@ func NewDownload(reportType, reportJournalType, reportScheduleType, reportAccoun
 	}
 
 	if dateOfTransaction != "" {
-		raisedDateFormatted := NewDate(dateOfTransaction)
+		raisedDateFormatted := shared.NewDate(dateOfTransaction)
 		download.DateOfTransaction = &raisedDateFormatted
 	}
 
 	if dateTo != "" {
-		startDateFormatted := NewDate(dateTo)
+		startDateFormatted := shared.NewDate(dateTo)
 		download.ToDateField = &startDateFormatted
 	}
 
 	if dateFrom != "" {
-		endDateFormatted := NewDate(dateFrom)
+		endDateFormatted := shared.NewDate(dateFrom)
 		download.FromDateField = &endDateFormatted
 	}
 

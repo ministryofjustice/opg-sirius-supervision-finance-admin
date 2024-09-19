@@ -5,6 +5,7 @@ import (
 	"github.com/ministryofjustice/opg-go-common/telemetry"
 	"github.com/opg-sirius-finance-admin/finance-admin/internal/api"
 	"github.com/opg-sirius-finance-admin/finance-admin/internal/model"
+	"github.com/opg-sirius-finance-admin/shared"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"html/template"
 	"io"
@@ -15,7 +16,7 @@ import (
 
 type ApiClient interface {
 	Download(api.Context, model.Download) error
-	Upload(api.Context, model.Upload) error
+	Upload(api.Context, shared.Upload) error
 }
 
 type router interface {

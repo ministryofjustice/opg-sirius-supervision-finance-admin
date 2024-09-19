@@ -13,6 +13,7 @@ services:
       - ./finance-admin/main.go:/app/finance-admin/main.go
       - ./finance-admin/web/static:/app/finance-admin/web/static
       - ./finance-admin/web/template:/app/finance-admin/web/template
+      - ./shared:/app/shared
 
   finance-admin-api:
     build:
@@ -26,6 +27,7 @@ services:
       - ./finance-admin-api/api:/app/finance-admin-api/api
       - ./finance-admin-api/session:/app/finance-admin-api/session
       - ./finance-admin-api/main.go:/app/finance-admin-api/main.go
+      - ./shared:/app/shared
 
   yarn:
     command: watch

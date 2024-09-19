@@ -1,6 +1,7 @@
 package model
 
 import (
+	"github.com/opg-sirius-finance-admin/shared"
 	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
@@ -47,9 +48,9 @@ func TestNewDownload(t *testing.T) {
 				ReportScheduleType: "reportScheduleType",
 				ReportAccountType:  "reportAccountType",
 				ReportDebtType:     "reportDebtType",
-				DateOfTransaction:  &Date{dateOfTransaction},
-				ToDateField:        &Date{dateTo},
-				FromDateField:      &Date{dateFrom},
+				DateOfTransaction:  &shared.Date{Time: dateOfTransaction},
+				ToDateField:        &shared.Date{Time: dateTo},
+				FromDateField:      &shared.Date{Time: dateFrom},
 				Email:              "Something@example.com",
 			},
 		},

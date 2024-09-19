@@ -3,6 +3,7 @@ package server
 import (
 	"github.com/opg-sirius-finance-admin/finance-admin/internal/api"
 	"github.com/opg-sirius-finance-admin/finance-admin/internal/model"
+	"github.com/opg-sirius-finance-admin/shared"
 	"io"
 	"net/http"
 )
@@ -52,7 +53,7 @@ type mockApiClient struct {
 	error error //nolint:golint,unused
 }
 
-func (m mockApiClient) Upload(context api.Context, data model.Upload) error {
+func (m mockApiClient) Upload(context api.Context, data shared.Upload) error {
 	return m.error
 }
 

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/opg-sirius-finance-admin/finance-admin/internal/model"
+	"github.com/opg-sirius-finance-admin/shared"
 	"github.com/stretchr/testify/assert"
 	"io"
 	"net/http"
@@ -14,10 +15,10 @@ import (
 func TestUploadUrlSwitching(t *testing.T) {
 	mockClient := &MockClient{}
 	client, _ := NewClient(mockClient, "http://localhost:3000", "")
-	uploadDate := model.NewDate("2025-06-15")
+	uploadDate := shared.NewDate("2025-06-15")
 	content := []byte("file content")
 
-	data := model.Upload{
+	data := shared.Upload{
 		ReportUploadType: "reportUploadType",
 		UploadDate:       &uploadDate,
 		Email:            "Something@example.com",
@@ -43,7 +44,7 @@ func TestSubmitUploadUnauthorised(t *testing.T) {
 
 	client, _ := NewClient(http.DefaultClient, svr.URL, svr.URL)
 
-	err := client.Upload(getContext(nil), model.Upload{})
+	err := client.Upload(getContext(nil), shared.Upload{})
 
 	assert.Equal(t, ErrUnauthorized.Error(), err.Error())
 }
@@ -56,7 +57,7 @@ func TestSubmitUploadReturns500Error(t *testing.T) {
 
 	client, _ := NewClient(http.DefaultClient, svr.URL, svr.URL)
 
-	err := client.Upload(getContext(nil), model.Upload{})
+	err := client.Upload(getContext(nil), shared.Upload{})
 
 	assert.Equal(t, StatusError{
 		Code:   http.StatusInternalServerError,
@@ -82,7 +83,7 @@ func TestSubmitUploadReturnsBadRequestError(t *testing.T) {
 		}, nil
 	}
 
-	err := client.Upload(getContext(nil), model.Upload{})
+	err := client.Upload(getContext(nil), shared.Upload{})
 
 	expectedError := model.ValidationError{Message: "", Errors: model.ValidationErrors{"EndDate": map[string]string{"EndDate": "EndDate"}, "StartDate": map[string]string{"StartDate": "StartDate"}}}
 	assert.Equal(t, expectedError, err)
@@ -106,7 +107,7 @@ func TestSubmitUploadReturnsValidationError(t *testing.T) {
 
 	client, _ := NewClient(http.DefaultClient, svr.URL, svr.URL)
 
-	err := client.Upload(getContext(nil), model.Upload{})
+	err := client.Upload(getContext(nil), shared.Upload{})
 	expectedError := model.ValidationError{Message: "", Errors: model.ValidationErrors{"ReportUploadType": map[string]string{"required": "Please select a report type"}}}
 	assert.Equal(t, expectedError, err.(model.ValidationError))
 }

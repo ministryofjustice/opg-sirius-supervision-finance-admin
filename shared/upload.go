@@ -1,4 +1,4 @@
-package model
+package shared
 
 import "io"
 
@@ -6,10 +6,11 @@ type Upload struct {
 	ReportUploadType string `json:"reportUploadType"`
 	UploadDate       *Date  `json:"uploadDate"`
 	Email            string `json:"email"`
+	Filename         string `json:"filename"`
 	File             []byte `json:"file"`
 }
 
-func NewUpload(reportUploadType string, uploadDate string, email string, file io.Reader) (Upload, error) {
+func NewUpload(reportUploadType string, uploadDate string, email string, file io.Reader, filename string) (Upload, error) {
 	fileTransformed, err := io.ReadAll(file)
 	if err != nil {
 		return Upload{}, err
@@ -19,6 +20,7 @@ func NewUpload(reportUploadType string, uploadDate string, email string, file io
 		ReportUploadType: reportUploadType,
 		Email:            email,
 		File:             fileTransformed,
+		Filename:         filename,
 	}
 
 	if uploadDate != "" {

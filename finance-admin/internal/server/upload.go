@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/opg-sirius-finance-admin/finance-admin/internal/api"
 	"github.com/opg-sirius-finance-admin/finance-admin/internal/model"
+	"github.com/opg-sirius-finance-admin/shared"
 	"io"
 	"net/http"
 	"reflect"
@@ -24,7 +25,7 @@ func (h *UploadHandler) render(v AppVars, w http.ResponseWriter, r *http.Request
 	email := r.PostFormValue("email")
 
 	// Handle file upload
-	file, _, err := r.FormFile("fileUpload")
+	file, handler, err := r.FormFile("fileUpload")
 	if err != nil {
 		return h.handleError(w, r, "No file uploaded", http.StatusBadRequest)
 	}
@@ -52,7 +53,7 @@ func (h *UploadHandler) render(v AppVars, w http.ResponseWriter, r *http.Request
 		return err
 	}
 
-	data, err := model.NewUpload(reportUploadType, uploadDate, email, file)
+	data, err := shared.NewUpload(reportUploadType, uploadDate, email, file, handler.Filename)
 	if err != nil {
 		return h.handleError(w, r, "Failed to read file", http.StatusBadRequest)
 	}
