@@ -11,6 +11,9 @@ import (
 
 func (s *Server) upload(w http.ResponseWriter, r *http.Request) error {
 	sess, err := session.NewSession()
+	if err != nil {
+		return err
+	}
 
 	endpoint := os.Getenv("AWS_S3_ENDPOINT")
 	sess.AwsSession.Config.Endpoint = &endpoint

@@ -24,8 +24,7 @@ func NewSession() (*Session, error) {
 	}
 
 	if iamRole, ok := os.LookupEnv("AWS_IAM_ROLE"); ok {
-		c := stscreds.NewCredentials(sess, iamRole)
-		*sess.Config.Credentials = *c
+		sess.Config.Credentials = stscreds.NewCredentials(sess, iamRole)
 	}
 
 	return &Session{sess}, nil
