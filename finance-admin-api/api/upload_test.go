@@ -14,11 +14,10 @@ func Test_upload(t *testing.T) {
 	var b bytes.Buffer
 
 	uploadForm := &shared.Upload{
-		"Test",
-		nil,
-		"joseph@test.com",
-		"file.txt",
-		[]byte("file contents"),
+		ReportUploadType: "Test",
+		Email:            "joseph@test.com",
+		Filename:         "file.txt",
+		File:             []byte("file contents"),
 	}
 
 	_ = json.NewEncoder(&b).Encode(uploadForm)
