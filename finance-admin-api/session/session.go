@@ -14,7 +14,7 @@ type Session struct {
 func NewSession() (*Session, error) {
 	awsRegion, ok := os.LookupEnv("AWS_REGION")
 
-	if !ok {
+	if !ok || awsRegion == "" {
 		awsRegion = "eu-west-1" // default region
 	}
 

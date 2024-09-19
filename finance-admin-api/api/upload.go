@@ -29,8 +29,10 @@ func (s *Server) upload(w http.ResponseWriter, r *http.Request) error {
 		"Test Contents",
 	}
 
+	bucket := os.Getenv("ASYNC_S3_BUCKET")
+
 	_, err = uploader.Upload(&s3manager.UploadInput{
-		Bucket: aws.String("async-upload"),
+		Bucket: aws.String(bucket),
 		Key:    &file.FileName,
 		Body:   strings.NewReader(file.FileContents),
 	})

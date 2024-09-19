@@ -13,6 +13,8 @@ type Server struct{}
 func (s *Server) SetupRoutes(logger *slog.Logger) http.Handler {
 	mux := http.NewServeMux()
 
+	mux.Handle("/health-check", healthCheck())
+
 	// handleFunc is a replacement for mux.HandleFunc
 	// which enriches the handler's HTTP instrumentation with the pattern as the http.route.
 	handleFunc := func(pattern string, h handlerFunc) {

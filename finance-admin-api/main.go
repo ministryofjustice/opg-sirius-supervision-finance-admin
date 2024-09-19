@@ -15,7 +15,7 @@ import (
 
 func main() {
 	ctx := context.Background()
-	logger := telemetry.NewLogger("opg-sirius-finance-hub")
+	logger := telemetry.NewLogger("opg-sirius-finance-admin")
 
 	err := run(ctx, logger)
 	if err != nil {
