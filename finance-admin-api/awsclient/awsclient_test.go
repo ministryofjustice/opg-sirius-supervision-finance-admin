@@ -1,14 +1,15 @@
-package session
+package awsclient
 
 import (
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
+	"context"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/stretchr/testify/assert"
 	"os"
 	"testing"
 )
 
-func TestNewSession(t *testing.T) {
+func TestNewClient(t *testing.T) {
 	tests := []struct {
 		region     *string
 		role       *string
@@ -32,13 +33,13 @@ func TestNewSession(t *testing.T) {
 			os.Setenv("AWS_IAM_ROLE", *test.role)
 		}
 
-		got, err := NewSession()
+		got, err := NewClient(context.Background())
 		if test.wantErr {
 			assert.Error(t, err)
 		} else {
 			assert.Nil(t, err)
 		}
-		assert.IsType(t, new(session.Session), got.AwsSession)
-		assert.Equal(t, test.wantRegion, *got.AwsSession.Config.Region)
+		assert.IsType(t, new(s3.Client), got)
+		assert.Equal(t, test.wantRegion, got.Options().Region)
 	}
 }

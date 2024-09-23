@@ -3,19 +3,24 @@ package api
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/s3/s3manager"
-	"github.com/opg-sirius-finance-admin/finance-admin-api/session"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/opg-sirius-finance-admin/finance-admin-api/awsclient"
 	"github.com/opg-sirius-finance-admin/shared"
 	"net/http"
 	"os"
 )
 
 func (s *Server) upload(w http.ResponseWriter, r *http.Request) error {
-	sess, err := session.NewSession()
+	ctx := r.Context()
+	awsClient, err := awsclient.NewClient(ctx)
+
 	if err != nil {
 		return err
 	}
+
+	uploader := manager.NewUploader(awsClient)
 
 	var upload shared.Upload
 	defer r.Body.Close()
@@ -24,18 +29,13 @@ func (s *Server) upload(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	endpoint := os.Getenv("AWS_S3_ENDPOINT")
-	sess.AwsSession.Config.Endpoint = &endpoint
-	sess.AwsSession.Config.S3ForcePathStyle = aws.Bool(true)
-
-	uploader := s3manager.NewUploader(sess.AwsSession)
-
-	_, err = uploader.Upload(&s3manager.UploadInput{
+	_, err = uploader.Upload(ctx, &s3.PutObjectInput{
 		Bucket:               aws.String(os.Getenv("ASYNC_S3_BUCKET")),
 		Key:                  &upload.Filename,
 		Body:                 bytes.NewReader(upload.File),
-		ServerSideEncryption: aws.String("AES256"),
+		ServerSideEncryption: "AES256",
 	})
+
 	if err != nil {
 		return err
 	}
