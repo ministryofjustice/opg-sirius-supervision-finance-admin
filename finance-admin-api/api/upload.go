@@ -30,10 +30,30 @@ func (s *Server) upload(w http.ResponseWriter, r *http.Request) error {
 
 	uploader := s3manager.NewUploader(sess.AwsSession)
 
+	//uploadInput := s3manager.UploadInput{
+	//	Bucket:               aws.String(os.Getenv("ASYNC_S3_BUCKET")),
+	//	Key:                  &upload.Filename,
+	//	Body:                 bytes.NewReader(upload.File),
+	//	ServerSideEncryption: aws.String("AES256"),
+	//}
+
+	//e, err := s3.New(sess.AwsSession).PutObject(&s3.PutObjectInput{
+	//	Bucket: aws.String(os.Getenv("ASYNC_S3_BUCKET")),
+	//	Key:    &upload.Filename,
+	//	//ACL:                  aws.String("private"),
+	//	Body: bytes.NewReader(upload.File),
+	//	//ContentLength:        aws.Int64(size),
+	//	//ContentType:          aws.String(http.DetectContentType(buffer)),
+	//	//ContentDisposition:   aws.String("attachment"),
+	//	ServerSideEncryption: aws.String("AES256"),
+	//	//StorageClass:         aws.String("INTELLIGENT_TIERING"),
+	//})
+
 	_, err = uploader.Upload(&s3manager.UploadInput{
-		Bucket: aws.String(os.Getenv("ASYNC_S3_BUCKET")),
-		Key:    &upload.Filename,
-		Body:   bytes.NewReader(upload.File),
+		Bucket:               aws.String(os.Getenv("ASYNC_S3_BUCKET")),
+		Key:                  &upload.Filename,
+		Body:                 bytes.NewReader(upload.File),
+		ServerSideEncryption: aws.String("AES256"),
 	})
 	if err != nil {
 		return err
