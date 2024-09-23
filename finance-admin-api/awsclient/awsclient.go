@@ -33,13 +33,16 @@ func NewClient(ctx context.Context) (*s3.Client, error) {
 		cfg.Credentials = stscreds.NewAssumeRoleProvider(client, iamRole)
 	}
 
-	endpoint := os.Getenv("AWS_S3_ENDPOINT")
-
-	client := s3.New(s3.Options{
-		BaseEndpoint: &endpoint,
+	options := s3.Options{
 		UsePathStyle: true,
 		Region:       awsRegion,
-	})
+	}
+
+	endpoint := os.Getenv("AWS_S3_ENDPOINT")
+	if endpoint != "" {
+		options.BaseEndpoint = &endpoint
+	}
+	client := s3.New(options)
 
 	return client, nil
 }

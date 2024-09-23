@@ -31,7 +31,7 @@ func (s *Server) upload(w http.ResponseWriter, r *http.Request) error {
 
 	_, err = uploader.Upload(ctx, &s3.PutObjectInput{
 		Bucket:               aws.String(os.Getenv("ASYNC_S3_BUCKET")),
-		Key:                  &upload.Filename,
+		Key:                  aws.String(upload.Filename),
 		Body:                 bytes.NewReader(upload.File),
 		ServerSideEncryption: "AES256",
 	})
