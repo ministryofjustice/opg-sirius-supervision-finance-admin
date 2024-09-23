@@ -31,6 +31,10 @@ function disableUploadFormInputs() {
 htmx.onLoad(content => {
     initAll();
 
+    htmx.findAll(".moj-banner--success").forEach((element) => {
+        element.addEventListener("click", () => htmx.addClass(htmx.find(".moj-banner--success"), "hide"));
+    });
+
     if (document.getElementById('reports-type')) {
         htmx.findAll("#reports-type").forEach((element) => {
             element.addEventListener("change", function() {

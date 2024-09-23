@@ -9,7 +9,6 @@ var ReportUploadTypes = []ReportUploadType{
 	ReportTypeUploadPaymentsSupervisionBACS,
 	ReportTypeUploadDebtChase,
 	ReportTypeUploadDeputySchedule,
-	ReportTypeTest,
 }
 
 type ReportUploadType int
@@ -22,7 +21,6 @@ const (
 	ReportTypeUploadPaymentsSupervisionBACS
 	ReportTypeUploadDebtChase
 	ReportTypeUploadDeputySchedule
-	ReportTypeTest
 )
 
 var reportTypeUploadMap = map[string]ReportUploadType{
@@ -32,7 +30,6 @@ var reportTypeUploadMap = map[string]ReportUploadType{
 	"PaymentsSupervisionBACS": ReportTypeUploadPaymentsSupervisionBACS,
 	"DebtChase":               ReportTypeUploadDebtChase,
 	"DeputySchedule":          ReportTypeUploadDeputySchedule,
-	"Test":                    ReportTypeTest,
 }
 
 func (i ReportUploadType) String() string {
@@ -53,8 +50,6 @@ func (i ReportUploadType) Translation() string {
 		return "Debt chase"
 	case ReportTypeUploadDeputySchedule:
 		return "Deputy schedule"
-	case ReportTypeTest:
-		return "Test upload"
 	default:
 		return ""
 	}
@@ -74,8 +69,6 @@ func (i ReportUploadType) Key() string {
 		return "DebtChase"
 	case ReportTypeUploadDeputySchedule:
 		return "DeputySchedule"
-	case ReportTypeTest:
-		return "Test"
 	default:
 		return ""
 	}

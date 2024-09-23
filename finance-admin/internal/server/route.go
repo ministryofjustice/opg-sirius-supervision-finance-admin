@@ -5,7 +5,8 @@ import (
 )
 
 type PageData struct {
-	Data any
+	Data           any
+	SuccessMessage string
 }
 
 type route struct {
@@ -26,10 +27,19 @@ func (r route) execute(w http.ResponseWriter, req *http.Request, data any) error
 		return r.tmpl.ExecuteTemplate(w, r.partial, data)
 	} else {
 		data := PageData{
-			Data: data,
+			Data:           data,
+			SuccessMessage: r.getSuccess(req),
 		}
 		return r.tmpl.Execute(w, data)
 	}
+}
+
+func (r route) getSuccess(req *http.Request) string {
+	switch req.URL.Query().Get("success") {
+	case "upload":
+		return "File successfully uploaded"
+	}
+	return ""
 }
 
 func IsHxRequest(req *http.Request) bool {

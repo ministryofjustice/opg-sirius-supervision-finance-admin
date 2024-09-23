@@ -3,6 +3,7 @@ package server
 import (
 	"encoding/csv"
 	"errors"
+	"fmt"
 	"github.com/opg-sirius-finance-admin/finance-admin/internal/api"
 	"github.com/opg-sirius-finance-admin/finance-admin/internal/model"
 	"github.com/opg-sirius-finance-admin/shared"
@@ -44,7 +45,7 @@ func (h *UploadHandler) render(v AppVars, w http.ResponseWriter, r *http.Request
 	}
 
 	// Compare the extracted headers with the expected headers
-	if reportUploadType != model.ReportTypeTest.Key() && !reflect.DeepEqual(readHeaders, expectedHeaders) {
+	if !reflect.DeepEqual(readHeaders, expectedHeaders) {
 		return h.handleError(w, r, "CSV headers do not match for the file trying to be uploaded", http.StatusBadRequest)
 	}
 
@@ -62,6 +63,8 @@ func (h *UploadHandler) render(v AppVars, w http.ResponseWriter, r *http.Request
 	if err := h.Client().Upload(ctx, data); err != nil {
 		return h.handleUploadError(w, r, err)
 	}
+
+	w.Header().Add("HX-Redirect", fmt.Sprintf("%s/uploads?success=upload", v.EnvironmentVars.Prefix))
 
 	return nil
 }

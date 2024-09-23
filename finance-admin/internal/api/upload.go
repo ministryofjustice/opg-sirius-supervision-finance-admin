@@ -30,7 +30,7 @@ func (c *Client) Upload(ctx Context, data shared.Upload) error {
 	defer resp.Body.Close()
 
 	switch resp.StatusCode {
-	case http.StatusCreated:
+	case http.StatusOK, http.StatusCreated:
 		return nil
 
 	case http.StatusUnauthorized:
