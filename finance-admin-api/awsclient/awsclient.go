@@ -2,6 +2,7 @@ package awsclient
 
 import (
 	"context"
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials/stscreds"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -33,16 +34,11 @@ func NewClient(ctx context.Context) (*s3.Client, error) {
 		cfg.Credentials = stscreds.NewAssumeRoleProvider(client, iamRole)
 	}
 
-	options := s3.Options{
-		UsePathStyle: true,
-		Region:       awsRegion,
-	}
-
-	endpoint := os.Getenv("AWS_S3_ENDPOINT")
-	if endpoint != "" {
-		options.BaseEndpoint = &endpoint
-	}
-	client := s3.New(options)
+	client := s3.NewFromConfig(cfg, func(u *s3.Options) {
+		u.UsePathStyle = true
+		u.Region = awsRegion
+		u.BaseEndpoint = aws.String(os.Getenv("AWS_S3_ENDPOINT"))
+	})
 
 	return client, nil
 }
