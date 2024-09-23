@@ -3,6 +3,7 @@ package api
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -31,7 +32,7 @@ func (s *Server) upload(w http.ResponseWriter, r *http.Request) error {
 
 	_, err = uploader.Upload(ctx, &s3.PutObjectInput{
 		Bucket:               aws.String(os.Getenv("ASYNC_S3_BUCKET")),
-		Key:                  aws.String(upload.Filename),
+		Key:                  aws.String(fmt.Sprintf("%s/%s", "finance-admin", upload.Filename)),
 		Body:                 bytes.NewReader(upload.File),
 		ServerSideEncryption: "AES256",
 	})
