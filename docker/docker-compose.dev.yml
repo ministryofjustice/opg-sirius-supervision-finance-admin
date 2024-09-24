@@ -26,6 +26,7 @@ services:
       - ./go.sum:/app/go.sum
       - ./finance-admin-api/api:/app/finance-admin-api/api
       - ./finance-admin-api/awsclient:/app/finance-admin-api/awsclient
+      - ./apierror:/app/apierror
       - ./finance-admin-api/main.go:/app/finance-admin-api/main.go
       - ./shared:/app/shared
 
