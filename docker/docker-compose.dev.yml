@@ -5,15 +5,15 @@ services:
     ports:
       - '2345:2345'
     volumes:
-      - ./finance-admin/.air.toml:/app/finance-admin/.air.toml
       - ./go.mod:/app/go.mod
       - ./go.sum:/app/go.sum
+      - ./shared:/app/shared
+      - ./finance-admin/.air.toml:/app/finance-admin/.air.toml
       - ./finance-admin/internal:/app/finance-admin/internal
-      - ./main_test.go:/app/main_test.go
+      - ./finance-admin/main_test.go:/app/finance-admin/main_test.go
       - ./finance-admin/main.go:/app/finance-admin/main.go
       - ./finance-admin/web/static:/app/finance-admin/web/static
       - ./finance-admin/web/template:/app/finance-admin/web/template
-      - ./shared:/app/shared
 
   finance-admin-api:
     build:
@@ -21,14 +21,14 @@ services:
     ports:
       - '3456:2345'
     volumes:
-      - ./finance-admin-api/.air.toml:/app/finance-admin-api/.air.toml
       - ./go.mod:/app/go.mod
       - ./go.sum:/app/go.sum
+      - ./apierror:/app/apierror
+      - ./shared:/app/shared
+      - ./finance-admin-api/.air.toml:/app/finance-admin-api/.air.toml
       - ./finance-admin-api/api:/app/finance-admin-api/api
       - ./finance-admin-api/awsclient:/app/finance-admin-api/awsclient
-      - ./apierror:/app/apierror
       - ./finance-admin-api/main.go:/app/finance-admin-api/main.go
-      - ./shared:/app/shared
 
   yarn:
     command: watch

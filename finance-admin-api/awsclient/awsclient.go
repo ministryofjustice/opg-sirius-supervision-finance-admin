@@ -13,7 +13,7 @@ type AWSClient interface {
 	PutObject(ctx context.Context, params *s3.PutObjectInput, optFns ...func(*s3.Options)) (*s3.PutObjectOutput, error)
 }
 
-func NewClient(ctx context.Context) (*s3.Client, error) {
+func NewClient(ctx context.Context) (AWSClient, error) {
 	awsRegion, ok := os.LookupEnv("AWS_REGION")
 
 	if !ok || awsRegion == "" {
