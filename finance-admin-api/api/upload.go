@@ -6,10 +6,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/opg-sirius-finance-admin/apierror"
-	"github.com/opg-sirius-finance-admin/finance-admin-api/awsclient"
 	"github.com/opg-sirius-finance-admin/shared"
 	"io"
 	"net/http"
@@ -37,6 +35,9 @@ func validateCSVHeaders(file []byte, reportUploadType string) error {
 	for i, header := range readHeaders {
 		readHeaders[i] = cleanString(header)
 	}
+
+	fmt.Println(expectedHeaders)
+	fmt.Println(readHeaders)
 
 	// Compare the extracted headers with the expected headers
 	if !reflect.DeepEqual(readHeaders, expectedHeaders) {
@@ -82,13 +83,6 @@ func cleanString(s string) string {
 
 func (s *Server) upload(w http.ResponseWriter, r *http.Request) error {
 	ctx := r.Context()
-	awsClient, err := awsclient.NewClient(ctx)
-
-	if err != nil {
-		return err
-	}
-
-	uploader := manager.NewUploader(awsClient)
 
 	var upload shared.Upload
 	defer r.Body.Close()
@@ -97,21 +91,28 @@ func (s *Server) upload(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	err = validateCSVHeaders(upload.File, upload.ReportUploadType)
+	err := validateCSVHeaders(upload.File, upload.ReportUploadType)
 	if err != nil {
 		return err
 	}
 
-	_, err = uploader.Upload(ctx, &s3.PutObjectInput{
+	fmt.Println("before upload")
+
+	_, err = s.awsClient.PutObject(ctx, &s3.PutObjectInput{
 		Bucket:               aws.String(os.Getenv("ASYNC_S3_BUCKET")),
 		Key:                  aws.String(fmt.Sprintf("%s/%s", "finance-admin", upload.Filename)),
 		Body:                 bytes.NewReader(upload.File),
 		ServerSideEncryption: "AES256",
 	})
 
+	fmt.Println("after upload")
+
 	if err != nil {
 		return err
 	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
 
 	return nil
 }

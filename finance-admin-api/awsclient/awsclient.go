@@ -9,8 +9,8 @@ import (
 	"os"
 )
 
-type AwsClient struct {
-	Client s3.Client
+type AWSClient interface {
+	PutObject(ctx context.Context, params *s3.PutObjectInput, optFns ...func(*s3.Options)) (*s3.PutObjectOutput, error)
 }
 
 func NewClient(ctx context.Context) (*s3.Client, error) {

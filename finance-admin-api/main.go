@@ -5,6 +5,7 @@ import (
 	"github.com/ministryofjustice/opg-go-common/env"
 	"github.com/ministryofjustice/opg-go-common/telemetry"
 	"github.com/opg-sirius-finance-admin/finance-admin-api/api"
+	"github.com/opg-sirius-finance-admin/finance-admin-api/awsclient"
 	"log/slog"
 	"net/http"
 	"os"
@@ -33,7 +34,12 @@ func run(ctx context.Context, logger *slog.Logger) error {
 		return err
 	}
 
-	server := api.Server{}
+	awsClient, err := awsclient.NewClient(ctx)
+	if err != nil {
+		return err
+	}
+
+	server := api.NewServer(awsClient)
 
 	s := &http.Server{
 		Addr:    ":8080",

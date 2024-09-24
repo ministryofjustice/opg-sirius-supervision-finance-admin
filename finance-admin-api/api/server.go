@@ -1,14 +1,22 @@
 package api
 
 import (
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/ministryofjustice/opg-go-common/securityheaders"
 	"github.com/ministryofjustice/opg-go-common/telemetry"
+	"github.com/opg-sirius-finance-admin/finance-admin-api/awsclient"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"log/slog"
 	"net/http"
 )
 
-type Server struct{}
+type Server struct {
+	awsClient awsclient.AWSClient
+}
+
+func NewServer(awsClient *s3.Client) Server {
+	return Server{awsClient}
+}
 
 func (s *Server) SetupRoutes(logger *slog.Logger) http.Handler {
 	mux := http.NewServeMux()
