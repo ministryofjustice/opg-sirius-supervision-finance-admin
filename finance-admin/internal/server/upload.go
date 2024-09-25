@@ -27,7 +27,7 @@ func (h *UploadHandler) render(v AppVars, w http.ResponseWriter, r *http.Request
 	}
 	defer file.Close()
 
-	data, err := shared.NewUpload(reportUploadType, uploadDate, email, file, handler.Filename)
+	data, err := shared.NewUpload(shared.ParseReportUploadType(reportUploadType), uploadDate, email, file, handler.Filename)
 	if err != nil {
 		return h.handleError(w, r, "Failed to read file", http.StatusBadRequest)
 	}

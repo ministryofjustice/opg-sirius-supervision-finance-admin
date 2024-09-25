@@ -152,7 +152,6 @@ htmx.onLoad(content => {
                         break;
                     case "DebtChase":
                     case "DeputySchedule":
-                    case "Test":
                         document.querySelector('#file-upload').removeAttribute("disabled")
                         htmx.addClass(htmx.find("#upload-date-input"), "hide")
                         htmx.addClass(htmx.find("#email-field-input"), "hide")

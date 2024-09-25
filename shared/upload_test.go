@@ -14,7 +14,7 @@ func (e *errorReader) Read(_ []byte) (int, error) {
 }
 
 func TestNewUploadReturnsCorrectly(t *testing.T) {
-	reportUploadType := "SomeReportType"
+	reportUploadType := ParseReportUploadType("SomeReportType")
 	email := "test@example.com"
 	uploadDate := "11/05/2024"
 	fileContent := []byte("file content")
@@ -38,7 +38,7 @@ func TestNewUploadReturnsCorrectly(t *testing.T) {
 }
 
 func TestNewUploadWithNoFileReturnsCorrectly(t *testing.T) {
-	reportUploadType := "SomeReportType"
+	reportUploadType := ParseReportUploadType("SomeReportType")
 	email := "test@example.com"
 	uploadDate := ""
 	fileContent := []byte("file content")
@@ -61,7 +61,7 @@ func TestNewUploadWithNoFileReturnsCorrectly(t *testing.T) {
 
 func TestNewUpload_ReturnsError(t *testing.T) {
 	// Prepare input with an errorReader that always fails
-	reportUploadType := "SomeReportType"
+	reportUploadType := ParseReportUploadType("SomeReportType")
 	email := "test@example.com"
 	uploadDate := "11/05/2024"
 	fileName := "TestFile.txt"

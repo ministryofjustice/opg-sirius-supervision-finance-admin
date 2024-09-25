@@ -74,6 +74,19 @@ func (i ReportUploadType) Key() string {
 	}
 }
 
+func (i ReportUploadType) CSVHeaders() []string {
+	switch i {
+	case ReportTypeUploadDeputySchedule:
+		return []string{"Deputy number", "Deputy name", "Case number", "Client forename", "Client surname", "Do not invoice", "Total outstanding"}
+	case ReportTypeUploadDebtChase:
+		return []string{"Client_no", "Deputy_name", "Total_debt"}
+	case ReportTypeUploadPaymentsOPGBACS:
+		return []string{"Line", "Type", "Code", "Number", "Transaction", "Value Date", "Amount", "Amount Reconciled", "Charges", "Status", "Desc Flex", "Consolidated line"}
+	default:
+		return []string{"Unknown report type"}
+	}
+}
+
 func ParseReportUploadType(s string) ReportUploadType {
 	value, ok := reportTypeUploadMap[s]
 	if !ok {

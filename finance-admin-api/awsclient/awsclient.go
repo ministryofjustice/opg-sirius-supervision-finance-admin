@@ -15,11 +15,7 @@ type AWSClient interface {
 }
 
 func NewClient(ctx context.Context) (AWSClient, error) {
-	awsRegion, ok := os.LookupEnv("AWS_REGION")
-
-	if !ok || awsRegion == "" {
-		awsRegion = "eu-west-1" // default region
-	}
+	awsRegion := os.Getenv("AWS_REGION")
 
 	cfg, err := config.LoadDefaultConfig(
 		ctx,

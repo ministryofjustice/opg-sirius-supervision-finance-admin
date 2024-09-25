@@ -19,7 +19,7 @@ func TestUploadUrlSwitching(t *testing.T) {
 	content := []byte("file content")
 
 	data := shared.Upload{
-		ReportUploadType: "reportUploadType",
+		ReportUploadType: shared.ParseReportUploadType("reportUploadType"),
 		UploadDate:       &uploadDate,
 		Email:            "Something@example.com",
 		File:             content,

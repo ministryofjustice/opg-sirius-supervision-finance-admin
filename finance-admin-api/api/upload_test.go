@@ -15,7 +15,7 @@ func Test_upload(t *testing.T) {
 	var b bytes.Buffer
 
 	uploadForm := &shared.Upload{
-		ReportUploadType: "DebtChase",
+		ReportUploadType: shared.ParseReportUploadType("DebtChase"),
 		Email:            "joseph@test.com",
 		Filename:         "file.txt",
 		File:             []byte("Client_no,Deputy_name,Total_debt"),
@@ -43,7 +43,7 @@ func TestUploadIncorrectCSVHeaders(t *testing.T) {
 	var b bytes.Buffer
 
 	uploadForm := &shared.Upload{
-		ReportUploadType: "DebtChase",
+		ReportUploadType: shared.ParseReportUploadType("DebtChase"),
 		Email:            "joseph@test.com",
 		Filename:         "file.txt",
 		File:             []byte("blarg"),
@@ -70,7 +70,7 @@ func TestUploadFailedToReadCSVHeaders(t *testing.T) {
 	var b bytes.Buffer
 
 	uploadForm := &shared.Upload{
-		ReportUploadType: "DebtChase",
+		ReportUploadType: shared.ParseReportUploadType("DebtChase"),
 		Email:            "joseph@test.com",
 		Filename:         "file.txt",
 		File:             []byte(""),
