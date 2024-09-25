@@ -5,7 +5,7 @@ describe("Finance Admin", () => {
 
     describe("Upload file", () => {
         it("Uploads file successfully", () => {
-            cy.get('[data-cy=\"report-upload-type\"]').select('DebtChase')
+            cy.get('[data-cy=\"report-upload-type\"]').select('DEBT_CHASE')
             cy.get('#file-upload').selectFile('cypress/fixtures/debt_chase_example.csv')
             cy.get('.govuk-button').contains('Upload report').click()
             cy.url().should("include","/uploads?success=upload");
