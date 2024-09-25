@@ -13,7 +13,7 @@ describe("Finance Admin", () => {
         });
 
         it("Validates missing file", () => {
-            cy.get('[data-cy=\"report-upload-type\"]').select('DeputySchedule')
+            cy.get('[data-cy=\"report-upload-type\"]').select('DEPUTY_SCHEDULE')
             cy.get('.govuk-button').contains('Upload report').click()
             cy.get('.govuk-error-summary').contains('No file uploaded')
             cy.get('#f-FileUpload').contains('No file uploaded')
@@ -21,7 +21,7 @@ describe("Finance Admin", () => {
         })
 
         it("Validates empty headers", () => {
-            cy.get('[data-cy=\"report-upload-type\"]').select('DeputySchedule')
+            cy.get('[data-cy=\"report-upload-type\"]').select('DEPUTY_SCHEDULE')
             cy.get('#file-upload').selectFile('cypress/fixtures/empty_report.csv')
             cy.get('.govuk-button').contains('Upload report').click()
             cy.get('.govuk-error-summary').contains('Failed to read CSV headers')
@@ -30,7 +30,7 @@ describe("Finance Admin", () => {
         })
 
         it("Validates CSV headers", () => {
-            cy.get('[data-cy=\"report-upload-type\"]').select('DeputySchedule');
+            cy.get('[data-cy=\"report-upload-type\"]').select('DEPUTY_SCHEDULE');
             cy.get('#file-upload').selectFile('cypress/fixtures/debt_chase_example.csv')
             cy.get('.govuk-button').contains('Upload report').click()
             cy.get('.govuk-error-summary').contains('CSV headers do not match for the report trying to be uploaded')
