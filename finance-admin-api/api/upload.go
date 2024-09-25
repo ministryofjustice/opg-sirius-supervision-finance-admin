@@ -96,16 +96,12 @@ func (s *Server) upload(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	fmt.Println("before upload")
-
 	_, err = s.awsClient.PutObject(ctx, &s3.PutObjectInput{
 		Bucket:               aws.String(os.Getenv("ASYNC_S3_BUCKET")),
 		Key:                  aws.String(fmt.Sprintf("%s/%s", "finance-admin", upload.Filename)),
 		Body:                 bytes.NewReader(upload.File),
 		ServerSideEncryption: "AES256",
 	})
-
-	fmt.Println("after upload")
 
 	if err != nil {
 		return err

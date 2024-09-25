@@ -11,6 +11,7 @@ import (
 
 type AWSClient interface {
 	PutObject(ctx context.Context, params *s3.PutObjectInput, optFns ...func(*s3.Options)) (*s3.PutObjectOutput, error)
+	Options() s3.Options
 }
 
 func NewClient(ctx context.Context) (AWSClient, error) {
