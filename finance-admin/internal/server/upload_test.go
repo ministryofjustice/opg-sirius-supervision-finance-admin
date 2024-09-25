@@ -12,7 +12,7 @@ import (
 
 func TestUploadNoFileUploaded(t *testing.T) {
 	form := url.Values{
-		"reportUploadType": {"DebtChase"},
+		"reportUploadType": {"DEBT_CHASE"},
 		"uploadDate":       {"2024-01-24"},
 		"email":            {"SomeSortOfEmail@example.com"},
 	}
@@ -41,7 +41,7 @@ func TestUploadNoFileUploaded(t *testing.T) {
 
 func TestUploadSuccess(t *testing.T) {
 	form := url.Values{
-		"reportUploadType": {"DebtChase"},
+		"reportUploadType": {"DEBT_CHASE"},
 		"uploadDate":       {"2024-01-24"},
 		"email":            {"SomeSortOfEmail@example.com"},
 	}

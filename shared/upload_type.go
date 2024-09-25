@@ -24,12 +24,12 @@ const (
 )
 
 var reportTypeUploadMap = map[string]ReportUploadType{
-	"PaymentsMOTOCard":        ReportTypeUploadPaymentsMOTOCard,
-	"PaymentsOnlineCard":      ReportTypeUploadPaymentsOnlineCard,
-	"PaymentsOPGBACS":         ReportTypeUploadPaymentsOPGBACS,
-	"PaymentsSupervisionBACS": ReportTypeUploadPaymentsSupervisionBACS,
-	"DebtChase":               ReportTypeUploadDebtChase,
-	"DeputySchedule":          ReportTypeUploadDeputySchedule,
+	"PAYMENTS_MOTO_CARD":        ReportTypeUploadPaymentsMOTOCard,
+	"PAYMENTS_ONLINE_CARD":      ReportTypeUploadPaymentsOnlineCard,
+	"PAYMENTS_OPG_BACS":         ReportTypeUploadPaymentsOPGBACS,
+	"PAYMENTS_SUPERVISION_BACS": ReportTypeUploadPaymentsSupervisionBACS,
+	"DEBT_CHASE":                ReportTypeUploadDebtChase,
+	"DEPUTY_SCHEDULE":           ReportTypeUploadDeputySchedule,
 }
 
 func (i ReportUploadType) String() string {
@@ -58,17 +58,17 @@ func (i ReportUploadType) Translation() string {
 func (i ReportUploadType) Key() string {
 	switch i {
 	case ReportTypeUploadPaymentsMOTOCard:
-		return "PaymentsMOTOCard"
+		return "PAYMENTS_MOTO_CARD"
 	case ReportTypeUploadPaymentsOnlineCard:
-		return "PaymentsOnlineCard"
+		return "PAYMENTS_ONLINE_CARD"
 	case ReportTypeUploadPaymentsOPGBACS:
-		return "PaymentsOPGBACS"
+		return "PAYMENTS_OPG_BACS"
 	case ReportTypeUploadPaymentsSupervisionBACS:
-		return "PaymentsSupervisionBACS"
+		return "PAYMENTS_SUPERVISION_BACS"
 	case ReportTypeUploadDebtChase:
-		return "DebtChase"
+		return "DEBT_CHASE"
 	case ReportTypeUploadDeputySchedule:
-		return "DeputySchedule"
+		return "DEPUTY_SCHEDULE"
 	default:
 		return ""
 	}

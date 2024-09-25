@@ -15,7 +15,7 @@ func Test_upload(t *testing.T) {
 	var b bytes.Buffer
 
 	uploadForm := &shared.Upload{
-		ReportUploadType: shared.ParseReportUploadType("DebtChase"),
+		ReportUploadType: shared.ParseReportUploadType("DEBT_CHASE"),
 		Email:            "joseph@test.com",
 		Filename:         "file.txt",
 		File:             []byte("Client_no,Deputy_name,Total_debt"),
@@ -43,7 +43,7 @@ func TestUploadIncorrectCSVHeaders(t *testing.T) {
 	var b bytes.Buffer
 
 	uploadForm := &shared.Upload{
-		ReportUploadType: shared.ParseReportUploadType("DebtChase"),
+		ReportUploadType: shared.ParseReportUploadType("DEBT_CHASE"),
 		Email:            "joseph@test.com",
 		Filename:         "file.txt",
 		File:             []byte("blarg"),
@@ -70,7 +70,7 @@ func TestUploadFailedToReadCSVHeaders(t *testing.T) {
 	var b bytes.Buffer
 
 	uploadForm := &shared.Upload{
-		ReportUploadType: shared.ParseReportUploadType("DebtChase"),
+		ReportUploadType: shared.ParseReportUploadType("DEBT_CHASE"),
 		Email:            "joseph@test.com",
 		Filename:         "file.txt",
 		File:             []byte(""),
@@ -101,17 +101,17 @@ func Test_reportHeadersByType(t *testing.T) {
 	}{
 		{
 			name:       "Deputy schedule report get the correct header",
-			reportType: "DeputySchedule",
+			reportType: "DEPUTY_SCHEDULE",
 			want:       []string{"Deputy number", "Deputy name", "Case number", "Client forename", "Client surname", "Do not invoice", "Total outstanding"},
 		},
 		{
 			name:       "Debt chase report get the correct header",
-			reportType: "DebtChase",
+			reportType: "DEBT_CHASE",
 			want:       []string{"Client_no", "Deputy_name", "Total_debt"},
 		},
 		{
 			name:       "Payments OPG BACS report get the correct header",
-			reportType: "PaymentsOPGBACS",
+			reportType: "PAYMENTS_OPG_BACS",
 			want:       []string{"Line", "Type", "Code", "Number", "Transaction", "Value Date", "Amount", "Amount Reconciled", "Charges", "Status", "Desc Flex", "Consolidated line"},
 		},
 		{

@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 	"github.com/opg-sirius-finance-admin/apierror"
 	"github.com/opg-sirius-finance-admin/shared"
 	"io"
@@ -98,7 +97,7 @@ func (s *Server) upload(w http.ResponseWriter, r *http.Request) error {
 		Bucket:               aws.String(os.Getenv("ASYNC_S3_BUCKET")),
 		Key:                  aws.String(fmt.Sprintf("%s/%s", "finance-admin", upload.Filename)),
 		Body:                 bytes.NewReader(upload.File),
-		ServerSideEncryption: types.ServerSideEncryption(os.Getenv("SSE_ALGORITHM")),
+		ServerSideEncryption: "AES256",
 	})
 
 	if err != nil {

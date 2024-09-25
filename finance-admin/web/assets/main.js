@@ -139,10 +139,10 @@ htmx.onLoad(content => {
                 reportUploadTypeSelect.value =  reportUploadTypeSelectValue
 
                 switch (reportUploadTypeSelect.value) {
-                    case "PaymentsMOTOCard":
-                    case "PaymentsOnlineCard":
-                    case "PaymentsOPGBACS":
-                    case "PaymentsSupervisionBACS":
+                    case "PAYMENTS_MOTO_CARD":
+                    case "PAYMENTS_ONLINE_CARD":
+                    case "PAYMENTS_OPG_BACS":
+                    case "PAYMENTS_SUPERVISION_BACS":
                         document.querySelector('#upload-date').removeAttribute("disabled")
                         document.querySelector('#file-upload').removeAttribute("disabled")
                         document.querySelector('#email-field').removeAttribute("disabled")
@@ -150,8 +150,8 @@ htmx.onLoad(content => {
                         htmx.removeClass(htmx.find("#file-upload-input"), "hide")
                         htmx.removeClass(htmx.find("#email-field-input"), "hide")
                         break;
-                    case "DebtChase":
-                    case "DeputySchedule":
+                    case "DEBT_CHASE":
+                    case "DEPUTY_SCHEDULE":
                         document.querySelector('#file-upload').removeAttribute("disabled")
                         htmx.addClass(htmx.find("#upload-date-input"), "hide")
                         htmx.addClass(htmx.find("#email-field-input"), "hide")
