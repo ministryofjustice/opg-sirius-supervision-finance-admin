@@ -133,16 +133,24 @@ jobs:
         with:
           registries: 311462405659
 
+      - name: Generate Single Timestamp
+        run: echo "TIMESTAMP=$(date +"%Y%m%d%H%M%S")" >> $GITHUB_ENV
+
       - name: Push Container
         run: |
           docker tag 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-admin:latest 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-admin:${{ steps.bump_version.outputs.tag }}
+          docker tag 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-admin-api:latest 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-admin-api:${{ steps.bump_version.outputs.tag }}
           if [ $BRANCH_NAME == "main" ]; then
             docker tag 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-admin:latest 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-admin:main-${{ steps.bump_version.outputs.tag }}
-            docker tag 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-admin:latest 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-admin:main-${{ steps.bump_version.outputs.tag }}-$(date +"%Y%m%d%H%M%S")
+            docker tag 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-admin-api:latest 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-admin-api:main-${{ steps.bump_version.outputs.tag }}
+            docker tag 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-admin:latest 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-admin:main-${{ steps.bump_version.outputs.tag }}-$TIMESTAMP
+            docker tag 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-admin-api:latest 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-admin-api:main-${{ steps.bump_version.outputs.tag }}-$TIMESTAMP
             # We want all of the tags pushed
             docker push  --all-tags 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-admin
+            docker push  --all-tags 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-admin-api
           else
             docker push 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-admin:${{ steps.bump_version.outputs.tag }}
+            docker push 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-admin-api:${{ steps.bump_version.outputs.tag }}
           fi
 
   push-tags:
