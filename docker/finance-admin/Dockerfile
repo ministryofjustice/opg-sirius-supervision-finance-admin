@@ -10,15 +10,15 @@ WORKDIR /app
 
 RUN mkdir -p web/static
 
-COPY web/assets web/assets
-COPY package.json .
-COPY yarn.lock .
+COPY finance-admin/web/assets web/assets
+COPY finance-admin/package.json .
+COPY finance-admin/yarn.lock .
 
 RUN yarn install
 RUN yarn build
 
 FROM base AS dev
-WORKDIR /app
+WORKDIR /app/finance-admin
 
 COPY --from=asset-env /app/web/static web/static
 
@@ -38,6 +38,8 @@ RUN go mod download
 
 COPY . .
 
+WORKDIR /app/finance-admin
+
 RUN go build -a -installsuffix cgo -o /go/bin/finance-admin
 
 FROM alpine:3
@@ -51,6 +53,6 @@ RUN apk --update --no-cache add \
 RUN apk upgrade --no-cache busybox libcrypto3 libssl3
 
 COPY --from=build-env /go/bin/finance-admin finance-admin
-COPY --from=build-env /app/web/template web/template
+COPY --from=build-env /app/finance-admin/web/template web/template
 COPY --from=asset-env /app/web/static web/static
 ENTRYPOINT ["./finance-admin"]
