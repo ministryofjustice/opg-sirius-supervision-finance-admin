@@ -95,7 +95,7 @@ func (s *Server) upload(w http.ResponseWriter, r *http.Request) error {
 
 	_, err = s.awsClient.PutObject(ctx, &s3.PutObjectInput{
 		Bucket:               aws.String(os.Getenv("ASYNC_S3_BUCKET")),
-		Key:                  aws.String(fmt.Sprintf("%s/%s", "moto-card-payments", upload.Filename)),
+		Key:                  aws.String(fmt.Sprintf("%s/%s", upload.ReportUploadType.S3Directory(), upload.Filename)),
 		Body:                 bytes.NewReader(upload.File),
 		ServerSideEncryption: "AES256",
 	})
