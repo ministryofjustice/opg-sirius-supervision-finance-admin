@@ -87,6 +87,15 @@ func (i ReportUploadType) CSVHeaders() []string {
 	}
 }
 
+func (i ReportUploadType) S3Directory() string {
+	switch i {
+	case ReportTypeUploadPaymentsMOTOCard:
+		return "moto-card-payments"
+	default:
+		return "finance-admin"
+	}
+}
+
 func ParseReportUploadType(s string) ReportUploadType {
 	value, ok := reportTypeUploadMap[s]
 	if !ok {
