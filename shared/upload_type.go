@@ -1,6 +1,10 @@
 package shared
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+	"time"
+)
 
 var ReportUploadTypes = []ReportUploadType{
 	ReportTypeUploadPaymentsMOTOCard,
@@ -76,6 +80,8 @@ func (i ReportUploadType) Key() string {
 
 func (i ReportUploadType) CSVHeaders() []string {
 	switch i {
+	case ReportTypeUploadPaymentsMOTOCard:
+		return []string{"Ordercode", "Date", "Amount"}
 	case ReportTypeUploadDeputySchedule:
 		return []string{"Deputy number", "Deputy name", "Case number", "Client forename", "Client surname", "Do not invoice", "Total outstanding"}
 	case ReportTypeUploadDebtChase:
@@ -84,6 +90,25 @@ func (i ReportUploadType) CSVHeaders() []string {
 		return []string{"Line", "Type", "Code", "Number", "Transaction", "Value Date", "Amount", "Amount Reconciled", "Charges", "Status", "Desc Flex", "Consolidated line"}
 	default:
 		return []string{"Unknown report type"}
+	}
+}
+
+func (i ReportUploadType) S3Directory() string {
+	switch i {
+	case ReportTypeUploadPaymentsMOTOCard:
+		return "moto-card-payments"
+	default:
+		return "finance-admin"
+	}
+}
+
+func (i ReportUploadType) Filename(date string) string {
+	switch i {
+	case ReportTypeUploadPaymentsMOTOCard:
+		parsedDate, _ := time.Parse("2006-01-02", date)
+		return fmt.Sprintf("feemoto_%snormal.csv", parsedDate.Format("02:01:2006"))
+	default:
+		return ""
 	}
 }
 
