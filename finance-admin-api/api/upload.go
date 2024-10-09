@@ -97,7 +97,8 @@ func (s *Server) upload(w http.ResponseWriter, r *http.Request) error {
 		Bucket:               aws.String(os.Getenv("ASYNC_S3_BUCKET")),
 		Key:                  aws.String(fmt.Sprintf("%s/%s", upload.ReportUploadType.S3Directory(), upload.Filename)),
 		Body:                 bytes.NewReader(upload.File),
-		ServerSideEncryption: "AES256",
+		ServerSideEncryption: "aws:kms",
+		SSEKMSKeyId:          aws.String(os.Getenv("S3_ENCRYPTION_KEY")),
 	})
 
 	if err != nil {
