@@ -28,8 +28,13 @@ func (h *UploadHandler) render(v AppVars, w http.ResponseWriter, r *http.Request
 	}
 	defer file.Close()
 
-	if handler.Filename != reportUploadType.Filename(uploadDate) && reportUploadType.Filename(uploadDate) != "" {
-		expectedFilename := strings.Replace(reportUploadType.Filename(uploadDate), ":", "/", -1)
+	expectedFilename, err := reportUploadType.Filename(uploadDate)
+	if err != nil {
+		return h.handleError(w, r, "Could not parse upload date", http.StatusBadRequest)
+	}
+
+	if handler.Filename != expectedFilename && expectedFilename != "" {
+		expectedFilename := strings.Replace(expectedFilename, ":", "/", -1)
 		return h.handleError(w, r, fmt.Sprintf("Filename should be named \"%s\"", expectedFilename), http.StatusBadRequest)
 	}
 

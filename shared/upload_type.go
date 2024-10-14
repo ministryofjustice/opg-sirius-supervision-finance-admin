@@ -102,13 +102,16 @@ func (i ReportUploadType) S3Directory() string {
 	}
 }
 
-func (i ReportUploadType) Filename(date string) string {
+func (i ReportUploadType) Filename(date string) (string, error) {
 	switch i {
 	case ReportTypeUploadPaymentsMOTOCard:
-		parsedDate, _ := time.Parse("2006-01-02", date)
-		return fmt.Sprintf("feemoto_%snormal.csv", parsedDate.Format("02:01:2006"))
+		parsedDate, err := time.Parse("2006-01-02", date)
+		if err != nil {
+			return "", err
+		}
+		return fmt.Sprintf("feemoto_%snormal.csv", parsedDate.Format("02:01:2006")), nil
 	default:
-		return ""
+		return "", nil
 	}
 }
 
