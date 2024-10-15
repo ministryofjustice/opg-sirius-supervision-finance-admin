@@ -7,6 +7,7 @@ import (
 	"github.com/opg-sirius-finance-admin/finance-admin/internal/model"
 	"github.com/opg-sirius-finance-admin/shared"
 	"net/http"
+	"strings"
 )
 
 type UploadHandler struct {
@@ -16,7 +17,7 @@ type UploadHandler struct {
 func (h *UploadHandler) render(v AppVars, w http.ResponseWriter, r *http.Request) error {
 	ctx := getContext(r)
 
-	reportUploadType := r.PostFormValue("reportUploadType")
+	reportUploadType := shared.ParseReportUploadType(r.PostFormValue("reportUploadType"))
 	uploadDate := r.PostFormValue("uploadDate")
 	email := r.PostFormValue("email")
 
@@ -27,7 +28,17 @@ func (h *UploadHandler) render(v AppVars, w http.ResponseWriter, r *http.Request
 	}
 	defer file.Close()
 
-	data, err := shared.NewUpload(shared.ParseReportUploadType(reportUploadType), uploadDate, email, file, handler.Filename)
+	expectedFilename, err := reportUploadType.Filename(uploadDate)
+	if err != nil {
+		return h.handleError(w, r, "Could not parse upload date", http.StatusBadRequest)
+	}
+
+	if handler.Filename != expectedFilename && expectedFilename != "" {
+		expectedFilename := strings.Replace(expectedFilename, ":", "/", -1)
+		return h.handleError(w, r, fmt.Sprintf("Filename should be named \"%s\"", expectedFilename), http.StatusBadRequest)
+	}
+
+	data, err := shared.NewUpload(reportUploadType, uploadDate, email, file, handler.Filename)
 	if err != nil {
 		return h.handleError(w, r, "Failed to read file", http.StatusBadRequest)
 	}
