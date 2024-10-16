@@ -2,14 +2,38 @@ package api
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"github.com/opg-sirius-finance-admin/apierror"
+	"github.com/opg-sirius-finance-admin/finance-admin-api/event"
 	"github.com/opg-sirius-finance-admin/shared"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 )
+
+type MockHttpClient struct {
+	DoFunc func(req *http.Request) (*http.Response, error)
+}
+
+var (
+	// GetDoFunc fetches the mock client's `Do` func. Implement this within a test to modify the client's behaviour.
+	GetDoFunc func(req *http.Request) (*http.Response, error)
+)
+
+func (m *MockHttpClient) Do(req *http.Request) (*http.Response, error) {
+	return GetDoFunc(req)
+}
+
+type MockDispatch struct {
+	event any
+}
+
+func (m *MockDispatch) FinanceAdminUpload(ctx context.Context, event event.FinanceAdminUpload) error {
+	m.event = event
+	return nil
+}
 
 func Test_upload(t *testing.T) {
 	var b bytes.Buffer
@@ -26,8 +50,10 @@ func Test_upload(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	mockAwsClient := MockAWSClient{}
+	mockHttpClient := MockHttpClient{}
+	mockDispatch := MockDispatch{}
 
-	server := Server{&mockAwsClient}
+	server := Server{&mockHttpClient, &mockDispatch, &mockAwsClient}
 	_ = server.upload(w, req)
 
 	res := w.Result()
@@ -54,8 +80,10 @@ func TestUploadIncorrectCSVHeaders(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	mockAwsClient := MockAWSClient{}
+	mockHttpClient := MockHttpClient{}
+	mockDispatch := MockDispatch{}
 
-	server := Server{&mockAwsClient}
+	server := Server{&mockHttpClient, &mockDispatch, &mockAwsClient}
 	err := server.upload(w, req)
 
 	expected := apierror.ValidationError{Errors: apierror.ValidationErrors{
@@ -81,8 +109,10 @@ func TestUploadFailedToReadCSVHeaders(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	mockAwsClient := MockAWSClient{}
+	mockHttpClient := MockHttpClient{}
+	mockDispatch := MockDispatch{}
 
-	server := Server{&mockAwsClient}
+	server := Server{&mockHttpClient, &mockDispatch, &mockAwsClient}
 	err := server.upload(w, req)
 
 	expected := apierror.ValidationError{Errors: apierror.ValidationErrors{
