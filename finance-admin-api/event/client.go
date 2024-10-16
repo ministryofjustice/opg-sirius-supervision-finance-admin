@@ -9,7 +9,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/eventbridge/types"
 )
 
-const source = "opg.supervision.finance-admin"
+const source = "opg.supervision.finance.admin"
 
 type EventBridgeClient interface {
 	PutEvents(ctx context.Context, params *eventbridge.PutEventsInput, optFns ...func(*eventbridge.Options)) (*eventbridge.PutEventsOutput, error)
