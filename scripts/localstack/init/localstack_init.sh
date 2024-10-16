@@ -28,4 +28,4 @@ create_bucket() {
 # S3
 
 create_bucket "opg-backoffice-async-uploads-local"
-
+create_bucket "opg-backoffice-reports-local"

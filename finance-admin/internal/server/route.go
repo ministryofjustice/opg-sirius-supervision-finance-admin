@@ -26,6 +26,12 @@ func (r route) execute(w http.ResponseWriter, req *http.Request, data any) error
 	if IsHxRequest(req) {
 		return r.tmpl.ExecuteTemplate(w, r.partial, data)
 	} else {
+		// auth check
+		_, err := r.client.GetSession(getContext(req))
+		if err != nil {
+			return err
+		}
+
 		data := PageData{
 			Data:           data,
 			SuccessMessage: r.getSuccess(req),

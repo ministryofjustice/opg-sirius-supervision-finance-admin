@@ -60,3 +60,7 @@ func (m mockApiClient) Upload(context api.Context, data shared.Upload) error {
 func (m mockApiClient) Download(context api.Context, data model.Download) error {
 	return m.error
 }
+
+func (m mockApiClient) GetSession(context api.Context) error {
+	return m.error
+}

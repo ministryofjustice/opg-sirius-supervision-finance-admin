@@ -16,6 +16,7 @@ import (
 
 type ApiClient interface {
 	Download(api.Context, model.Download) error
+	GetSession(api.Context) (shared.Assignee, error)
 	Upload(api.Context, shared.Upload) error
 }
 
