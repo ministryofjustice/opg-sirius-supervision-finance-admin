@@ -6,8 +6,8 @@ import (
 )
 
 const (
-	EventSourceFinanceHub                 = "opg.supervision.finance"
-	DetailTypeMotoPaymentsReportProcessed = "moto-payments-report-processed"
+	EventSourceFinanceHub              = "opg.supervision.finance"
+	DetailTypeFinanceAdminUploadFailed = "finance-admin-upload-failed"
 )
 
 type Event struct {
@@ -32,8 +32,8 @@ func (e *Event) UnmarshalJSON(data []byte) error {
 	}
 
 	switch e.DetailType {
-	case DetailTypeMotoPaymentsReportProcessed:
-		var detail MotoPaymentsReportProcessedEvent
+	case DetailTypeFinanceAdminUploadFailed:
+		var detail FinanceAdminUploadFailedEvent
 		if err := json.Unmarshal(raw.Detail, &detail); err != nil {
 			return err
 		}
@@ -45,7 +45,7 @@ func (e *Event) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-type MotoPaymentsReportProcessedEvent struct {
+type FinanceAdminUploadFailedEvent struct {
 	EmailAddress string         `json:"emailAddress"`
 	FailedLines  map[int]string `json:"failedLines"`
 }
