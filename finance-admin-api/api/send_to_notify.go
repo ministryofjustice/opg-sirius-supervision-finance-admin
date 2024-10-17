@@ -12,6 +12,9 @@ import (
 	"time"
 )
 
+const notifyUrl = "https://api.notifications.service.gov.uk"
+const emailEndpoint = "v2/notifications/email"
+
 func parseNotifyApiKey(notifyApiKey string) (string, string) {
 	splitKey := strings.Split(notifyApiKey, "-")
 	if len(splitKey) != 11 {
@@ -22,10 +25,7 @@ func parseNotifyApiKey(notifyApiKey string) (string, string) {
 	return iss, jwtToken
 }
 
-func (s *Server) SendEmailToNotify(ctx context.Context, emailAddress string, templateId string) error {
-	notifyUrl := "https://api.notifications.service.gov.uk"
-	emailEndpoint := "v2/notifications/email"
-
+func createSignedJwtToken() (string, error) {
 	iss, jwtKey := parseNotifyApiKey(os.Getenv("OPG_NOTIFY_API_KEY"))
 
 	t := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
@@ -35,15 +35,30 @@ func (s *Server) SendEmailToNotify(ctx context.Context, emailAddress string, tem
 
 	signedToken, err := t.SignedString([]byte(jwtKey))
 	if err != nil {
+		return "", err
+	}
+	return signedToken, nil
+}
+
+func (s *Server) SendEmailToNotify(ctx context.Context, emailAddress string, templateId string, failedLines []string, reportType string) error {
+	signedToken, err := createSignedJwtToken()
+	if err != nil {
 		return err
 	}
 
+	type Personalisation struct {
+		FailedLines []string `json:"failed_lines"`
+		ReportType  string   `json:"report_type"`
+	}
+
 	payload := struct {
-		EmailAddress string `json:"email_address"`
-		TemplateId   string `json:"template_id"`
+		EmailAddress    string          `json:"email_address"`
+		TemplateId      string          `json:"template_id"`
+		Personalisation Personalisation `json:"personalisation"`
 	}{
-		emailAddress,
-		templateId,
+		EmailAddress:    emailAddress,
+		TemplateId:      templateId,
+		Personalisation: Personalisation{failedLines, reportType},
 	}
 
 	var body bytes.Buffer
@@ -52,9 +67,6 @@ func (s *Server) SendEmailToNotify(ctx context.Context, emailAddress string, tem
 	if err != nil {
 		return err
 	}
-
-	fmt.Println("Sending to Notify API")
-	fmt.Println(body)
 
 	r, err := http.NewRequestWithContext(ctx, http.MethodPost, fmt.Sprintf("%s/%s", notifyUrl, emailEndpoint), &body)
 

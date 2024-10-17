@@ -46,9 +46,8 @@ func (e *Event) UnmarshalJSON(data []byte) error {
 }
 
 type MotoPaymentsReportProcessedEvent struct {
-	ClientID      int    `json:"clientId"`
-	CaseRecNumber string `json:"caseRecNumber"`
-	EmailAddress  string `json:"emailAddress"`
+	EmailAddress string         `json:"emailAddress"`
+	FailedLines  map[int]string `json:"failedLines"`
 }
 
 type RequestParameters struct {

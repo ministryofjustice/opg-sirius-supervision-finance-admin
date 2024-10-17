@@ -94,9 +94,6 @@ func (s *Server) upload(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	fmt.Println(os.Getenv("ASYNC_S3_BUCKET"))
-	fmt.Printf("%s/%s", upload.ReportUploadType.S3Directory(), upload.Filename)
-
 	_, err = s.awsClient.PutObject(ctx, &s3.PutObjectInput{
 		Bucket:               aws.String(strings.TrimSpace(os.Getenv("ASYNC_S3_BUCKET"))),
 		Key:                  aws.String(fmt.Sprintf("%s/%s", upload.ReportUploadType.S3Directory(), upload.Filename)),
