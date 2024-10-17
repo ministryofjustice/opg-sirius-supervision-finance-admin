@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
+	"io"
+	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -61,6 +63,8 @@ func (s *Server) SendEmailToNotify(ctx context.Context, emailAddress string, tem
 		Personalisation: Personalisation{failedLines, reportType},
 	}
 
+	fmt.Println(payload)
+
 	var body bytes.Buffer
 
 	err = json.NewEncoder(&body).Encode(payload)
@@ -85,5 +89,12 @@ func (s *Server) SendEmailToNotify(ctx context.Context, emailAddress string, tem
 
 	fmt.Println(resp.Body)
 
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+	bodyString := string(bodyBytes)
+	fmt.Println(bodyString)
+	_, _ = io.Copy(os.Stdout, resp.Body)
 	return nil
 }
