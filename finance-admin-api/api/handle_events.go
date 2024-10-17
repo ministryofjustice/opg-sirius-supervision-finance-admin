@@ -38,7 +38,7 @@ func (s *Server) handleEvents(w http.ResponseWriter, r *http.Request) error {
 
 	if event.Source == shared.EventSourceFinanceHub && event.DetailType == shared.DetailTypeFinanceAdminUploadFailed {
 		if detail, ok := event.Detail.(shared.FinanceAdminUploadFailedEvent); ok {
-			templateId := "942ae6a0-792d-45ae-b4f1-ce88fc22d5ce"
+			templateId := "a8f9ab79-1489-4639-9e6c-cad1f079ebcf"
 
 			err := s.SendEmailToNotify(ctx, detail.EmailAddress, templateId, formatFailedLines(detail.FailedLines), shared.ReportTypeUploadPaymentsMOTOCard.String())
 			if err != nil {
