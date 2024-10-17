@@ -28,6 +28,7 @@ services:
       - ./finance-admin-api/.air.toml:/app/finance-admin-api/.air.toml
       - ./finance-admin-api/api:/app/finance-admin-api/api
       - ./finance-admin-api/awsclient:/app/finance-admin-api/awsclient
+      - ./finance-admin-api/event:/app/finance-admin-api/event
       - ./finance-admin-api/main.go:/app/finance-admin-api/main.go
 
   yarn:
