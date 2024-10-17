@@ -9,11 +9,11 @@ import (
 	"net/http"
 )
 
-type UploadHandler struct {
+type UploadFormHandler struct {
 	router
 }
 
-func (h *UploadHandler) render(v AppVars, w http.ResponseWriter, r *http.Request) error {
+func (h *UploadFormHandler) render(v AppVars, w http.ResponseWriter, r *http.Request) error {
 	ctx := getContext(r)
 
 	reportUploadType := r.PostFormValue("reportUploadType")
@@ -43,7 +43,7 @@ func (h *UploadHandler) render(v AppVars, w http.ResponseWriter, r *http.Request
 }
 
 // handleError simplifies repetitive error handling in the render method.
-func (h *UploadHandler) handleError(w http.ResponseWriter, r *http.Request, msg string, code int) error {
+func (h *UploadFormHandler) handleError(w http.ResponseWriter, r *http.Request, msg string, code int) error {
 	fileError := model.ValidationErrors{
 		"FileUpload": map[string]string{"required": msg},
 	}
@@ -53,7 +53,7 @@ func (h *UploadHandler) handleError(w http.ResponseWriter, r *http.Request, msg 
 }
 
 // handleUploadError processes specific upload-related errors.
-func (h *UploadHandler) handleUploadError(w http.ResponseWriter, r *http.Request, err error) error {
+func (h *UploadFormHandler) handleUploadError(w http.ResponseWriter, r *http.Request, err error) error {
 	var (
 		valErr model.ValidationError
 		stErr  api.StatusError
