@@ -11,7 +11,7 @@ import (
 	"testing"
 )
 
-func TestDownloadSuccess(t *testing.T) {
+func TestRequestReportHandlerSuccess(t *testing.T) {
 	form := url.Values{
 		"reportType":         {"AccountsReceivable"},
 		"reportJournalType":  {""},
@@ -37,14 +37,14 @@ func TestDownloadSuccess(t *testing.T) {
 
 	appVars.EnvironmentVars.Prefix = "prefix"
 
-	sut := GetDownloadHandler{ro}
+	sut := RequestReportHandler{ro}
 
 	err := sut.render(appVars, w, r)
 
 	assert.Nil(t, err)
 }
 
-func TestDownloadValidationErrors(t *testing.T) {
+func TestRequestReportHandlerValidationErrors(t *testing.T) {
 	assert := assert.New(t)
 	client := &mockApiClient{}
 	ro := &mockRoute{client: client}
@@ -67,13 +67,13 @@ func TestDownloadValidationErrors(t *testing.T) {
 		Path: "/add",
 	}
 
-	sut := GetDownloadHandler{ro}
+	sut := RequestReportHandler{ro}
 	err := sut.render(appVars, w, r)
 	assert.Nil(err)
 	assert.Equal("422 Unprocessable Entity", w.Result().Status)
 }
 
-func TestDownloadStatusError(t *testing.T) {
+func TestRequestReportHandlerStatusError(t *testing.T) {
 	assert := assert.New(t)
 	client := &mockApiClient{}
 	ro := &mockRoute{client: client}
@@ -92,7 +92,7 @@ func TestDownloadStatusError(t *testing.T) {
 		Path: "/add",
 	}
 
-	sut := GetDownloadHandler{ro}
+	sut := RequestReportHandler{ro}
 	err := sut.render(appVars, w, r)
 	assert.Nil(err)
 	assert.Equal(http.StatusInternalServerError, w.Result().StatusCode)
