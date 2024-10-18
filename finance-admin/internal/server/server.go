@@ -38,12 +38,14 @@ func New(logger *slog.Logger, client ApiClient, templates map[string]*template.T
 		mux.Handle(pattern, telemetry.Middleware(logger)(errors(h)))
 	}
 
-	handleMux("GET /downloads", &GetDownloadsHandler{&route{client: client, tmpl: templates["downloads.gotmpl"], partial: "downloads"}})
-	handleMux("GET /uploads", &GetUploadsHandler{&route{client: client, tmpl: templates["uploads.gotmpl"], partial: "uploads"}})
-	handleMux("GET /annual-invoicing-letters", &GetAnnualInvoicingLettersHandler{&route{client: client, tmpl: templates["annual_invoicing_letters.gotmpl"], partial: "annual-invoicing-letters"}})
-	handleMux("GET /download", &GetDownloadHandler{&route{client: client, tmpl: templates["downloads.gotmpl"], partial: "error-summary"}})
+	// tabs
+	handleMux("GET /downloads", &DownloadsTabHandler{&route{client: client, tmpl: templates["downloads.gotmpl"], partial: "downloads"}})
+	handleMux("GET /uploads", &UploadsTabHandler{&route{client: client, tmpl: templates["uploads.gotmpl"], partial: "uploads"}})
+	handleMux("GET /annual-invoicing-letters", &AnnualInvoicingLettersTabHandler{&route{client: client, tmpl: templates["annual_invoicing_letters.gotmpl"], partial: "annual-invoicing-letters"}})
 
-	handleMux("POST /uploads", &UploadHandler{&route{client: client, tmpl: templates["uploads.gotmpl"], partial: "error-summary"}})
+	//forms
+	handleMux("POST /request-report", &RequestReportHandler{&route{client: client, tmpl: templates["downloads.gotmpl"], partial: "error-summary"}})
+	handleMux("POST /uploads", &UploadFormHandler{&route{client: client, tmpl: templates["uploads.gotmpl"], partial: "error-summary"}})
 
 	mux.Handle("/health-check", healthCheck())
 
