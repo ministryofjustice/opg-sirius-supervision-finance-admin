@@ -16,6 +16,10 @@ func (m *MockAWSClient) PutObject(ctx context.Context, params *s3.PutObjectInput
 	return nil, nil
 }
 
+func (m *MockAWSClient) GetObject(ctx context.Context, params *s3.GetObjectInput, optFns ...func(*s3.Options)) (*s3.GetObjectOutput, error) {
+	return nil, nil
+}
+
 func (m *MockAWSClient) Options() s3.Options {
 	return s3.Options{}
 }
