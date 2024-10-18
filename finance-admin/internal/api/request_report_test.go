@@ -12,14 +12,14 @@ import (
 	"testing"
 )
 
-func TestSubmitDownload(t *testing.T) {
+func TestRequestReport(t *testing.T) {
 	mockClient := &MockClient{}
 	client, _ := NewClient(mockClient, "http://localhost:3000", "")
 	dateOfTransaction := shared.NewDate("2024-05-11")
 	dateTo := shared.NewDate("2025-06-15")
 	dateFrom := shared.NewDate("2022-07-21")
 
-	data := model.Download{
+	data := model.ReportRequest{
 		ReportType:         "reportType",
 		ReportJournalType:  "reportJournalType",
 		ReportScheduleType: "reportScheduleType",
@@ -38,15 +38,15 @@ func TestSubmitDownload(t *testing.T) {
 		}, nil
 	}
 
-	err := client.Download(getContext(nil), data)
+	err := client.RequestReport(getContext(nil), data)
 	assert.NoError(t, err)
 }
 
-func TestSubmitDownloadUnauthorised(t *testing.T) {
+func TestRequestReportUnauthorised(t *testing.T) {
 	mockClient := &MockClient{}
 	client, _ := NewClient(mockClient, "http://localhost:3000", "")
 
-	data := model.Download{
+	data := model.ReportRequest{
 		ReportType:         "reportType",
 		ReportJournalType:  "reportJournalType",
 		ReportScheduleType: "reportScheduleType",
@@ -65,16 +65,16 @@ func TestSubmitDownloadUnauthorised(t *testing.T) {
 		}, nil
 	}
 
-	err := client.Download(getContext(nil), data)
+	err := client.RequestReport(getContext(nil), data)
 
 	assert.Equal(t, ErrUnauthorized.Error(), err.Error())
 }
 
-func TestSubmitDownloadReturnsBadRequestError(t *testing.T) {
+func TestRequestReportReturnsBadRequestError(t *testing.T) {
 	mockClient := &MockClient{}
 	client, _ := NewClient(mockClient, "http://localhost:3000", "")
 
-	data := model.Download{
+	data := model.ReportRequest{
 		ReportType:         "reportType",
 		ReportJournalType:  "reportJournalType",
 		ReportScheduleType: "reportScheduleType",
@@ -97,14 +97,14 @@ func TestSubmitDownloadReturnsBadRequestError(t *testing.T) {
 		}, nil
 	}
 
-	err := client.Download(getContext(nil), data)
+	err := client.RequestReport(getContext(nil), data)
 
 	expectedError := model.ValidationError{Message: "", Errors: model.ValidationErrors{"EndDate": map[string]string{"EndDate": "EndDate"}, "StartDate": map[string]string{"StartDate": "StartDate"}}}
 	assert.Equal(t, expectedError, err)
 }
 
-func TestSubmitDownloadReturnsValidationError(t *testing.T) {
-	data := model.Download{
+func TestRequestReportReturnsValidationError(t *testing.T) {
+	data := model.ReportRequest{
 		ReportType:         "",
 		ReportJournalType:  "reportJournalType",
 		ReportScheduleType: "reportScheduleType",
@@ -133,7 +133,7 @@ func TestSubmitDownloadReturnsValidationError(t *testing.T) {
 
 	client, _ := NewClient(http.DefaultClient, svr.URL, svr.URL)
 
-	err := client.Download(getContext(nil), data)
+	err := client.RequestReport(getContext(nil), data)
 	expectedError := model.ValidationError{Message: "", Errors: model.ValidationErrors{"ReportType": map[string]string{"required": "Please select a report type"}}}
 	assert.Equal(t, expectedError, err.(model.ValidationError))
 }
