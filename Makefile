@@ -40,4 +40,5 @@ compile-assets:
 	docker compose run --rm yarn build
 
 cypress: setup-directories clean
+	docker compose up -d localstack
 	docker compose run --build cypress
