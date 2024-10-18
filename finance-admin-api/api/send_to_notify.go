@@ -6,8 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
-	"io"
-	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -16,6 +14,7 @@ import (
 
 const notifyUrl = "https://api.notifications.service.gov.uk"
 const emailEndpoint = "v2/notifications/email"
+const templateId = "a8f9ab79-1489-4639-9e6c-cad1f079ebcf"
 
 func parseNotifyApiKey(notifyApiKey string) (string, string) {
 	splitKey := strings.Split(notifyApiKey, "-")
@@ -42,7 +41,29 @@ func createSignedJwtToken() (string, error) {
 	return signedToken, nil
 }
 
-func (s *Server) SendEmailToNotify(ctx context.Context, emailAddress string, templateId string, failedLines []string, reportType string) error {
+func formatFailedLines(failedLines map[int]string) []string {
+	var errorMessage string
+	var formattedLines []string
+
+	for i, line := range failedLines {
+		errorMessage = ""
+
+		switch line {
+		case "DATE_PARSE_ERROR":
+			errorMessage = "Unable to parse date"
+		case "DUPLICATE_PAYMENT":
+			errorMessage = "Duplicate payment line"
+		case "CLIENT_NOT_FOUND":
+			errorMessage = "Could not find a client with this court reference"
+		}
+
+		formattedLines = append(formattedLines, fmt.Sprintf("Line %d: %s", i, errorMessage))
+	}
+
+	return formattedLines
+}
+
+func (s *Server) SendEmailToNotify(ctx context.Context, emailAddress string, failedLines map[int]string, reportType string) error {
 	signedToken, err := createSignedJwtToken()
 	if err != nil {
 		return err
@@ -60,10 +81,8 @@ func (s *Server) SendEmailToNotify(ctx context.Context, emailAddress string, tem
 	}{
 		EmailAddress:    emailAddress,
 		TemplateId:      templateId,
-		Personalisation: Personalisation{failedLines, reportType},
+		Personalisation: Personalisation{formatFailedLines(failedLines), reportType},
 	}
-
-	fmt.Println(payload)
 
 	var body bytes.Buffer
 
@@ -87,14 +106,9 @@ func (s *Server) SendEmailToNotify(ctx context.Context, emailAddress string, tem
 	}
 	defer resp.Body.Close()
 
-	fmt.Println(resp.Body)
-
-	bodyBytes, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatal(err)
+	if resp.StatusCode == http.StatusCreated {
+		return nil
 	}
-	bodyString := string(bodyBytes)
-	fmt.Println(bodyString)
-	_, _ = io.Copy(os.Stdout, resp.Body)
-	return nil
+
+	return newStatusError(resp)
 }

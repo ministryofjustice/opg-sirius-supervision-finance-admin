@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"fmt"
 	"github.com/ministryofjustice/opg-go-common/securityheaders"
 	"github.com/ministryofjustice/opg-go-common/telemetry"
 	"github.com/opg-sirius-finance-admin/finance-admin-api/awsclient"
@@ -60,4 +61,22 @@ func (s *Server) RequestLogger(h http.Handler) http.HandlerFunc {
 		}
 		h.ServeHTTP(w, r)
 	}
+}
+
+type StatusError struct {
+	Code   int    `json:"code"`
+	URL    string `json:"url"`
+	Method string `json:"method"`
+}
+
+func newStatusError(resp *http.Response) StatusError {
+	return StatusError{
+		Code:   resp.StatusCode,
+		URL:    resp.Request.URL.String(),
+		Method: resp.Request.Method,
+	}
+}
+
+func (e StatusError) Error() string {
+	return fmt.Sprintf("%s %s returned %d", e.Method, e.URL, e.Code)
 }
