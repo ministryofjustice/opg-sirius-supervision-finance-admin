@@ -7,11 +7,11 @@ import (
 	"net/http"
 )
 
-type GetDownloadHandler struct {
+type RequestReportHandler struct {
 	router
 }
 
-func (h *GetDownloadHandler) render(v AppVars, w http.ResponseWriter, r *http.Request) error {
+func (h *RequestReportHandler) render(v AppVars, w http.ResponseWriter, r *http.Request) error {
 	ctx := getContext(r)
 	params := r.Form
 
