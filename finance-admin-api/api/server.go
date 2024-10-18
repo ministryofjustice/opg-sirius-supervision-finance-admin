@@ -47,6 +47,7 @@ func (s *Server) SetupRoutes(logger *slog.Logger) http.Handler {
 		mux.Handle(pattern, handler)
 	}
 
+	handleFunc("GET /downloads/{filename}", s.download)
 	handleFunc("POST /uploads", s.upload)
 
 	handleFunc("POST /events", s.handleEvents)
