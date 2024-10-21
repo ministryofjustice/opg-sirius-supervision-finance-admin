@@ -8,6 +8,8 @@ services:
     environment:
       PORT: 8888
       PREFIX: /finance-admin
+      SIRIUS_PUBLIC_URL: http://localhost:8080
+      SIRIUS_URL: http://json-server:3000
       BACKEND_URL: http://finance-admin-api:8080
     healthcheck:
       test: wget -O /dev/null -S 'http://localhost:8888/finance-admin/health-check' 2>&1 | grep 'HTTP/1.1 200 OK' || exit 1
@@ -16,9 +18,8 @@ services:
       retries: 3
       start_period: 30s
     depends_on:
-      finance-admin-api:
-        condition: service_healthy
-
+      - json-server
+      - finance-admin-api
 
   finance-admin-api:
     image: 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-admin-api:latest
@@ -101,3 +102,8 @@ services:
     volumes:
       - ./finance-admin:/home/node/app
 
+  json-server:
+    build:
+      dockerfile: json-server/Dockerfile
+    ports:
+      - '3000:3000'
