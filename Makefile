@@ -14,7 +14,7 @@ build:
 	docker compose build --no-cache --parallel finance-admin finance-admin-api
 
 build-dev:
-	docker compose -f docker-compose.yml -f docker/docker-compose.dev.yml build --parallel finance-admin finance-admin-api yarn
+	docker compose -f docker-compose.yml -f docker/docker-compose.dev.yml build --parallel finance-admin finance-admin-api yarn json-server
 
 build-all:
 	docker compose build --parallel finance-admin finance-admin-api yarn cypress
@@ -30,7 +30,7 @@ clean:
 	docker compose down
 	docker compose run --rm yarn
 
-up: clean build-dev
+up: clean compile-assets build-dev
 	docker compose -f docker-compose.yml -f docker/docker-compose.dev.yml up finance-admin finance-admin-api yarn
 
 down:
