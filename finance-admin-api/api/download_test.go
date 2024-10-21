@@ -49,5 +49,6 @@ func TestServer_download_noMatch(t *testing.T) {
 	server := Server{&mockAwsClient}
 	err := server.download(w, req)
 
-	assert.ErrorAs(t, err, apierror.NotFound{})
+	expected := apierror.NotFoundError(&types.NoSuchKey{})
+	assert.ErrorAs(t, err, &expected)
 }
