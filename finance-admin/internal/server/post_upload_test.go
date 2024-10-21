@@ -10,7 +10,7 @@ import (
 	"testing"
 )
 
-func TestUploadNoFileUploaded(t *testing.T) {
+func TestUploadFormHandlerNoFileUploaded(t *testing.T) {
 	form := url.Values{
 		"reportUploadType": {"DEBT_CHASE"},
 		"uploadDate":       {"2024-01-24"},
@@ -20,7 +20,7 @@ func TestUploadNoFileUploaded(t *testing.T) {
 	client := mockApiClient{}
 	ro := &mockRoute{client: client}
 
-	sut := UploadHandler{ro}
+	sut := UploadFormHandler{ro}
 
 	w := httptest.NewRecorder()
 	r, _ := http.NewRequest(http.MethodPost, "/uploads", strings.NewReader(form.Encode()))
@@ -39,7 +39,7 @@ func TestUploadNoFileUploaded(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestUploadSuccess(t *testing.T) {
+func TestUploadFormHandlerSuccess(t *testing.T) {
 	form := url.Values{
 		"reportUploadType": {"DEBT_CHASE"},
 		"uploadDate":       {"2024-01-24"},
@@ -58,12 +58,12 @@ func TestUploadSuccess(t *testing.T) {
 	}
 
 	appVars.EnvironmentVars.Prefix = "prefix"
-	sut := UploadHandler{ro}
+	sut := UploadFormHandler{ro}
 	err := sut.render(appVars, w, r)
 	assert.Nil(t, err)
 }
 
-func TestUploadValidationErrors(t *testing.T) {
+func TestUploadFormHandlerValidationErrors(t *testing.T) {
 	assert := assert.New(t)
 	client := &mockApiClient{}
 	ro := &mockRoute{client: client}
@@ -86,7 +86,7 @@ func TestUploadValidationErrors(t *testing.T) {
 		Path: "/uploads",
 	}
 
-	sut := UploadHandler{ro}
+	sut := UploadFormHandler{ro}
 	err := sut.render(appVars, w, r)
 	assert.Nil(err)
 	assert.Equal("400 Bad Request", w.Result().Status)
