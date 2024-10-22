@@ -6,15 +6,34 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/opg-sirius-finance-admin/shared"
 	"net/http"
 	"os"
+	"slices"
 	"strings"
 	"time"
 )
 
 const notifyUrl = "https://api.notifications.service.gov.uk"
 const emailEndpoint = "v2/notifications/email"
-const templateId = "a8f9ab79-1489-4639-9e6c-cad1f079ebcf"
+const processingErrorTemplateId = "a8f9ab79-1489-4639-9e6c-cad1f079ebcf"
+const processingFailedTemplateId = "a8f9ab79-1489-4639-9e6c-cad1f079ebcf"
+const processingSuccessTemplateId = "8c85cf6c-695f-493a-a25f-77b4fb5f6a8e"
+
+type ProcessingFailedPersonalisation struct {
+	FailedLines []string `json:"failed_lines"`
+	ReportType  string   `json:"report_type"`
+}
+
+type ProcessingSuccessPersonalisation struct {
+	ReportType string `json:"report_type"`
+}
+
+type NotifyPayload struct {
+	EmailAddress    string      `json:"email_address"`
+	TemplateId      string      `json:"template_id"`
+	Personalisation interface{} `json:"personalisation"`
+}
 
 func parseNotifyApiKey(notifyApiKey string) (string, string) {
 	splitKey := strings.Split(notifyApiKey, "-")
@@ -44,11 +63,18 @@ func createSignedJwtToken() (string, error) {
 func formatFailedLines(failedLines map[int]string) []string {
 	var errorMessage string
 	var formattedLines []string
+	var keys []int
+	for i := range failedLines {
+		keys = append(keys, i)
+	}
 
-	for i, line := range failedLines {
+	slices.Sort(keys)
+
+	for _, key := range keys {
+		failedLine := failedLines[key]
 		errorMessage = ""
 
-		switch line {
+		switch failedLine {
 		case "DATE_PARSE_ERROR":
 			errorMessage = "Unable to parse date"
 		case "DUPLICATE_PAYMENT":
@@ -57,36 +83,61 @@ func formatFailedLines(failedLines map[int]string) []string {
 			errorMessage = "Could not find a client with this court reference"
 		}
 
-		formattedLines = append(formattedLines, fmt.Sprintf("Line %d: %s", i, errorMessage))
+		formattedLines = append(formattedLines, fmt.Sprintf("Line %d: %s", key, errorMessage))
 	}
 
 	return formattedLines
 }
 
-func (s *Server) SendEmailToNotify(ctx context.Context, emailAddress string, failedLines map[int]string, reportType string) error {
+func createNotifyPayload(detail shared.FinanceAdminUploadProcessedEvent, reportType string) NotifyPayload {
+	var payload NotifyPayload
+
+	if detail.Error != "" {
+		payload = NotifyPayload{
+			detail.EmailAddress,
+			processingErrorTemplateId,
+			struct {
+				Error      string `json:"error"`
+				ReportType string `json:"report_type"`
+			}{
+				detail.Error,
+				reportType,
+			},
+		}
+	} else if len(detail.FailedLines) != 0 {
+		payload = NotifyPayload{
+			detail.EmailAddress,
+			processingFailedTemplateId,
+			struct {
+				FailedLines []string `json:"failed_lines"`
+				ReportType  string   `json:"report_type"`
+			}{
+				formatFailedLines(detail.FailedLines),
+				reportType,
+			},
+		}
+	} else {
+		payload = NotifyPayload{
+			detail.EmailAddress,
+			processingSuccessTemplateId,
+			struct {
+				ReportType string `json:"report_type"`
+			}{reportType},
+		}
+	}
+
+	return payload
+}
+
+func (s *Server) SendEmailToNotify(ctx context.Context, detail shared.FinanceAdminUploadProcessedEvent, reportType string) error {
 	signedToken, err := createSignedJwtToken()
 	if err != nil {
 		return err
 	}
 
-	type Personalisation struct {
-		FailedLines []string `json:"failed_lines"`
-		ReportType  string   `json:"report_type"`
-	}
-
-	payload := struct {
-		EmailAddress    string          `json:"email_address"`
-		TemplateId      string          `json:"template_id"`
-		Personalisation Personalisation `json:"personalisation"`
-	}{
-		EmailAddress:    emailAddress,
-		TemplateId:      templateId,
-		Personalisation: Personalisation{formatFailedLines(failedLines), reportType},
-	}
-
 	var body bytes.Buffer
 
-	err = json.NewEncoder(&body).Encode(payload)
+	err = json.NewEncoder(&body).Encode(createNotifyPayload(detail, reportType))
 	if err != nil {
 		return err
 	}

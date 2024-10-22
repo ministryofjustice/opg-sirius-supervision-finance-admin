@@ -21,11 +21,11 @@ func TestServer_handleEvents(t *testing.T) {
 		expectedErr error
 	}{
 		{
-			name: "finance admin upload failed event",
+			name: "finance admin upload processed event",
 			event: shared.Event{
 				Source:     "opg.supervision.finance",
-				DetailType: "finance-admin-upload-failed",
-				Detail: shared.FinanceAdminUploadFailedEvent{
+				DetailType: "finance-admin-upload-processed",
+				Detail: shared.FinanceAdminUploadProcessedEvent{
 					EmailAddress: "test@email.com",
 					FailedLines: map[int]string{
 						1: "DUPLICATE_PAYMENT",

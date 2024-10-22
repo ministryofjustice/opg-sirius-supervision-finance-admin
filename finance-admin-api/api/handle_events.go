@@ -19,9 +19,9 @@ func (s *Server) handleEvents(w http.ResponseWriter, r *http.Request) error {
 		return apierror.BadRequestError("event", "unable to parse event", err)
 	}
 
-	if event.Source == shared.EventSourceFinanceHub && event.DetailType == shared.DetailTypeFinanceAdminUploadFailed {
-		if detail, ok := event.Detail.(shared.FinanceAdminUploadFailedEvent); ok {
-			err := s.SendEmailToNotify(ctx, detail.EmailAddress, detail.FailedLines, shared.ReportTypeUploadPaymentsMOTOCard.Translation())
+	if event.Source == shared.EventSourceFinanceHub && event.DetailType == shared.DetailTypeFinanceAdminUploadProcessed {
+		if detail, ok := event.Detail.(shared.FinanceAdminUploadProcessedEvent); ok {
+			err := s.SendEmailToNotify(ctx, detail, shared.ReportTypeUploadPaymentsMOTOCard.Translation())
 			if err != nil {
 				return err
 			}
