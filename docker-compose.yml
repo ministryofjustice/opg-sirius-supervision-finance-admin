@@ -30,8 +30,10 @@ services:
       ASYNC_S3_BUCKET: opg-backoffice-async-uploads-local
       AWS_REGION: eu-west-1
       AWS_S3_ENDPOINT: http://localstack:4566
+      AWS_BASE_URL: http://localstack:4566
       AWS_ACCESS_KEY_ID: localstack
       AWS_SECRET_ACCESS_KEY: localstack
+      EVENT_BUS_NAME: local-main
       S3_ENCRYPTION_KEY: alias/aws/s3
     healthcheck:
       test: wget -O /dev/null -S 'http://localhost:8080/health-check' 2>&1 | grep 'HTTP/1.1 200 OK' || exit 1
@@ -48,6 +50,8 @@ services:
     volumes:
       - "./scripts/localstack/init:/etc/localstack/init/ready.d"
       - "./scripts/localstack/wait:/scripts/wait"
+    ports:
+      - "4566:4566"
     environment:
       AWS_DEFAULT_REGION: eu-west-1
     healthcheck:
