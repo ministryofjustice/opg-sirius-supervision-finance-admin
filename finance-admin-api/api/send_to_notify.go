@@ -16,7 +16,7 @@ import (
 
 const notifyUrl = "https://api.notifications.service.gov.uk"
 const emailEndpoint = "v2/notifications/email"
-const processingErrorTemplateId = "a8f9ab79-1489-4639-9e6c-cad1f079ebcf"
+const processingErrorTemplateId = "872d88b3-076e-495c-bf81-a2be2d3d234c"
 const processingFailedTemplateId = "a8f9ab79-1489-4639-9e6c-cad1f079ebcf"
 const processingSuccessTemplateId = "8c85cf6c-695f-493a-a25f-77b4fb5f6a8e"
 
