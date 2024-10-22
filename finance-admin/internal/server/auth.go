@@ -30,7 +30,7 @@ func (a *Authenticator) Authenticate(next http.Handler) http.Handler {
 		}
 		if !sessionValid {
 			logger.Info("User session not valid. Redirecting.")
-			http.Redirect(w, r, fmt.Sprintf("%s/auth?redirect=%s", a.EnvVars.SiriusURL, url.QueryEscape(a.EnvVars.Prefix+r.URL.Path)), http.StatusFound)
+			http.Redirect(w, r, fmt.Sprintf("%s/auth?redirect=%s", a.EnvVars.SiriusPublicURL, url.QueryEscape(a.EnvVars.Prefix+r.URL.Path)), http.StatusFound)
 			return
 		}
 
