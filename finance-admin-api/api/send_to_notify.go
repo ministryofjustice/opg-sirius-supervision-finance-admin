@@ -77,6 +77,8 @@ func formatFailedLines(failedLines map[int]string) []string {
 		switch failedLine {
 		case "DATE_PARSE_ERROR":
 			errorMessage = "Unable to parse date"
+		case "AMOUNT_PARSE_ERROR":
+			errorMessage = "Unable to parse amount"
 		case "DUPLICATE_PAYMENT":
 			errorMessage = "Duplicate payment line"
 		case "CLIENT_NOT_FOUND":
