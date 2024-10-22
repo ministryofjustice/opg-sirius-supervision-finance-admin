@@ -2,56 +2,53 @@ package api
 
 import (
 	"bytes"
-	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/opg-sirius-finance-admin/apierror"
+	"github.com/opg-sirius-finance-admin/finance-admin-api/event"
 	"github.com/opg-sirius-finance-admin/shared"
-	"io"
 	"net/http"
 	"os"
-	"reflect"
 	"strings"
 	"unicode"
 )
 
-func validateCSVHeaders(file []byte, reportUploadType shared.ReportUploadType) error {
-	fileReader := bytes.NewReader(file)
-	csvReader := csv.NewReader(fileReader)
-	expectedHeaders := reportUploadType.CSVHeaders()
-
-	readHeaders, err := csvReader.Read()
-	if err != nil {
-		return apierror.ValidationError{Errors: apierror.ValidationErrors{
-			"FileUpload": {
-				"read-failed": "Failed to read CSV headers",
-			},
-		},
-		}
-	}
-
-	for i, header := range readHeaders {
-		readHeaders[i] = cleanString(header)
-	}
-
-	// Compare the extracted headers with the expected headers
-	if !reflect.DeepEqual(readHeaders, expectedHeaders) {
-		return apierror.ValidationError{Errors: apierror.ValidationErrors{
-			"FileUpload": {
-				"incorrect-headers": "CSV headers do not match for the report trying to be uploaded",
-			},
-		},
-		}
-	}
-
-	_, err = fileReader.Seek(0, io.SeekStart)
-	if err != nil {
-		return err
-	}
-	return nil
-}
+//func validateCSVHeaders(file []byte, reportUploadType shared.ReportUploadType) error {
+//	fileReader := bytes.NewReader(file)
+//	csvReader := csv.NewReader(fileReader)
+//	expectedHeaders := reportUploadType.CSVHeaders()
+//
+//	readHeaders, err := csvReader.Read()
+//	if err != nil {
+//		return apierror.ValidationError{Errors: apierror.ValidationErrors{
+//			"FileUpload": {
+//				"read-failed": "Failed to read CSV headers",
+//			},
+//		},
+//		}
+//	}
+//
+//	for i, header := range readHeaders {
+//		readHeaders[i] = cleanString(header)
+//	}
+//
+//	// Compare the extracted headers with the expected headers
+//	if !reflect.DeepEqual(readHeaders, expectedHeaders) {
+//		return apierror.ValidationError{Errors: apierror.ValidationErrors{
+//			"FileUpload": {
+//				"incorrect-headers": "CSV headers do not match for the report trying to be uploaded",
+//			},
+//		},
+//		}
+//	}
+//
+//	_, err = fileReader.Seek(0, io.SeekStart)
+//	if err != nil {
+//		return err
+//	}
+//	return nil
+//}
 
 func reportHeadersByType(reportType string) []string {
 	switch reportType {
@@ -88,18 +85,28 @@ func (s *Server) upload(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	err := validateCSVHeaders(upload.File, upload.ReportUploadType)
-	if err != nil {
-		return err
-	}
+	//err := validateCSVHeaders(upload.File, upload.ReportUploadType)
+	//if err != nil {
+	//	return err
+	//}
 
-	_, err = s.awsClient.PutObject(ctx, &s3.PutObjectInput{
+	_, err := s.awsClient.PutObject(ctx, &s3.PutObjectInput{
 		Bucket:               aws.String(os.Getenv("ASYNC_S3_BUCKET")),
 		Key:                  aws.String(fmt.Sprintf("%s/%s", upload.ReportUploadType.S3Directory(), upload.Filename)),
 		Body:                 bytes.NewReader(upload.File),
 		ServerSideEncryption: "aws:kms",
 		SSEKMSKeyId:          aws.String(os.Getenv("S3_ENCRYPTION_KEY")),
 	})
+
+	if err != nil {
+		return err
+	}
+
+	uploadEvent := event.FinanceAdminUpload{
+		EmailAddress: upload.Email,
+		Filename:     fmt.Sprintf("%s/%s", upload.ReportUploadType.S3Directory(), upload.Filename),
+	}
+	err = s.dispatch.FinanceAdminUpload(ctx, uploadEvent)
 
 	if err != nil {
 		return err
