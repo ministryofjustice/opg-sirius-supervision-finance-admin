@@ -24,8 +24,8 @@ func (e ClientError) Error() string {
 func NewClient(httpClient HTTPClient, siriusURL string, backendURL string) (*Client, error) {
 	return &Client{
 		http:       httpClient,
-		siriusURL:  siriusURL,
-		backendURL: backendURL,
+		SiriusURL:  siriusURL,
+		BackendURL: backendURL,
 	}, nil
 }
 
@@ -35,8 +35,8 @@ type HTTPClient interface {
 
 type Client struct {
 	http       HTTPClient
-	siriusURL  string
-	backendURL string
+	SiriusURL  string
+	BackendURL string
 }
 
 type StatusError struct {
@@ -54,7 +54,7 @@ func (e StatusError) Data() interface{} {
 }
 
 func (c *Client) newBackendRequest(ctx Context, method, path string, body io.Reader) (*http.Request, error) {
-	req, err := http.NewRequestWithContext(ctx.Context, method, c.backendURL+path, body)
+	req, err := http.NewRequestWithContext(ctx.Context, method, c.BackendURL+path, body)
 	if err != nil {
 		return nil, err
 	}
@@ -63,8 +63,18 @@ func (c *Client) newBackendRequest(ctx Context, method, path string, body io.Rea
 		req.AddCookie(c)
 	}
 
-	req.Header.Add("OPG-Bypass-Membrane", "1")
 	req.Header.Add("X-XSRF-TOKEN", ctx.XSRFToken)
+
+	return req, err
+}
+
+func (c *Client) newSessionRequest(ctx context.Context, sessionCookie *http.Cookie) (*http.Request, error) {
+	req, err := http.NewRequestWithContext(ctx, "GET", c.SiriusURL+"/users/current", nil)
+	if err != nil {
+		return nil, err
+	}
+
+	req.AddCookie(sessionCookie)
 
 	return req, err
 }
