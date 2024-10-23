@@ -1,20 +1,26 @@
-package awsclient
+package filestorage
 
 import (
 	"context"
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials/stscreds"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go-v2/service/sts"
+	"io"
 	"os"
 )
 
-type AWSClient interface {
+type S3Client interface {
 	PutObject(ctx context.Context, params *s3.PutObjectInput, optFns ...func(*s3.Options)) (*s3.PutObjectOutput, error)
 	Options() s3.Options
 }
 
-func NewClient(ctx context.Context) (AWSClient, error) {
+type Client struct {
+	s3 S3Client
+}
+
+func NewClient(ctx context.Context) (*Client, error) {
 	awsRegion := os.Getenv("AWS_REGION")
 
 	cfg, err := config.LoadDefaultConfig(
@@ -40,5 +46,17 @@ func NewClient(ctx context.Context) (AWSClient, error) {
 		}
 	})
 
-	return client, nil
+	return &Client{client}, nil
+}
+
+func (c *Client) PutFile(ctx context.Context, bucketName string, fileName string, file io.Reader) error {
+	_, err := c.s3.PutObject(ctx, &s3.PutObjectInput{
+		Bucket:               &bucketName,
+		Key:                  &fileName,
+		Body:                 file,
+		ServerSideEncryption: "aws:kms",
+		SSEKMSKeyId:          aws.String(os.Getenv("S3_ENCRYPTION_KEY")),
+	})
+
+	return err
 }
