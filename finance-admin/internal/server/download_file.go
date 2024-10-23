@@ -9,8 +9,8 @@ import (
 func downloadProxy(client ApiClient) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := getContext(r)
-		filename := r.URL.Query().Get("filename")
-		resp, err := client.Download(ctx, filename)
+		uid := r.URL.Query().Get("uid")
+		resp, err := client.Download(ctx, uid)
 		if err != nil {
 			log.Printf("Error calling download API: %v", err)
 			http.Error(w, "Failed to stream file", http.StatusInternalServerError)

@@ -50,6 +50,13 @@ func NewClient(ctx context.Context) (*Client, error) {
 	return &Client{client}, nil
 }
 
+func (c *Client) GetFile(ctx context.Context, bucketName string, filename string) (*s3.GetObjectOutput, error) {
+	return c.s3.GetObject(ctx, &s3.GetObjectInput{
+		Bucket: aws.String(bucketName),
+		Key:    aws.String(filename),
+	})
+}
+
 func (c *Client) PutFile(ctx context.Context, bucketName string, fileName string, file io.Reader) error {
 	_, err := c.s3.PutObject(ctx, &s3.PutObjectInput{
 		Bucket:               &bucketName,
