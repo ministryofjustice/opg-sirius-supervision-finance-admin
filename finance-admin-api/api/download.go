@@ -1,10 +1,9 @@
 package api
 
 import (
+	"encoding/base64"
 	"errors"
 	"fmt"
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/smithy-go"
 	"github.com/opg-sirius-finance-admin/apierror"
 	"io"
@@ -14,12 +13,10 @@ import (
 
 func (s *Server) download(w http.ResponseWriter, r *http.Request) error {
 	ctx := r.Context()
-	filename := r.PathValue("filename")
+	uid := r.URL.Query().Get("uid")
+	filename := decryptFilename(uid)
 
-	result, err := s.awsClient.GetObject(ctx, &s3.GetObjectInput{
-		Bucket: aws.String(os.Getenv("REPORTS_S3_BUCKET")),
-		Key:    aws.String(filename),
-	})
+	result, err := s.filestorage.GetFile(ctx, os.Getenv("REPORTS_S3_BUCKET"), filename)
 	if err != nil {
 		var apiErr smithy.APIError
 		if errors.As(err, &apiErr) {
@@ -38,4 +35,9 @@ func (s *Server) download(w http.ResponseWriter, r *http.Request) error {
 	_, err = io.Copy(w, result.Body)
 
 	return err
+}
+
+func decryptFilename(uid string) string {
+	filename, _ := base64.StdEncoding.DecodeString(uid)
+	return string(filename)
 }

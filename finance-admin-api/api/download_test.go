@@ -14,19 +14,18 @@ import (
 )
 
 func TestServer_download(t *testing.T) {
-	req := httptest.NewRequest(http.MethodGet, "/download/test.csv", nil)
+	req := httptest.NewRequest(http.MethodGet, "/download?uid=dGVzdC5jc3Y=", nil)
 	w := httptest.NewRecorder()
-	req.SetPathValue("filename", "abc.csv")
 
 	fileContent := "col1,col2,col3\n1,a,Z\n"
 
-	mockAwsClient := MockAWSClient{}
-	mockAwsClient.outgoingObject = &s3.GetObjectOutput{
+	mockS3 := MockFileStorage{}
+	mockS3.outgoingObject = &s3.GetObjectOutput{
 		Body:        io.NopCloser(bytes.NewReader([]byte(fileContent))),
 		ContentType: aws.String("text/csv"),
 	}
 
-	server := Server{&mockAwsClient}
+	server := NewServer(nil, nil, &mockS3)
 	_ = server.download(w, req)
 
 	res := w.Result()
@@ -35,18 +34,18 @@ func TestServer_download(t *testing.T) {
 	assert.Equal(t, fileContent, w.Body.String())
 	assert.Equal(t, http.StatusOK, w.Code)
 	assert.Equal(t, res.Header.Get("Content-Type"), "text/csv")
-	assert.Equal(t, res.Header.Get("Content-Disposition"), "attachment; filename=abc.csv")
+	assert.Equal(t, res.Header.Get("Content-Disposition"), "attachment; filename=test.csv")
 }
 
 func TestServer_download_noMatch(t *testing.T) {
-	req := httptest.NewRequest(http.MethodGet, "/download/test.csv", nil)
+	req := httptest.NewRequest(http.MethodGet, "/download?uid=dGVzdC5jc3Y=", nil)
 	w := httptest.NewRecorder()
 	req.SetPathValue("filename", "abc.csv")
 
-	mockAwsClient := MockAWSClient{}
-	mockAwsClient.err = &types.NoSuchKey{}
+	mockS3 := MockFileStorage{}
+	mockS3.err = &types.NoSuchKey{}
+	server := NewServer(nil, nil, &mockS3)
 
-	server := Server{&mockAwsClient}
 	err := server.download(w, req)
 
 	expected := apierror.NotFoundError(&types.NoSuchKey{})
