@@ -1,20 +1,37 @@
 package api
 
 import (
+	"context"
+	"fmt"
 	"github.com/ministryofjustice/opg-go-common/securityheaders"
 	"github.com/ministryofjustice/opg-go-common/telemetry"
-	"github.com/opg-sirius-finance-admin/finance-admin-api/awsclient"
+	"github.com/opg-sirius-finance-admin/finance-admin-api/event"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
+	"io"
 	"log/slog"
 	"net/http"
 )
 
-type Server struct {
-	awsClient awsclient.AWSClient
+type HTTPClient interface {
+	Do(req *http.Request) (*http.Response, error)
 }
 
-func NewServer(awsClient awsclient.AWSClient) Server {
-	return Server{awsClient}
+type Dispatch interface {
+	FinanceAdminUpload(ctx context.Context, event event.FinanceAdminUpload) error
+}
+
+type FileStorage interface {
+	PutFile(ctx context.Context, bucketName string, fileName string, file io.Reader) error
+}
+
+type Server struct {
+	http        HTTPClient
+	dispatch    Dispatch
+	filestorage FileStorage
+}
+
+func NewServer(httpClient HTTPClient, dispatch Dispatch, filestorage FileStorage) Server {
+	return Server{httpClient, dispatch, filestorage}
 }
 
 func (s *Server) SetupRoutes(logger *slog.Logger) http.Handler {
@@ -32,6 +49,8 @@ func (s *Server) SetupRoutes(logger *slog.Logger) http.Handler {
 
 	handleFunc("POST /uploads", s.upload)
 
+	handleFunc("POST /events", s.handleEvents)
+
 	return otelhttp.NewHandler(telemetry.Middleware(logger)(securityheaders.Use(s.RequestLogger(mux))), "supervision-finance-admin-api")
 }
 
@@ -46,4 +65,22 @@ func (s *Server) RequestLogger(h http.Handler) http.HandlerFunc {
 		}
 		h.ServeHTTP(w, r)
 	}
+}
+
+type StatusError struct {
+	Code   int    `json:"code"`
+	URL    string `json:"url"`
+	Method string `json:"method"`
+}
+
+func newStatusError(resp *http.Response) StatusError {
+	return StatusError{
+		Code:   resp.StatusCode,
+		URL:    resp.Request.URL.String(),
+		Method: resp.Request.Method,
+	}
+}
+
+func (e StatusError) Error() string {
+	return fmt.Sprintf("%s %s returned %d", e.Method, e.URL, e.Code)
 }
