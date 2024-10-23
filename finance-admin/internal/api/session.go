@@ -1,12 +1,11 @@
 package api
 
 import (
-	"context"
 	"net/http"
 )
 
-func (c *Client) CheckUserSession(ctx context.Context, sessionCookie *http.Cookie) (*http.Response, error, bool) {
-	req, _ := c.newSessionRequest(ctx, sessionCookie)
+func (c *Client) CheckUserSession(ctx Context) (*http.Response, error, bool) {
+	req, _ := c.newSessionRequest(ctx)
 
 	res, err := c.http.Do(req)
 
