@@ -61,6 +61,6 @@ func (m mockApiClient) RequestReport(context api.Context, data model.ReportReque
 	return m.error
 }
 
-func (m mockApiClient) Download(ctx api.Context, filename string) (*http.Response, error) {
+func (m mockApiClient) Download(ctx api.Context, uid string) (*http.Response, error) {
 	return nil, m.error
 }

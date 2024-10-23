@@ -17,7 +17,7 @@ import (
 type ApiClient interface {
 	RequestReport(api.Context, model.ReportRequest) error
 	Upload(api.Context, shared.Upload) error
-	Download(ctx api.Context, filename string) (*http.Response, error)
+	Download(api.Context, string) (*http.Response, error)
 }
 
 type AuthClient interface {
