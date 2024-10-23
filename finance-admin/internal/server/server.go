@@ -1,7 +1,6 @@
 package server
 
 import (
-	"context"
 	"github.com/ministryofjustice/opg-go-common/securityheaders"
 	"github.com/ministryofjustice/opg-go-common/telemetry"
 	"github.com/opg-sirius-finance-admin/finance-admin/internal/api"
@@ -22,7 +21,7 @@ type ApiClient interface {
 }
 
 type AuthClient interface {
-	CheckUserSession(ctx context.Context, sessionCookie *http.Cookie) (*http.Response, error, bool)
+	CheckUserSession(ctx api.Context) (*http.Response, error, bool)
 }
 
 type router interface {

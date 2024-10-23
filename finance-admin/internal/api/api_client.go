@@ -68,13 +68,17 @@ func (c *Client) newBackendRequest(ctx Context, method, path string, body io.Rea
 	return req, err
 }
 
-func (c *Client) newSessionRequest(ctx context.Context, sessionCookie *http.Cookie) (*http.Request, error) {
-	req, err := http.NewRequestWithContext(ctx, "GET", c.SiriusURL+"/users/current", nil)
+func (c *Client) newSessionRequest(ctx Context) (*http.Request, error) {
+	req, err := http.NewRequestWithContext(ctx.Context, "GET", c.SiriusURL+"/users/current", nil)
 	if err != nil {
 		return nil, err
 	}
 
-	req.AddCookie(sessionCookie)
+	for _, c := range ctx.Cookies {
+		req.AddCookie(c)
+	}
+
+	req.Header.Add("OPG-Bypass-Membrane", "1")
 
 	return req, err
 }
