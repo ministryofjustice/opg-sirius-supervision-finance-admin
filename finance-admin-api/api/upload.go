@@ -5,9 +5,8 @@ import (
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/opg-sirius-finance-admin/apierror"
+	"github.com/opg-sirius-finance-admin/finance-admin-api/event"
 	"github.com/opg-sirius-finance-admin/shared"
 	"io"
 	"net/http"
@@ -93,13 +92,21 @@ func (s *Server) upload(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	_, err = s.awsClient.PutObject(ctx, &s3.PutObjectInput{
-		Bucket:               aws.String(os.Getenv("ASYNC_S3_BUCKET")),
-		Key:                  aws.String(fmt.Sprintf("%s/%s", upload.ReportUploadType.S3Directory(), upload.Filename)),
-		Body:                 bytes.NewReader(upload.File),
-		ServerSideEncryption: "aws:kms",
-		SSEKMSKeyId:          aws.String(os.Getenv("S3_ENCRYPTION_KEY")),
-	})
+	err = s.filestorage.PutFile(
+		ctx,
+		os.Getenv("ASYNC_S3_BUCKET"),
+		fmt.Sprintf("%s/%s", upload.ReportUploadType.S3Directory(), upload.Filename),
+		bytes.NewReader(upload.File))
+
+	if err != nil {
+		return err
+	}
+
+	uploadEvent := event.FinanceAdminUpload{
+		EmailAddress: upload.Email,
+		Filename:     fmt.Sprintf("%s/%s", upload.ReportUploadType.S3Directory(), upload.Filename),
+	}
+	err = s.dispatch.FinanceAdminUpload(ctx, uploadEvent)
 
 	if err != nil {
 		return err

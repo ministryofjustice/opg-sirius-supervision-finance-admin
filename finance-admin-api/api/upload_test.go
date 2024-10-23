@@ -25,9 +25,11 @@ func Test_upload(t *testing.T) {
 	req := httptest.NewRequest(http.MethodPost, "/uploads", &b)
 	w := httptest.NewRecorder()
 
-	mockAwsClient := MockAWSClient{}
+	mockHttpClient := MockHttpClient{}
+	mockDispatch := MockDispatch{}
+	mockFileStorage := MockFileStorage{}
 
-	server := Server{&mockAwsClient}
+	server := Server{&mockHttpClient, &mockDispatch, &mockFileStorage}
 	_ = server.upload(w, req)
 
 	res := w.Result()
@@ -53,9 +55,10 @@ func TestUploadIncorrectCSVHeaders(t *testing.T) {
 	req := httptest.NewRequest(http.MethodPost, "/uploads", &b)
 	w := httptest.NewRecorder()
 
-	mockAwsClient := MockAWSClient{}
+	mockHttpClient := MockHttpClient{}
+	mockDispatch := MockDispatch{}
 
-	server := Server{&mockAwsClient}
+	server := Server{&mockHttpClient, &mockDispatch, nil}
 	err := server.upload(w, req)
 
 	expected := apierror.ValidationError{Errors: apierror.ValidationErrors{
@@ -80,9 +83,10 @@ func TestUploadFailedToReadCSVHeaders(t *testing.T) {
 	req := httptest.NewRequest(http.MethodPost, "/uploads", &b)
 	w := httptest.NewRecorder()
 
-	mockAwsClient := MockAWSClient{}
+	mockHttpClient := MockHttpClient{}
+	mockDispatch := MockDispatch{}
 
-	server := Server{&mockAwsClient}
+	server := Server{&mockHttpClient, &mockDispatch, nil}
 	err := server.upload(w, req)
 
 	expected := apierror.ValidationError{Errors: apierror.ValidationErrors{
