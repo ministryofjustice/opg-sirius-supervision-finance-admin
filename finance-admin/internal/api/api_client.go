@@ -69,7 +69,7 @@ func (c *Client) newBackendRequest(ctx Context, method, path string, body io.Rea
 }
 
 func (c *Client) newSessionRequest(ctx Context) (*http.Request, error) {
-	req, err := http.NewRequestWithContext(ctx.Context, "GET", c.SiriusURL+"/users/current", nil)
+	req, err := http.NewRequestWithContext(ctx.Context, "GET", c.SiriusURL+"/supervision-api/v1/users/current", nil)
 	if err != nil {
 		return nil, err
 	}
