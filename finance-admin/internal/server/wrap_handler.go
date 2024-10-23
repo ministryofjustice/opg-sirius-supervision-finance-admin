@@ -27,12 +27,8 @@ func (e StatusError) Code() int {
 	return int(e)
 }
 
-type Handler interface {
-	render(app AppVars, w http.ResponseWriter, r *http.Request) error
-}
-
-func wrapHandler(errTmpl Template, errPartial string, envVars EnvironmentVars) func(next Handler) http.Handler {
-	return func(next Handler) http.Handler {
+func wrapHandler(errTmpl Template, errPartial string, envVars EnvironmentVars) func(next HtmxHandler) http.Handler {
+	return func(next HtmxHandler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			start := time.Now()
 

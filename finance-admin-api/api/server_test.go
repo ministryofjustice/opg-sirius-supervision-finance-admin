@@ -6,14 +6,20 @@ import (
 )
 
 type MockAWSClient struct {
-	params *s3.PutObjectInput
-	optFns []func(*s3.Options)
+	incomingObject *s3.PutObjectInput
+	outgoingObject *s3.GetObjectOutput
+	optFns         []func(*s3.Options)
+	err            error
 }
 
 func (m *MockAWSClient) PutObject(ctx context.Context, params *s3.PutObjectInput, optFns ...func(*s3.Options)) (*s3.PutObjectOutput, error) {
-	m.params = params
+	m.incomingObject = params
 	m.optFns = optFns
-	return nil, nil
+	return nil, m.err
+}
+
+func (m *MockAWSClient) GetObject(ctx context.Context, params *s3.GetObjectInput, optFns ...func(*s3.Options)) (*s3.GetObjectOutput, error) {
+	return m.outgoingObject, m.err
 }
 
 func (m *MockAWSClient) Options() s3.Options {
