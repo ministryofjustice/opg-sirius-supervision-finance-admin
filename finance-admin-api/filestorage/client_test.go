@@ -1,8 +1,7 @@
-package awsclient
+package filestorage
 
 import (
 	"context"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/stretchr/testify/assert"
 	"os"
 	"testing"
@@ -22,8 +21,8 @@ func TestNewClient(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	assert.IsType(t, new(s3.Client), got)
-	assert.Equal(t, region, got.Options().Region)
-	assert.Equal(t, endpoint, *got.Options().BaseEndpoint)
+	assert.IsType(t, new(Client), got)
+	assert.Equal(t, region, got.s3.Options().Region)
+	assert.Equal(t, endpoint, *got.s3.Options().BaseEndpoint)
 
 }

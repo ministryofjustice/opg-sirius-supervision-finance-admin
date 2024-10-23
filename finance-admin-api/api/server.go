@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"github.com/ministryofjustice/opg-go-common/securityheaders"
 	"github.com/ministryofjustice/opg-go-common/telemetry"
-	"github.com/opg-sirius-finance-admin/finance-admin-api/awsclient"
 	"github.com/opg-sirius-finance-admin/finance-admin-api/event"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
+	"io"
 	"log/slog"
 	"net/http"
 )
@@ -20,14 +20,18 @@ type Dispatch interface {
 	FinanceAdminUpload(ctx context.Context, event event.FinanceAdminUpload) error
 }
 
-type Server struct {
-	http      HTTPClient
-	dispatch  Dispatch
-	awsClient awsclient.AWSClient
+type FileStorage interface {
+	PutFile(ctx context.Context, bucketName string, fileName string, file io.Reader) error
 }
 
-func NewServer(httpClient HTTPClient, dispatch Dispatch, awsClient awsclient.AWSClient) Server {
-	return Server{httpClient, dispatch, awsClient}
+type Server struct {
+	http        HTTPClient
+	dispatch    Dispatch
+	filestorage FileStorage
+}
+
+func NewServer(httpClient HTTPClient, dispatch Dispatch, filestorage FileStorage) Server {
+	return Server{httpClient, dispatch, filestorage}
 }
 
 func (s *Server) SetupRoutes(logger *slog.Logger) http.Handler {
