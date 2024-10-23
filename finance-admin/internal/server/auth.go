@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/ministryofjustice/opg-go-common/telemetry"
 	"net/http"
-	"net/url"
 )
 
 type Authenticator struct {
@@ -14,23 +13,16 @@ type Authenticator struct {
 
 func (a *Authenticator) Authenticate(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx := r.Context()
-		logger := telemetry.LoggerFromContext(ctx)
+		ctx := getContext(r)
+		logger := telemetry.LoggerFromContext(ctx.Context)
 
-		sessionCookie, err := r.Cookie("sirius")
-		if err != nil {
-			logger.Info("Missing session cookie. Redirecting.")
-			http.Redirect(w, r, fmt.Sprintf("%s/auth?redirect=%s", a.EnvVars.SiriusPublicURL, url.QueryEscape(a.EnvVars.Prefix+r.URL.Path)), http.StatusFound)
-			return
-		}
-
-		_, err, sessionValid := a.Client.CheckUserSession(ctx, sessionCookie)
+		_, err, sessionValid := a.Client.CheckUserSession(ctx)
 		if err != nil {
 			logger.Error("Error validating session.", "error", err)
 		}
 		if !sessionValid {
 			logger.Info("User session not valid. Redirecting.")
-			http.Redirect(w, r, fmt.Sprintf("%s/auth?redirect=%s", a.EnvVars.SiriusPublicURL, url.QueryEscape(a.EnvVars.Prefix+r.URL.Path)), http.StatusFound)
+			http.Redirect(w, r, fmt.Sprintf("%s/auth", a.EnvVars.SiriusPublicURL), http.StatusFound)
 			return
 		}
 
