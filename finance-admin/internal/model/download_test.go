@@ -27,7 +27,7 @@ func TestNewDownload(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want Download
+		want ReportRequest
 	}{
 		{
 			name: "Returns all fields",
@@ -42,7 +42,7 @@ func TestNewDownload(t *testing.T) {
 				dateFrom:           "21/07/2022",
 				email:              "Something@example.com",
 			},
-			want: Download{
+			want: ReportRequest{
 				ReportType:         "reportType",
 				ReportJournalType:  "reportJournalType",
 				ReportScheduleType: "reportScheduleType",
@@ -67,7 +67,7 @@ func TestNewDownload(t *testing.T) {
 				dateFrom:           "",
 				email:              "Something@example.com",
 			},
-			want: Download{
+			want: ReportRequest{
 				ReportType:         "reportType",
 				ReportJournalType:  "reportJournalType",
 				ReportScheduleType: "reportScheduleType",

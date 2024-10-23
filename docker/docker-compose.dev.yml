@@ -32,3 +32,11 @@ services:
 
   yarn:
     command: watch
+
+  json-server:
+    build:
+      dockerfile: ./json-server/Dockerfile
+    volumes:
+      - ./json-server/config:/app/config
+    ports:
+      - '3000:3000'
