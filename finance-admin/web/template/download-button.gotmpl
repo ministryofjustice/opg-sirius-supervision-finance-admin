@@ -1,0 +1,21 @@
+{{- /*gotype: github.com/ministryofjustice/opg-sirius-supervision-finance-admin/internal/server.GetDownloadVars*/ -}}
+{{ template "page" . }}
+{{ define "title" }}OPG Sirius Finance Admin - Download File{{ end }}
+{{ define "main-content" }}
+    {{ block "download" .Data }}
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <h1 class="govuk-heading-m  govuk-!-margin-bottom-1">Your file is ready</h1>
+                <form
+                        class="govuk-grid-column-one-third"
+                        method="get"
+                        hx-get="{{ prefix (printf "/download/request?uid=%s" .Uid) }}"
+                >
+                    <div class="govuk-button-group govuk-!-margin-top-5">
+                        <button id="download-button" class="govuk-button" data-module="govuk-button">Download</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    {{ end }}
+{{ end }}

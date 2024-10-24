@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/opg-sirius-finance-admin/finance-admin-api/event"
 	"io"
 	"net/http"
@@ -17,9 +18,15 @@ func (m *MockDispatch) FinanceAdminUpload(ctx context.Context, event event.Finan
 }
 
 type MockFileStorage struct {
-	bucketname string
-	filename   string
-	file       io.Reader
+	bucketname     string
+	filename       string
+	file           io.Reader
+	outgoingObject *s3.GetObjectOutput
+	err            error
+}
+
+func (m *MockFileStorage) GetFile(ctx context.Context, bucketName string, fileName string) (*s3.GetObjectOutput, error) {
+	return m.outgoingObject, m.err
 }
 
 func (m *MockFileStorage) PutFile(ctx context.Context, bucketName string, fileName string, file io.Reader) error {
