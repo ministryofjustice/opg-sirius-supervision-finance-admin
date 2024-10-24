@@ -53,7 +53,7 @@ func wrapHandler(errTmpl Template, errPartial string, envVars EnvironmentVars) f
 					return
 				}
 
-				logger.Error("Page Error", err)
+				logger.Error("Page Error", "error", err)
 
 				code := http.StatusInternalServerError
 				var serverStatusError StatusError
@@ -79,7 +79,7 @@ func wrapHandler(errTmpl Template, errPartial string, envVars EnvironmentVars) f
 				}
 
 				if err != nil {
-					logger.Error("failed to render error template", err)
+					logger.Error("failed to render error template", "error", err)
 					http.Error(w, err.Error(), http.StatusInternalServerError)
 				}
 			}
