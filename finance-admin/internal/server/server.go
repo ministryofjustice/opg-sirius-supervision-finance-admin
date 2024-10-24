@@ -60,11 +60,14 @@ func New(logger *slog.Logger, client *api.Client, templates map[string]*template
 	handleMux("POST /uploads", &UploadFormHandler{&route{client: client, tmpl: templates["uploads.gotmpl"], partial: "error-summary"}})
 
 	// file download
+	handleMux("GET /download", &GetDownloadHandler{&route{client: client, tmpl: templates["download-button.gotmpl"], partial: "download"}})
+
 	downloadMux := func(pattern string, h http.Handler) {
 		mux.Handle(pattern, telemetry.Middleware(logger)(auth.Authenticate(h)))
 	}
 
-	downloadMux("GET /download", downloadProxy(client))
+	downloadMux("GET /download/request", requestDownload(envVars))
+	downloadMux("GET /download/callback", downloadCallback(client))
 
 	mux.Handle("/health-check", healthCheck())
 
