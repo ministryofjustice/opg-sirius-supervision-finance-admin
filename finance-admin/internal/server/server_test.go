@@ -57,6 +57,10 @@ func (m mockApiClient) Upload(context api.Context, data shared.Upload) error {
 	return m.error
 }
 
-func (m mockApiClient) Download(context api.Context, data model.Download) error {
+func (m mockApiClient) RequestReport(context api.Context, data model.ReportRequest) error {
 	return m.error
+}
+
+func (m mockApiClient) Download(ctx api.Context, uid string) (*http.Response, error) {
+	return nil, m.error
 }
