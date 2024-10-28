@@ -80,8 +80,7 @@ func (i ReportUploadType) Key() string {
 
 func (i ReportUploadType) CSVHeaders() []string {
 	switch i {
-	case ReportTypeUploadPaymentsMOTOCard:
-	case ReportTypeUploadPaymentsOnlineCard:
+	case ReportTypeUploadPaymentsMOTOCard, ReportTypeUploadPaymentsOnlineCard:
 		return []string{"Ordercode", "Date", "Amount"}
 	case ReportTypeUploadDeputySchedule:
 		return []string{"Deputy number", "Deputy name", "Case number", "Client forename", "Client surname", "Do not invoice", "Total outstanding"}
