@@ -21,7 +21,7 @@ func TestServer_download(t *testing.T) {
 
 	mockS3 := MockFileStorage{}
 	mockS3.outgoingObject = &s3.GetObjectOutput{
-		Body:        io.NopCloser(bytes.NewReader([]byte(fileContent))),
+		Body:        io.NopCloser(bytes.NewBufferString(fileContent)),
 		ContentType: aws.String("text/csv"),
 	}
 

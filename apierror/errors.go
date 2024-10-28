@@ -77,3 +77,13 @@ func (ve ValidationError) HTTPStatus() int { return http.StatusUnprocessableEnti
 func (ve ValidationError) HasData() bool {
 	return true
 }
+
+type Unauthorized struct {
+	err error
+}
+
+func (u Unauthorized) Error() string {
+	return "unauthorized"
+}
+
+func (u Unauthorized) HTTPStatus() int { return http.StatusUnauthorized }
