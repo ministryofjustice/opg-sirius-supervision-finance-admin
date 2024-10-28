@@ -4,10 +4,10 @@ import (
 	"net/http"
 )
 
-func (c *Client) CheckUserSession(ctx Context) (*http.Response, error, bool) {
+func (c *Client) CheckUserSession(ctx Context) (bool, error) {
 	req, _ := c.newSessionRequest(ctx)
 
 	res, err := c.http.Do(req)
 
-	return res, err, err == nil && res.StatusCode == http.StatusOK
+	return err == nil && res.StatusCode == http.StatusOK, err
 }

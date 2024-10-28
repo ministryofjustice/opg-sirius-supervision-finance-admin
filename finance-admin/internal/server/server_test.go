@@ -50,7 +50,8 @@ func (r *mockRoute) execute(w http.ResponseWriter, req *http.Request, data any) 
 }
 
 type mockApiClient struct {
-	error error //nolint:golint,unused
+	error            error
+	downloadResponse *http.Response
 }
 
 func (m mockApiClient) Upload(context api.Context, data shared.Upload) error {
@@ -62,5 +63,5 @@ func (m mockApiClient) RequestReport(context api.Context, data model.ReportReque
 }
 
 func (m mockApiClient) Download(ctx api.Context, uid string) (*http.Response, error) {
-	return nil, m.error
+	return m.downloadResponse, m.error
 }

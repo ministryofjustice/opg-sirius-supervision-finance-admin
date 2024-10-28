@@ -12,7 +12,7 @@ func requestDownload(envVars EnvironmentVars) http.Handler {
 		uid := r.URL.Query().Get("uid")
 
 		if !IsHxRequest(r) {
-			http.Error(w, "Bad routing", http.StatusBadRequest)
+			http.Error(w, "htmx routing required", http.StatusBadRequest)
 			return
 		}
 		w.Header().Add("HX-Redirect", fmt.Sprintf("%s/download/callback?uid=%s", envVars.Prefix, uid))
