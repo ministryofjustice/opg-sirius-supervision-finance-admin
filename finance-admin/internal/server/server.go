@@ -21,7 +21,7 @@ type ApiClient interface {
 }
 
 type AuthClient interface {
-	CheckUserSession(ctx api.Context) (*http.Response, error, bool)
+	CheckUserSession(ctx api.Context) (bool, error)
 }
 
 type router interface {

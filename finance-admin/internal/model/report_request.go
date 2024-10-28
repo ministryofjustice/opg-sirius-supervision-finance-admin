@@ -14,7 +14,7 @@ type ReportRequest struct {
 	Email              string       `json:"email"`
 }
 
-func NewDownload(reportType, reportJournalType, reportScheduleType, reportAccountType, reportDebtType, dateOfTransaction, dateTo, dateFrom, email string) ReportRequest {
+func NewReportRequest(reportType, reportJournalType, reportScheduleType, reportAccountType, reportDebtType, dateOfTransaction, dateTo, dateFrom, email string) ReportRequest {
 	download := ReportRequest{
 		ReportType:         reportType,
 		ReportJournalType:  reportJournalType,

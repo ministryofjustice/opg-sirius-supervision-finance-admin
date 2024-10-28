@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func TestNewDownload(t *testing.T) {
+func TestNewReportRequest(t *testing.T) {
 	type args struct {
 		reportType         string
 		reportJournalType  string
@@ -83,7 +83,7 @@ func TestNewDownload(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := NewDownload(
+			got := NewReportRequest(
 				tt.args.reportType,
 				tt.args.reportJournalType,
 				tt.args.reportScheduleType,
