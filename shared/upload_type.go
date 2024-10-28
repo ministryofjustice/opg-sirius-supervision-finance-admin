@@ -80,7 +80,7 @@ func (i ReportUploadType) Key() string {
 
 func (i ReportUploadType) CSVHeaders() []string {
 	switch i {
-	case ReportTypeUploadPaymentsMOTOCard:
+	case ReportTypeUploadPaymentsMOTOCard, ReportTypeUploadPaymentsOnlineCard:
 		return []string{"Ordercode", "Date", "Amount"}
 	case ReportTypeUploadDeputySchedule:
 		return []string{"Deputy number", "Deputy name", "Case number", "Client forename", "Client surname", "Do not invoice", "Total outstanding"}
@@ -88,28 +88,22 @@ func (i ReportUploadType) CSVHeaders() []string {
 		return []string{"Client_no", "Deputy_name", "Total_debt"}
 	case ReportTypeUploadPaymentsOPGBACS:
 		return []string{"Line", "Type", "Code", "Number", "Transaction", "Value Date", "Amount", "Amount Reconciled", "Charges", "Status", "Desc Flex", "Consolidated line"}
-	default:
-		return []string{"Unknown report type"}
 	}
-}
 
-func (i ReportUploadType) S3Directory() string {
-	switch i {
-	case ReportTypeUploadPaymentsMOTOCard:
-		return "moto-card-payments"
-	default:
-		return "finance-admin"
-	}
+	return []string{"Unknown report type"}
 }
 
 func (i ReportUploadType) Filename(date string) (string, error) {
+	parsedDate, err := time.Parse("2006-01-02", date)
+	if err != nil {
+		return "", err
+	}
+
 	switch i {
 	case ReportTypeUploadPaymentsMOTOCard:
-		parsedDate, err := time.Parse("2006-01-02", date)
-		if err != nil {
-			return "", err
-		}
 		return fmt.Sprintf("feemoto_%snormal.csv", parsedDate.Format("02:01:2006")), nil
+	case ReportTypeUploadPaymentsOnlineCard:
+		return fmt.Sprintf("feemoto_%smlpayments.csv", parsedDate.Format("02:01:2006")), nil
 	default:
 		return "", nil
 	}
