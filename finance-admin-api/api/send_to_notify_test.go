@@ -83,23 +83,22 @@ func TestServer_formatFailedLines(t *testing.T) {
 
 func TestServer_createNotifyPayload(t *testing.T) {
 	tests := []struct {
-		name       string
-		detail     shared.FinanceAdminUploadProcessedEvent
-		reportType string
-		want       NotifyPayload
+		name   string
+		detail shared.FinanceAdminUploadProcessedEvent
+		want   NotifyPayload
 	}{
 		{
 			name: "Success",
 			detail: shared.FinanceAdminUploadProcessedEvent{
 				EmailAddress: "test@email.com",
+				ReportType:   shared.ReportTypeUploadPaymentsMOTOCard.Key(),
 			},
-			reportType: "test report",
 			want: NotifyPayload{
 				EmailAddress: "test@email.com",
 				TemplateId:   processingSuccessTemplateId,
 				Personalisation: struct {
 					ReportType string `json:"report_type"`
-				}{"test report"},
+				}{shared.ReportTypeUploadPaymentsMOTOCard.Translation()},
 			},
 		},
 		{
@@ -109,15 +108,15 @@ func TestServer_createNotifyPayload(t *testing.T) {
 				FailedLines: map[int]string{
 					1: "DATE_PARSE_ERROR",
 				},
+				ReportType: shared.ReportTypeUploadPaymentsMOTOCard.Key(),
 			},
-			reportType: "test report",
 			want: NotifyPayload{
 				EmailAddress: "test@email.com",
 				TemplateId:   processingFailedTemplateId,
 				Personalisation: struct {
 					FailedLines []string `json:"failed_lines"`
 					ReportType  string   `json:"report_type"`
-				}{[]string{"Line 1: Unable to parse date"}, "test report"},
+				}{[]string{"Line 1: Unable to parse date"}, shared.ReportTypeUploadPaymentsMOTOCard.Translation()},
 			},
 		},
 		{
@@ -125,21 +124,21 @@ func TestServer_createNotifyPayload(t *testing.T) {
 			detail: shared.FinanceAdminUploadProcessedEvent{
 				EmailAddress: "test@email.com",
 				Error:        "Couldn't open report",
+				ReportType:   shared.ReportTypeUploadPaymentsMOTOCard.Key(),
 			},
-			reportType: "test report",
 			want: NotifyPayload{
 				EmailAddress: "test@email.com",
 				TemplateId:   processingErrorTemplateId,
 				Personalisation: struct {
 					Error      string `json:"error"`
 					ReportType string `json:"report_type"`
-				}{"Couldn't open report", "test report"},
+				}{"Couldn't open report", shared.ReportTypeUploadPaymentsMOTOCard.Translation()},
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			payload := createNotifyPayload(tt.detail, tt.reportType)
+			payload := createNotifyPayload(tt.detail)
 			assert.Equal(t, tt.want, payload)
 		})
 	}
@@ -195,9 +194,10 @@ func Test_SendEmailToNotify(t *testing.T) {
 			detail := shared.FinanceAdminUploadProcessedEvent{
 				EmailAddress: "test@email.com",
 				FailedLines:  map[int]string{1: "test"},
+				ReportType:   shared.ReportTypeUploadPaymentsMOTOCard.Key(),
 			}
 
-			err := server.SendEmailToNotify(ctx, detail, "testReport")
+			err := server.SendEmailToNotify(ctx, detail)
 			assert.Equal(t, tt.expectedErr, err)
 		})
 	}
