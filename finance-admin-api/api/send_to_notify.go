@@ -91,9 +91,10 @@ func formatFailedLines(failedLines map[int]string) []string {
 	return formattedLines
 }
 
-func createNotifyPayload(detail shared.FinanceAdminUploadProcessedEvent, reportType string) NotifyPayload {
+func createNotifyPayload(detail shared.FinanceAdminUploadProcessedEvent) NotifyPayload {
 	var payload NotifyPayload
 
+	reportType := shared.ParseReportUploadType(detail.ReportType)
 	if detail.Error != "" {
 		payload = NotifyPayload{
 			detail.EmailAddress,
@@ -103,7 +104,7 @@ func createNotifyPayload(detail shared.FinanceAdminUploadProcessedEvent, reportT
 				ReportType string `json:"report_type"`
 			}{
 				detail.Error,
-				reportType,
+				reportType.Translation(),
 			},
 		}
 	} else if len(detail.FailedLines) != 0 {
@@ -115,7 +116,7 @@ func createNotifyPayload(detail shared.FinanceAdminUploadProcessedEvent, reportT
 				ReportType  string   `json:"report_type"`
 			}{
 				formatFailedLines(detail.FailedLines),
-				reportType,
+				reportType.Translation(),
 			},
 		}
 	} else {
@@ -124,14 +125,14 @@ func createNotifyPayload(detail shared.FinanceAdminUploadProcessedEvent, reportT
 			processingSuccessTemplateId,
 			struct {
 				ReportType string `json:"report_type"`
-			}{reportType},
+			}{reportType.Translation()},
 		}
 	}
 
 	return payload
 }
 
-func (s *Server) SendEmailToNotify(ctx context.Context, detail shared.FinanceAdminUploadProcessedEvent, reportType string) error {
+func (s *Server) SendEmailToNotify(ctx context.Context, detail shared.FinanceAdminUploadProcessedEvent) error {
 	signedToken, err := createSignedJwtToken()
 	if err != nil {
 		return err
@@ -139,7 +140,7 @@ func (s *Server) SendEmailToNotify(ctx context.Context, detail shared.FinanceAdm
 
 	var body bytes.Buffer
 
-	err = json.NewEncoder(&body).Encode(createNotifyPayload(detail, reportType))
+	err = json.NewEncoder(&body).Encode(createNotifyPayload(detail))
 	if err != nil {
 		return err
 	}
