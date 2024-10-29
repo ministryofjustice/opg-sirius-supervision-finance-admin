@@ -2,7 +2,7 @@ package model
 
 import "github.com/opg-sirius-finance-admin/shared"
 
-type Download struct {
+type ReportRequest struct {
 	ReportType         string       `json:"reportType"`
 	ReportJournalType  string       `json:"reportJournalType"`
 	ReportScheduleType string       `json:"reportScheduleType"`
@@ -14,8 +14,8 @@ type Download struct {
 	Email              string       `json:"email"`
 }
 
-func NewDownload(reportType, reportJournalType, reportScheduleType, reportAccountType, reportDebtType, dateOfTransaction, dateTo, dateFrom, email string) Download {
-	download := Download{
+func NewReportRequest(reportType, reportJournalType, reportScheduleType, reportAccountType, reportDebtType, dateOfTransaction, dateTo, dateFrom, email string) ReportRequest {
+	download := ReportRequest{
 		ReportType:         reportType,
 		ReportJournalType:  reportJournalType,
 		ReportScheduleType: reportScheduleType,

@@ -27,8 +27,8 @@ func (h *RequestReportHandler) render(v AppVars, w http.ResponseWriter, r *http.
 		email              = params.Get("email")
 	)
 
-	data := model.NewDownload(reportType, reportJournalType, reportScheduleType, reportAccountType, reportDebtType, dateOfTransaction, dateTo, dateFrom, email)
-	err := h.Client().Download(ctx, data)
+	data := model.NewReportRequest(reportType, reportJournalType, reportScheduleType, reportAccountType, reportDebtType, dateOfTransaction, dateTo, dateFrom, email)
+	err := h.Client().RequestReport(ctx, data)
 
 	if err != nil {
 		var (

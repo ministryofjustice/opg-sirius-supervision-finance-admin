@@ -13,6 +13,7 @@ import (
 
 type S3Client interface {
 	PutObject(ctx context.Context, params *s3.PutObjectInput, optFns ...func(*s3.Options)) (*s3.PutObjectOutput, error)
+	GetObject(ctx context.Context, params *s3.GetObjectInput, optFns ...func(*s3.Options)) (*s3.GetObjectOutput, error)
 	Options() s3.Options
 }
 
@@ -47,6 +48,13 @@ func NewClient(ctx context.Context) (*Client, error) {
 	})
 
 	return &Client{client}, nil
+}
+
+func (c *Client) GetFile(ctx context.Context, bucketName string, filename string) (*s3.GetObjectOutput, error) {
+	return c.s3.GetObject(ctx, &s3.GetObjectInput{
+		Bucket: aws.String(bucketName),
+		Key:    aws.String(filename),
+	})
 }
 
 func (c *Client) PutFile(ctx context.Context, bucketName string, fileName string, file io.Reader) error {

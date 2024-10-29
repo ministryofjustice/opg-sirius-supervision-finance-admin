@@ -7,10 +7,10 @@
   resolved "https://registry.yarnpkg.com/@colors/colors/-/colors-1.5.0.tgz#bb504579c1cae923e6576a4f5da43d25f97bdbd9"
   integrity sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==
 
-"@cypress/request@^3.0.0":
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/@cypress/request/-/request-3.0.1.tgz#72d7d5425236a2413bd3d8bb66d02d9dc3168960"
-  integrity sha512-TWivJlJi8ZDx2wGOw1dbLuHJKUYX7bWySw377nlnGOW3hP9/MUKIsEdXT/YngWxVdgNCHRBmFlBipE+5/2ZZlQ==
+"@cypress/request@3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@cypress/request/-/request-3.0.0.tgz#7f58dfda087615ed4e6aab1b25fffe7630d6dd85"
+  integrity sha512-GKFCqwZwMYmL3IBoNeR2MM1SnxRIGERsQOTWeQKoYBt2JLqcqiy7JXqO894FLrpjZYqGxW92MNwRH2BN56obdQ==
   dependencies:
     aws-sign2 "~0.7.0"
     aws4 "^1.8.0"
@@ -1637,7 +1637,6 @@ onetime@^5.1.0:
 
 "opg-sirius-header@ministryofjustice/opg-sirius-header#semver:v0.24.0":
   version "1.0.0"
-  uid "8c0613962eaf4c8f47c0cef513de3383d0d38b20"
   resolved "https://codeload.github.com/ministryofjustice/opg-sirius-header/tar.gz/8c0613962eaf4c8f47c0cef513de3383d0d38b20"
   dependencies:
     "@cypress/request" "3.0.0"
