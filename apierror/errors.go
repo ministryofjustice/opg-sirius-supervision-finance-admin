@@ -79,11 +79,15 @@ func (ve ValidationError) HasData() bool {
 }
 
 type Unauthorized struct {
-	err error
+	error
 }
 
 func (u Unauthorized) Error() string {
 	return "unauthorized"
+}
+
+func (u Unauthorized) Unwrap() error {
+	return u.error
 }
 
 func (u Unauthorized) HTTPStatus() int { return http.StatusUnauthorized }

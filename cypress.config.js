@@ -19,6 +19,10 @@ module.exports = defineConfig({
             });
         },
         baseUrl: "http://localhost:8888/finance-admin",
+        downloadsFolder: "downloads",
+        specPattern: "e2e/**/*.cy.{js,ts}",
+        screenshotsFolder: "screenshots",
+        supportFile: "support/e2e.ts",
         modifyObstructiveCode: false,
     },
     viewportWidth: 1000,
