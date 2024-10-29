@@ -15,8 +15,13 @@ import (
 )
 
 type ApiClient interface {
-	Download(api.Context, model.Download) error
+	RequestReport(api.Context, model.ReportRequest) error
 	Upload(api.Context, shared.Upload) error
+	Download(api.Context, string) (*http.Response, error)
+}
+
+type AuthClient interface {
+	CheckUserSession(ctx api.Context) (bool, error)
 }
 
 type router interface {
@@ -29,13 +34,20 @@ type Template interface {
 	ExecuteTemplate(wr io.Writer, name string, data any) error
 }
 
-func New(logger *slog.Logger, client ApiClient, templates map[string]*template.Template, envVars EnvironmentVars) http.Handler {
+type HtmxHandler interface {
+	render(app AppVars, w http.ResponseWriter, r *http.Request) error
+}
 
+func New(logger *slog.Logger, client *api.Client, templates map[string]*template.Template, envVars EnvironmentVars) http.Handler {
 	mux := http.NewServeMux()
+	auth := Authenticator{
+		Client:  client,
+		EnvVars: envVars,
+	}
 
-	handleMux := func(pattern string, h Handler) {
+	handleMux := func(pattern string, h HtmxHandler) {
 		errors := wrapHandler(templates["error.gotmpl"], "main", envVars)
-		mux.Handle(pattern, telemetry.Middleware(logger)(errors(h)))
+		mux.Handle(pattern, telemetry.Middleware(logger)(auth.Authenticate(errors(h))))
 	}
 
 	// tabs
@@ -46,6 +58,16 @@ func New(logger *slog.Logger, client ApiClient, templates map[string]*template.T
 	//forms
 	handleMux("POST /request-report", &RequestReportHandler{&route{client: client, tmpl: templates["downloads.gotmpl"], partial: "error-summary"}})
 	handleMux("POST /uploads", &UploadFormHandler{&route{client: client, tmpl: templates["uploads.gotmpl"], partial: "error-summary"}})
+
+	// file download
+	handleMux("GET /download", &GetDownloadHandler{&route{client: client, tmpl: templates["download-button.gotmpl"], partial: "download"}})
+
+	downloadMux := func(pattern string, h http.Handler) {
+		mux.Handle(pattern, telemetry.Middleware(logger)(auth.Authenticate(h)))
+	}
+
+	downloadMux("GET /download/request", requestDownload(envVars))
+	downloadMux("GET /download/callback", downloadCallback(client))
 
 	mux.Handle("/health-check", healthCheck())
 
