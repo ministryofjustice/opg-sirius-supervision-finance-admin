@@ -49,6 +49,7 @@ type FinanceAdminUploadProcessedEvent struct {
 	EmailAddress string         `json:"emailAddress"`
 	FailedLines  map[int]string `json:"failedLines"`
 	Error        string         `json:"error"`
+	ReportType   string         `json:"reportType"`
 }
 
 type RequestParameters struct {
