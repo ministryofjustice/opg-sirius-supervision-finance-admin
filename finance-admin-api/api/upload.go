@@ -16,9 +16,12 @@ import (
 	"unicode"
 )
 
+const s3Directory = "finance-admin"
+
 func validateCSVHeaders(file []byte, reportUploadType shared.ReportUploadType) error {
 	fileReader := bytes.NewReader(file)
 	csvReader := csv.NewReader(fileReader)
+
 	expectedHeaders := reportUploadType.CSVHeaders()
 
 	readHeaders, err := csvReader.Read()
@@ -95,7 +98,7 @@ func (s *Server) upload(w http.ResponseWriter, r *http.Request) error {
 	err = s.filestorage.PutFile(
 		ctx,
 		os.Getenv("ASYNC_S3_BUCKET"),
-		fmt.Sprintf("%s/%s", upload.ReportUploadType.S3Directory(), upload.Filename),
+		fmt.Sprintf("%s/%s", s3Directory, upload.Filename),
 		bytes.NewReader(upload.File))
 
 	if err != nil {
@@ -104,7 +107,8 @@ func (s *Server) upload(w http.ResponseWriter, r *http.Request) error {
 
 	uploadEvent := event.FinanceAdminUpload{
 		EmailAddress: upload.Email,
-		Filename:     fmt.Sprintf("%s/%s", upload.ReportUploadType.S3Directory(), upload.Filename),
+		Filename:     fmt.Sprintf("%s/%s", s3Directory, upload.Filename),
+		UploadType:   upload.ReportUploadType.Key(),
 	}
 	err = s.dispatch.FinanceAdminUpload(ctx, uploadEvent)
 
