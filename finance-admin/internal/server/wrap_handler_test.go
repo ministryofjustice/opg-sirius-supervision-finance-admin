@@ -23,7 +23,7 @@ func TestStatusError_Error(t *testing.T) {
 	assert.Equal(t, "999 ", StatusError(999).Error())
 }
 
-type mockHandler struct {
+type mockRenderer struct {
 	app    AppVars
 	w      http.ResponseWriter
 	r      *http.Request
@@ -31,7 +31,7 @@ type mockHandler struct {
 	Called int
 }
 
-func (m *mockHandler) render(app AppVars, w http.ResponseWriter, r *http.Request) error {
+func (m *mockRenderer) render(app AppVars, w http.ResponseWriter, r *http.Request) error {
 	m.app = app
 	m.w = w
 	m.r = r
@@ -47,7 +47,7 @@ func Test_wrapHandler_successful_request(t *testing.T) {
 	errorTemplate := &mockTemplate{}
 	envVars := EnvironmentVars{}
 	nextHandlerFunc := wrapHandler(errorTemplate, "", envVars)
-	next := &mockHandler{}
+	next := &mockRenderer{}
 	httpHandler := nextHandlerFunc(next)
 	httpHandler.ServeHTTP(w, r)
 
@@ -85,7 +85,7 @@ func Test_wrapHandler_status_error_handling(t *testing.T) {
 			errorTemplate := &mockTemplate{error: errors.New("some template error")}
 			envVars := EnvironmentVars{}
 			nextHandlerFunc := wrapHandler(errorTemplate, "", envVars)
-			next := &mockHandler{Err: test.error}
+			next := &mockRenderer{Err: test.error}
 			httpHandler := nextHandlerFunc(next)
 			httpHandler.ServeHTTP(w, r)
 
