@@ -22,11 +22,11 @@ const processingSuccessTemplateId = "8c85cf6c-695f-493a-a25f-77b4fb5f6a8e"
 
 type ProcessingFailedPersonalisation struct {
 	FailedLines []string `json:"failed_lines"`
-	ReportType  string   `json:"report_type"`
+	UploadType  string   `json:"upload_type"`
 }
 
 type ProcessingSuccessPersonalisation struct {
-	ReportType string `json:"report_type"`
+	UploadType string `json:"upload_type"`
 }
 
 type NotifyPayload struct {
@@ -94,14 +94,14 @@ func formatFailedLines(failedLines map[int]string) []string {
 func createNotifyPayload(detail shared.FinanceAdminUploadProcessedEvent) NotifyPayload {
 	var payload NotifyPayload
 
-	reportType := shared.ParseReportUploadType(detail.ReportType)
+	reportType := shared.ParseReportUploadType(detail.UploadType)
 	if detail.Error != "" {
 		payload = NotifyPayload{
 			detail.EmailAddress,
 			processingErrorTemplateId,
 			struct {
 				Error      string `json:"error"`
-				ReportType string `json:"report_type"`
+				UploadType string `json:"upload_type"`
 			}{
 				detail.Error,
 				reportType.Translation(),
@@ -113,7 +113,7 @@ func createNotifyPayload(detail shared.FinanceAdminUploadProcessedEvent) NotifyP
 			processingFailedTemplateId,
 			struct {
 				FailedLines []string `json:"failed_lines"`
-				ReportType  string   `json:"report_type"`
+				UploadType  string   `json:"upload_type"`
 			}{
 				formatFailedLines(detail.FailedLines),
 				reportType.Translation(),
@@ -124,7 +124,7 @@ func createNotifyPayload(detail shared.FinanceAdminUploadProcessedEvent) NotifyP
 			detail.EmailAddress,
 			processingSuccessTemplateId,
 			struct {
-				ReportType string `json:"report_type"`
+				UploadType string `json:"upload_type"`
 			}{reportType.Translation()},
 		}
 	}

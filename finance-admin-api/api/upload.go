@@ -108,7 +108,7 @@ func (s *Server) upload(w http.ResponseWriter, r *http.Request) error {
 	uploadEvent := event.FinanceAdminUpload{
 		EmailAddress: upload.Email,
 		Filename:     fmt.Sprintf("%s/%s", s3Directory, upload.Filename),
-		ReportType:   upload.ReportUploadType.Key(),
+		UploadType:   upload.ReportUploadType.Key(),
 	}
 	err = s.dispatch.FinanceAdminUpload(ctx, uploadEvent)
 
