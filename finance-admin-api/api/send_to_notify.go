@@ -94,7 +94,7 @@ func formatFailedLines(failedLines map[int]string) []string {
 func createNotifyPayload(detail shared.FinanceAdminUploadProcessedEvent) NotifyPayload {
 	var payload NotifyPayload
 
-	reportType := shared.ParseReportUploadType(detail.UploadType)
+	uploadType := shared.ParseReportUploadType(detail.UploadType)
 	if detail.Error != "" {
 		payload = NotifyPayload{
 			detail.EmailAddress,
@@ -104,7 +104,7 @@ func createNotifyPayload(detail shared.FinanceAdminUploadProcessedEvent) NotifyP
 				UploadType string `json:"upload_type"`
 			}{
 				detail.Error,
-				reportType.Translation(),
+				uploadType.Translation(),
 			},
 		}
 	} else if len(detail.FailedLines) != 0 {
@@ -116,7 +116,7 @@ func createNotifyPayload(detail shared.FinanceAdminUploadProcessedEvent) NotifyP
 				UploadType  string   `json:"upload_type"`
 			}{
 				formatFailedLines(detail.FailedLines),
-				reportType.Translation(),
+				uploadType.Translation(),
 			},
 		}
 	} else {
@@ -125,7 +125,7 @@ func createNotifyPayload(detail shared.FinanceAdminUploadProcessedEvent) NotifyP
 			processingSuccessTemplateId,
 			struct {
 				UploadType string `json:"upload_type"`
-			}{reportType.Translation()},
+			}{uploadType.Translation()},
 		}
 	}
 

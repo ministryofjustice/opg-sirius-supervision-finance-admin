@@ -35,6 +35,13 @@ func TestReportUploadType_Filename(t *testing.T) {
 			wantFilename: "feemoto_03:12:2024mlpayments.csv",
 		},
 		{
+			name:         "Supervision BACS payments report type",
+			uploadType:   ReportTypeUploadPaymentsSupervisionBACS,
+			dateString:   "2024-10-01",
+			wantErr:      false,
+			wantFilename: "feebacs_01:10:2024_new_acc.csv",
+		},
+		{
 			name:         "Invalid date",
 			uploadType:   ReportTypeUploadPaymentsMOTOCard,
 			dateString:   "02/01/2020",
