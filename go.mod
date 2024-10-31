@@ -11,7 +11,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.66.1
 	github.com/aws/aws-sdk-go-v2/service/sts v1.32.2
 	github.com/golang-jwt/jwt/v5 v5.2.1
-	github.com/ministryofjustice/opg-go-common v1.30.0
+	github.com/ministryofjustice/opg-go-common v1.31.0
 	github.com/stretchr/testify v1.9.0
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.56.0
 )
