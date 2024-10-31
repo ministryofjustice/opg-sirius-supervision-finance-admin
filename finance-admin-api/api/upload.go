@@ -21,7 +21,6 @@ const s3Directory = "finance-admin"
 func validateCSVHeaders(file []byte, reportUploadType shared.ReportUploadType) error {
 	fileReader := bytes.NewReader(file)
 	csvReader := csv.NewReader(fileReader)
-
 	expectedHeaders := reportUploadType.CSVHeaders()
 
 	readHeaders, err := csvReader.Read()
@@ -108,7 +107,7 @@ func (s *Server) upload(w http.ResponseWriter, r *http.Request) error {
 	uploadEvent := event.FinanceAdminUpload{
 		EmailAddress: upload.Email,
 		Filename:     fmt.Sprintf("%s/%s", s3Directory, upload.Filename),
-		ReportType:   upload.ReportUploadType.Key(),
+		UploadType:   upload.ReportUploadType.Key(),
 	}
 	err = s.dispatch.FinanceAdminUpload(ctx, uploadEvent)
 
