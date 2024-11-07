@@ -21,7 +21,6 @@ const s3Directory = "finance-admin"
 func validateCSVHeaders(file []byte, reportUploadType shared.ReportUploadType) error {
 	fileReader := bytes.NewReader(file)
 	csvReader := csv.NewReader(fileReader)
-
 	expectedHeaders := reportUploadType.CSVHeaders()
 
 	readHeaders, err := csvReader.Read()
