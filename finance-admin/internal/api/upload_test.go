@@ -15,14 +15,12 @@ import (
 func TestUploadUrlSwitching(t *testing.T) {
 	mockClient := &MockClient{}
 	client, _ := NewClient(mockClient, "http://localhost:3000", "")
-	uploadDate := shared.NewDate("2025-06-15")
-	content := []byte("file content")
 
 	data := shared.Upload{
 		ReportUploadType: shared.ParseReportUploadType("reportUploadType"),
-		UploadDate:       &uploadDate,
+		UploadDate:       shared.NewDate("2025-06-15"),
 		Email:            "Something@example.com",
-		File:             content,
+		File:             []byte("file content"),
 	}
 
 	GetDoFunc = func(req *http.Request) (*http.Response, error) {
