@@ -4,7 +4,7 @@ import "io"
 
 type Upload struct {
 	ReportUploadType ReportUploadType `json:"reportUploadType"`
-	UploadDate       *Date            `json:"uploadDate"`
+	UploadDate       Date             `json:"uploadDate"`
 	Email            string           `json:"email"`
 	Filename         string           `json:"filename"`
 	File             []byte           `json:"file"`
@@ -25,7 +25,7 @@ func NewUpload(reportUploadType ReportUploadType, uploadDate string, email strin
 
 	if uploadDate != "" {
 		uploadDateFormatted := NewDate(uploadDate)
-		upload.UploadDate = &uploadDateFormatted
+		upload.UploadDate = uploadDateFormatted
 	}
 
 	return upload, nil
