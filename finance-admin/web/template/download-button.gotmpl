@@ -3,19 +3,23 @@
 {{ define "title" }}OPG Sirius Finance Admin - Download File{{ end }}
 {{ define "main-content" }}
     {{ block "download" .Data }}
+
         <div class="govuk-grid-row govuk-!-margin-top-5  govuk-!-margin-bottom-5">
             <div class="govuk-grid-column-full">
-                <h1 class="govuk-heading-m  govuk-!-margin-bottom-1">{{ .Filename }} is ready to download</h1>
-                <form
-                        class="govuk-grid-column-one-third"
-                        method="get"
-                        hx-get="{{ prefix (printf "/download/request?uid=%s" .Uid) }}"
-                >
+                {{ if .ErrorMessage }}
+                    <h1 class="govuk-heading-m  govuk-!-margin-bottom-1">{{ .ErrorMessage }}</h1>
+                {{ else }}
+                    <h1 class="govuk-heading-m  govuk-!-margin-bottom-1">{{ .Filename }} is ready to download</h1>
                     <div class="govuk-button-group govuk-!-margin-top-5">
-                        <button id="download-button" class="govuk-button" data-module="govuk-button">Download</button>
+                        <a id="download-button"
+                           class="govuk-button"
+                           href="{{ prefix (printf "/download/callback?uid=%s" .Uid) }}"
+                           download
+                        >Download</a>
                     </div>
-                </form>
+                {{ end }}
             </div>
         </div>
+
     {{ end }}
 {{ end }}

@@ -17,6 +17,7 @@ import (
 type ApiClient interface {
 	RequestReport(api.Context, model.ReportRequest) error
 	Upload(api.Context, shared.Upload) error
+	CheckDownload(api.Context, string) error
 	Download(api.Context, string) (*http.Response, error)
 }
 
@@ -66,7 +67,6 @@ func New(logger *slog.Logger, client *api.Client, templates map[string]*template
 		mux.Handle(pattern, telemetry.Middleware(logger)(auth.Authenticate(h)))
 	}
 
-	downloadMux("GET /download/request", requestDownload(envVars))
 	downloadMux("GET /download/callback", downloadCallback(client))
 
 	mux.Handle("/health-check", healthCheck())

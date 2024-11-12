@@ -14,6 +14,7 @@ import (
 type S3Client interface {
 	PutObject(ctx context.Context, params *s3.PutObjectInput, optFns ...func(*s3.Options)) (*s3.PutObjectOutput, error)
 	GetObject(ctx context.Context, params *s3.GetObjectInput, optFns ...func(*s3.Options)) (*s3.GetObjectOutput, error)
+	HeadObject(ctx context.Context, params *s3.HeadObjectInput, optFns ...func(*s3.Options)) (*s3.HeadObjectOutput, error)
 	Options() s3.Options
 }
 
@@ -50,11 +51,11 @@ func NewClient(ctx context.Context) (*Client, error) {
 	return &Client{client}, nil
 }
 
-func (c *Client) GetFile(ctx context.Context, bucketName string, filename string, versionId string) (*s3.GetObjectOutput, error) {
+func (c *Client) GetFile(ctx context.Context, bucketName string, filename string, versionID string) (*s3.GetObjectOutput, error) {
 	return c.s3.GetObject(ctx, &s3.GetObjectInput{
 		Bucket:    aws.String(bucketName),
 		Key:       aws.String(filename),
-		VersionId: aws.String(versionId),
+		VersionId: aws.String(versionID),
 	})
 }
 
@@ -68,4 +69,16 @@ func (c *Client) PutFile(ctx context.Context, bucketName string, fileName string
 	})
 
 	return err
+}
+
+func (c *Client) FileExists(ctx context.Context, bucketName string, filename string, versionID string) bool {
+	_, err := c.s3.HeadObject(ctx, &s3.HeadObjectInput{
+		Bucket:    aws.String(bucketName),
+		Key:       aws.String(filename),
+		VersionId: aws.String(versionID),
+	})
+	if err != nil {
+		return false
+	}
+	return true
 }

@@ -23,6 +23,7 @@ type MockFileStorage struct {
 	file           io.Reader
 	outgoingObject *s3.GetObjectOutput
 	err            error
+	exists         bool
 }
 
 func (m *MockFileStorage) GetFile(ctx context.Context, bucketName string, fileName string, versionId string) (*s3.GetObjectOutput, error) {
@@ -35,6 +36,11 @@ func (m *MockFileStorage) PutFile(ctx context.Context, bucketName string, fileNa
 	m.file = file
 
 	return nil
+}
+
+// add a FileExists method to the MockFileStorage struct
+func (m *MockFileStorage) FileExists(ctx context.Context, bucketName string, filename string, versionID string) bool {
+	return m.exists
 }
 
 type MockHttpClient struct {

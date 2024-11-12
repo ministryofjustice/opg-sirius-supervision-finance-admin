@@ -9,43 +9,9 @@ import (
 	"testing"
 )
 
-func TestRequestDownload_success(t *testing.T) {
-	w := httptest.NewRecorder()
-	r, _ := http.NewRequest(http.MethodGet, "download/request?uid=dGVzdC5jc3Y=", nil)
-	r.Header.Add("HX-Request", "true")
-
-	envVars := EnvironmentVars{
-		SiriusURL: "https://sirius.gov.uk/v1/api",
-		Prefix:    "finance-admin",
-	}
-
-	handler := requestDownload(envVars)
-	handler.ServeHTTP(w, r)
-	resp := w.Result()
-
-	assert.Equal(t, http.StatusOK, resp.StatusCode)
-	assert.Equal(t, "finance-admin/download/callback?uid=dGVzdC5jc3Y=", resp.Header.Get("HX-Redirect"))
-}
-
-func TestRequestDownload_notHtmx(t *testing.T) {
-	w := httptest.NewRecorder()
-	r, _ := http.NewRequest(http.MethodGet, "download/request?uid=dGVzdC5jc3Y=", nil)
-
-	envVars := EnvironmentVars{
-		SiriusURL: "https://sirius.gov.uk/v1/api",
-		Prefix:    "finance-admin",
-	}
-
-	handler := requestDownload(envVars)
-	handler.ServeHTTP(w, r)
-	resp := w.Result()
-
-	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
-}
-
 func TestDownloadCallback_success(t *testing.T) {
 	w := httptest.NewRecorder()
-	r, _ := http.NewRequest(http.MethodGet, "download/callback?uid=dGVzdC5jc3Y=", nil)
+	r, _ := http.NewRequest(http.MethodGet, "download?uid=eyJLZXkiOiJ0ZXN0LmNzdiIsIlZlcnNpb25JZCI6InZwckF4c1l0TFZzYjVQOUhfcUhlTlVpVTlNQm5QTmN6In0=", nil)
 	fileContent := "col1,col2,col3\n1,a,Z\n"
 
 	download := &http.Response{
