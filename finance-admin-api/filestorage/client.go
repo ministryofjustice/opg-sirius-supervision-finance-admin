@@ -50,10 +50,11 @@ func NewClient(ctx context.Context) (*Client, error) {
 	return &Client{client}, nil
 }
 
-func (c *Client) GetFile(ctx context.Context, bucketName string, filename string) (*s3.GetObjectOutput, error) {
+func (c *Client) GetFile(ctx context.Context, bucketName string, filename string, versionId string) (*s3.GetObjectOutput, error) {
 	return c.s3.GetObject(ctx, &s3.GetObjectInput{
-		Bucket: aws.String(bucketName),
-		Key:    aws.String(filename),
+		Bucket:    aws.String(bucketName),
+		Key:       aws.String(filename),
+		VersionId: aws.String(versionId),
 	})
 }
 

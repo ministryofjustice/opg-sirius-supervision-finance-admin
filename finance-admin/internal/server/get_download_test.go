@@ -12,7 +12,7 @@ func TestGetDownload(t *testing.T) {
 	ro := &mockRoute{client: client}
 
 	w := httptest.NewRecorder()
-	r, _ := http.NewRequest(http.MethodGet, "download?uid=dGVzdC5jc3Y=", nil)
+	r, _ := http.NewRequest(http.MethodGet, "download?uid=eyJLZXkiOiJ0ZXN0LmNzdiIsIlZlcnNpb25JZCI6InZwckF4c1l0TFZzYjVQOUhfcUhlTlVpVTlNQm5QTmN6In0=", nil)
 
 	appVars := AppVars{}
 
@@ -23,7 +23,7 @@ func TestGetDownload(t *testing.T) {
 	assert.True(t, ro.executed)
 
 	expected := GetDownloadVars{
-		Uid:      "dGVzdC5jc3Y=",
+		Uid:      "eyJLZXkiOiJ0ZXN0LmNzdiIsIlZlcnNpb25JZCI6InZwckF4c1l0TFZzYjVQOUhfcUhlTlVpVTlNQm5QTmN6In0=",
 		Filename: "test.csv",
 		AppVars:  appVars,
 	}

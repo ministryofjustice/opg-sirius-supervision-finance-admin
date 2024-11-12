@@ -25,7 +25,7 @@ type MockFileStorage struct {
 	err            error
 }
 
-func (m *MockFileStorage) GetFile(ctx context.Context, bucketName string, fileName string) (*s3.GetObjectOutput, error) {
+func (m *MockFileStorage) GetFile(ctx context.Context, bucketName string, fileName string, versionId string) (*s3.GetObjectOutput, error) {
 	return m.outgoingObject, m.err
 }
 
