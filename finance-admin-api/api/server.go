@@ -22,7 +22,7 @@ type Dispatch interface {
 }
 
 type FileStorage interface {
-	GetFile(ctx context.Context, bucketName string, filename string) (*s3.GetObjectOutput, error)
+	GetFile(ctx context.Context, bucketName string, filename string, versionId string) (*s3.GetObjectOutput, error)
 	PutFile(ctx context.Context, bucketName string, fileName string, file io.Reader) error
 }
 

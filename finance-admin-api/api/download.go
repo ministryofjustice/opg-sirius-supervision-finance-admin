@@ -1,11 +1,11 @@
 package api
 
 import (
-	"encoding/base64"
 	"errors"
 	"fmt"
 	"github.com/aws/smithy-go"
 	"github.com/opg-sirius-finance-admin/apierror"
+	"github.com/opg-sirius-finance-admin/shared"
 	"io"
 	"net/http"
 	"os"
@@ -14,9 +14,14 @@ import (
 func (s *Server) download(w http.ResponseWriter, r *http.Request) error {
 	ctx := r.Context()
 	uid := r.URL.Query().Get("uid")
-	filename := decryptFilename(uid)
 
-	result, err := s.filestorage.GetFile(ctx, os.Getenv("REPORTS_S3_BUCKET"), filename)
+	var downloadRequest shared.DownloadRequest
+	err := downloadRequest.Decode(uid)
+	if err != nil {
+		return err
+	}
+
+	result, err := s.filestorage.GetFile(ctx, os.Getenv("REPORTS_S3_BUCKET"), downloadRequest.Key, downloadRequest.VersionId)
 	if err != nil {
 		var apiErr smithy.APIError
 		if errors.As(err, &apiErr) {
@@ -28,16 +33,11 @@ func (s *Server) download(w http.ResponseWriter, r *http.Request) error {
 	}
 	defer result.Body.Close()
 
-	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s", filename))
+	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s", downloadRequest.Key))
 	w.Header().Set("Content-Type", *result.ContentType)
 
 	// Stream the S3 object to the response writer using io.Copy
 	_, err = io.Copy(w, result.Body)
 
 	return err
-}
-
-func decryptFilename(uid string) string {
-	filename, _ := base64.StdEncoding.DecodeString(uid)
-	return string(filename)
 }

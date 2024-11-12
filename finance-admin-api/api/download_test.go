@@ -14,7 +14,7 @@ import (
 )
 
 func TestServer_download(t *testing.T) {
-	req := httptest.NewRequest(http.MethodGet, "/download?uid=dGVzdC5jc3Y=", nil)
+	req := httptest.NewRequest(http.MethodGet, "/download?uid=eyJLZXkiOiJ0ZXN0LmNzdiIsIlZlcnNpb25JZCI6InZwckF4c1l0TFZzYjVQOUhfcUhlTlVpVTlNQm5QTmN6In0=", nil)
 	w := httptest.NewRecorder()
 
 	fileContent := "col1,col2,col3\n1,a,Z\n"
@@ -38,9 +38,8 @@ func TestServer_download(t *testing.T) {
 }
 
 func TestServer_download_noMatch(t *testing.T) {
-	req := httptest.NewRequest(http.MethodGet, "/download?uid=dGVzdC5jc3Y=", nil)
+	req := httptest.NewRequest(http.MethodGet, "/download?uid=eyJLZXkiOiJ0ZXN0LmNzdiIsIlZlcnNpb25JZCI6InZwckF4c1l0TFZzYjVQOUhfcUhlTlVpVTlNQm5QTmN6In0=", nil)
 	w := httptest.NewRecorder()
-	req.SetPathValue("filename", "abc.csv")
 
 	mockS3 := MockFileStorage{}
 	mockS3.err = &types.NoSuchKey{}
