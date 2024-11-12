@@ -22,8 +22,9 @@ type Dispatch interface {
 }
 
 type FileStorage interface {
-	GetFile(ctx context.Context, bucketName string, filename string, versionId string) (*s3.GetObjectOutput, error)
+	GetFile(ctx context.Context, bucketName string, filename string, versionID string) (*s3.GetObjectOutput, error)
 	PutFile(ctx context.Context, bucketName string, fileName string, file io.Reader) error
+	FileExists(ctx context.Context, bucketName string, filename string, versionID string) bool
 }
 
 type Server struct {
@@ -50,6 +51,7 @@ func (s *Server) SetupRoutes(logger *slog.Logger) http.Handler {
 	}
 
 	handleFunc("GET /download", s.download)
+	handleFunc("HEAD /download", s.checkDownload)
 	handleFunc("POST /uploads", s.upload)
 
 	handleFunc("POST /events", s.handleEvents)

@@ -1,13 +1,21 @@
 package server
 
 import (
+	"errors"
+	"github.com/opg-sirius-finance-admin/apierror"
 	"github.com/opg-sirius-finance-admin/shared"
 	"net/http"
 )
 
+const (
+	downloadError = "Sorry, this link has expired. Please request a new report."
+	systemError   = "Sorry, there is a problem with the service. Please try again later."
+)
+
 type GetDownloadVars struct {
-	Uid      string `json:"uid"`
-	Filename string `json:"filename"`
+	Uid          string
+	Filename     string
+	ErrorMessage string
 	AppVars
 }
 
@@ -16,13 +24,29 @@ type GetDownloadHandler struct {
 }
 
 func (h *GetDownloadHandler) render(v AppVars, w http.ResponseWriter, r *http.Request) error {
+	ctx := getContext(r)
 	uid := r.URL.Query().Get("uid")
 
 	var downloadRequest shared.DownloadRequest
+	data := GetDownloadVars{AppVars: v}
+
 	err := downloadRequest.Decode(uid)
 	if err != nil {
-		return err
+		data.ErrorMessage = downloadError
+	} else {
+		err = h.Client().CheckDownload(ctx, uid)
+		if err != nil {
+			var notFound apierror.NotFound
+			if errors.As(err, &notFound) {
+				data.ErrorMessage = downloadError
+			} else {
+				data.ErrorMessage = systemError
+			}
+		} else {
+			data.Uid = uid
+			data.Filename = downloadRequest.Key
+		}
 	}
-	data := GetDownloadVars{Uid: uid, Filename: downloadRequest.Key, AppVars: v}
+
 	return h.execute(w, r, data)
 }
