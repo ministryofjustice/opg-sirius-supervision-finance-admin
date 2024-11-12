@@ -31,9 +31,9 @@ describe("Finance Admin", () => {
         })
 
         it("Validates CSV headers", () => {
-            cy.get('[data-cy=\"report-upload-type\"]').select('PAYMENTS_OPG_BACS');
-            cy.get('#file-upload').selectFile('cypress/fixtures/feemoto_01:10:2024normal.csv')
-            cy.get('#upload-date').type("2024-10-01");
+            cy.get('[data-cy=\"report-upload-type\"]').select('PAYMENTS_MOTO_CARD');
+            cy.get('#file-upload').selectFile('cypress/fixtures/feemoto_02:10:2024normal.csv')
+            cy.get('#upload-date').type("2024-10-02");
             cy.get('.govuk-button').contains('Upload report').click()
             cy.get('.govuk-error-summary').contains('CSV headers do not match for the report trying to be uploaded')
             cy.get('#f-FileUpload').contains('CSV headers do not match for the report trying to be uploaded')

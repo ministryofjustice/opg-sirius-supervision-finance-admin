@@ -86,8 +86,10 @@ func (i ReportUploadType) CSVHeaders() []string {
 		return []string{"Deputy number", "Deputy name", "Case number", "Client forename", "Client surname", "Do not invoice", "Total outstanding"}
 	case ReportTypeUploadDebtChase:
 		return []string{"Client_no", "Deputy_name", "Total_debt"}
-	case ReportTypeUploadPaymentsOPGBACS, ReportTypeUploadPaymentsSupervisionBACS:
+	case ReportTypeUploadPaymentsSupervisionBACS:
 		return []string{"Line", "Type", "Code", "Number", "Transaction Date", "Value Date", "Amount", "Amount Reconciled", "Charges", "Status", "Desc Flex", "Consolidated line"}
+	case ReportTypeUploadPaymentsOPGBACS:
+		return []string{"Line", "Type", "Code", "Number", "Transaction Date", "Value Date", "Amount", "Amount Reconciled", "Charges", "Status", "Desc Flex"}
 	}
 
 	return []string{"Unknown report type"}
@@ -106,6 +108,8 @@ func (i ReportUploadType) Filename(date string) (string, error) {
 		return fmt.Sprintf("feemoto_%smlpayments.csv", parsedDate.Format("02:01:2006")), nil
 	case ReportTypeUploadPaymentsSupervisionBACS:
 		return fmt.Sprintf("feebacs_%s_new_acc.csv", parsedDate.Format("02:01:2006")), nil
+	case ReportTypeUploadPaymentsOPGBACS:
+		return fmt.Sprintf("feebacs_%s.csv", parsedDate.Format("02:01:2006")), nil
 	default:
 		return "", nil
 	}
