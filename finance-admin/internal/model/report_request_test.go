@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func TestNewDownload(t *testing.T) {
+func TestNewReportRequest(t *testing.T) {
 	type args struct {
 		reportType         string
 		reportJournalType  string
@@ -27,7 +27,7 @@ func TestNewDownload(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want Download
+		want ReportRequest
 	}{
 		{
 			name: "Returns all fields",
@@ -42,7 +42,7 @@ func TestNewDownload(t *testing.T) {
 				dateFrom:           "21/07/2022",
 				email:              "Something@example.com",
 			},
-			want: Download{
+			want: ReportRequest{
 				ReportType:         "reportType",
 				ReportJournalType:  "reportJournalType",
 				ReportScheduleType: "reportScheduleType",
@@ -67,7 +67,7 @@ func TestNewDownload(t *testing.T) {
 				dateFrom:           "",
 				email:              "Something@example.com",
 			},
-			want: Download{
+			want: ReportRequest{
 				ReportType:         "reportType",
 				ReportJournalType:  "reportJournalType",
 				ReportScheduleType: "reportScheduleType",
@@ -83,7 +83,7 @@ func TestNewDownload(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := NewDownload(
+			got := NewReportRequest(
 				tt.args.reportType,
 				tt.args.reportJournalType,
 				tt.args.reportScheduleType,
