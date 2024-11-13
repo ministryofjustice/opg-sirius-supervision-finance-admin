@@ -17,7 +17,8 @@ access.
 
 The simplest solution to authentication is to piggyback on the existing Sirius user session and refresh the session on
 each API call by fetching the current user from the Sirius API. In the event that this session is not valid, we redirect
-to the login page. This is the same method by which we authenticate in Finance Hub.
+to the login page, with a redirect back to the previous page once authenticated. This is the same method by which we 
+authenticate in Finance Hub.
 
 ## Consequences
 

@@ -17,9 +17,10 @@ efficient manner, i.e. not reading the file into memory at every stage.
 The download flow is as follows:
 - The URL in the email navigates to Finance Admin, which now requires a valid user session (see ADR 004). The URL contains
   a `uid` query parameter, being a JSON object containing the filename and version ID, base64 encoded.
-- The user is presented with a Download button, which on click sends an HTMX request to the server.
-- This returns with an `HX-Redirect` header, that sends a further request to fetch the file.
+- The service checks the file is present in the S3 bucket.
+- If it exists, a "Download" button is rendered on the page, which fetches the file on click.
 - The file is then streamed to the user without being read using `io.Copy`.
+- If it does not exist, an error message is displayed.
 
 The filename and version ID are used as a composite key as we cannot guarantee the filename (which is the key in S3 buckets)
 will be unique.
