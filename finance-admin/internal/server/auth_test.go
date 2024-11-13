@@ -44,7 +44,7 @@ func Test_authenticate_success(t *testing.T) {
 	auth := Authenticator{
 		Client: client,
 		EnvVars: EnvironmentVars{
-			SiriusURL: "v1/api/",
+			SiriusPublicURL: "https://sirius.gov.uk",
 		},
 	}
 	next := &mockHandler{}
@@ -67,8 +67,8 @@ func Test_authenticate_unauthorised(t *testing.T) {
 	auth := Authenticator{
 		Client: client,
 		EnvVars: EnvironmentVars{
-			SiriusURL: "https://sirius.gov.uk/v1/api",
-			Prefix:    "finance-admin",
+			SiriusPublicURL: "https://sirius.gov.uk",
+			Prefix:          "finance-admin",
 		},
 	}
 	next := &mockHandler{}
@@ -77,7 +77,7 @@ func Test_authenticate_unauthorised(t *testing.T) {
 	assert.Equal(t, true, client.called)
 	assert.Equal(t, false, next.called)
 	assert.Equal(t, 302, w.Result().StatusCode)
-	assert.Equal(t, "https://sirius.gov.uk/v1/api/auth?redirect=finance-admin%2Ftest-url%2F1", w.Result().Header.Get("Location"))
+	assert.Equal(t, "https://sirius.gov.uk/auth?redirect=finance-admin%2Ftest-url%2F1", w.Result().Header.Get("Location"))
 }
 
 func Test_authenticate_error(t *testing.T) {
@@ -90,8 +90,8 @@ func Test_authenticate_error(t *testing.T) {
 	auth := Authenticator{
 		Client: client,
 		EnvVars: EnvironmentVars{
-			SiriusURL: "https://sirius.gov.uk/v1/api",
-			Prefix:    "finance-admin",
+			SiriusPublicURL: "https://sirius.gov.uk",
+			Prefix:          "finance-admin",
 		},
 	}
 	next := &mockHandler{}
@@ -100,5 +100,5 @@ func Test_authenticate_error(t *testing.T) {
 	assert.Equal(t, true, client.called)
 	assert.Equal(t, false, next.called)
 	assert.Equal(t, 302, w.Result().StatusCode)
-	assert.Equal(t, "https://sirius.gov.uk/v1/api/auth?redirect=finance-admin%2Ftest-url%2F1", w.Result().Header.Get("Location"))
+	assert.Equal(t, "https://sirius.gov.uk/auth?redirect=finance-admin%2Ftest-url%2F1", w.Result().Header.Get("Location"))
 }

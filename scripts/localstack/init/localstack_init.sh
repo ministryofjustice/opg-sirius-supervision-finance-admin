@@ -31,5 +31,4 @@ create_bucket "opg-backoffice-async-uploads-local"
 create_bucket "opg-backoffice-finance-reports-local"
 
 awslocal s3api put-bucket-versioning --bucket "opg-backoffice-finance-reports-local" --versioning-configuration Status=Enabled
-awslocal s3api put-object --bucket "opg-backoffice-finance-reports-local" --key "test.csv" --body "/etc/localstack/init/ready.d/test.csv"
 
