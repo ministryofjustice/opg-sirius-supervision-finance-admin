@@ -34,5 +34,5 @@ func (a *Authenticator) Authenticate(next http.Handler) http.Handler {
 }
 
 func (a *Authenticator) redirectPath(to string) string {
-	return fmt.Sprintf("%s/auth?redirect=%s", a.EnvVars.SiriusURL, url.QueryEscape(fmt.Sprintf("%s/%s", a.EnvVars.Prefix, to)))
+	return fmt.Sprintf("%s/auth?redirect=%s", a.EnvVars.SiriusPublicURL, url.QueryEscape(fmt.Sprintf("%s/%s", a.EnvVars.Prefix, to)))
 }
