@@ -1,0 +1,25 @@
+{{- /*gotype: github.com/ministryofjustice/opg-sirius-supervision-finance-admin/internal/server.GetDownloadVars*/ -}}
+{{ template "page" . }}
+{{ define "title" }}OPG Sirius Finance Admin - Download File{{ end }}
+{{ define "main-content" }}
+    {{ block "download" .Data }}
+
+        <div class="govuk-grid-row govuk-!-margin-top-5  govuk-!-margin-bottom-5">
+            <div class="govuk-grid-column-full">
+                {{ if .ErrorMessage }}
+                    <h1 class="govuk-heading-m  govuk-!-margin-bottom-1">{{ .ErrorMessage }}</h1>
+                {{ else }}
+                    <h1 class="govuk-heading-m  govuk-!-margin-bottom-1">{{ .Filename }} is ready to download</h1>
+                    <div class="govuk-button-group govuk-!-margin-top-5">
+                        <a id="download-button"
+                           class="govuk-button"
+                           href="{{ prefix (printf "/download/callback?uid=%s" .Uid) }}"
+                           download
+                        >Download</a>
+                    </div>
+                {{ end }}
+            </div>
+        </div>
+
+    {{ end }}
+{{ end }}
