@@ -28,4 +28,7 @@ create_bucket() {
 # S3
 
 create_bucket "opg-backoffice-async-uploads-local"
+create_bucket "opg-backoffice-finance-reports-local"
+
+awslocal s3api put-bucket-versioning --bucket "opg-backoffice-finance-reports-local" --versioning-configuration Status=Enabled
 
