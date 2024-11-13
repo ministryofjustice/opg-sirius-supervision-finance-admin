@@ -21,14 +21,12 @@ func TestNewUploadReturnsCorrectly(t *testing.T) {
 	fileName := "TestFile.txt"
 	fileReader := bytes.NewReader(fileContent)
 
-	// Expected result
-	expectedDate := NewDate(uploadDate)
 	expectedUpload := Upload{
 		ReportUploadType: reportUploadType,
 		Email:            email,
 		Filename:         fileName,
 		File:             fileContent,
-		UploadDate:       &expectedDate,
+		UploadDate:       NewDate(uploadDate),
 	}
 
 	upload, err := NewUpload(reportUploadType, uploadDate, email, fileReader, fileName)
@@ -50,7 +48,6 @@ func TestNewUploadWithNoFileReturnsCorrectly(t *testing.T) {
 		Email:            email,
 		Filename:         fileName,
 		File:             fileContent,
-		UploadDate:       nil,
 	}
 
 	upload, err := NewUpload(reportUploadType, uploadDate, email, fileReader, fileName)
