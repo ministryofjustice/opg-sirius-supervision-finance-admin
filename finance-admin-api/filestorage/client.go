@@ -77,8 +77,5 @@ func (c *Client) FileExists(ctx context.Context, bucketName string, filename str
 		Key:       aws.String(filename),
 		VersionId: aws.String(versionID),
 	})
-	if err != nil {
-		return false
-	}
-	return true
+	return err == nil
 }
