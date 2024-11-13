@@ -19,6 +19,10 @@ module.exports = defineConfig({
             });
         },
         baseUrl: "http://localhost:8888/finance-admin",
+        downloadsFolder: "cypress/downloads",
+        specPattern: "cypress/e2e/**/*.cy.{js,ts}",
+        screenshotsFolder: "cypress/screenshots",
+        supportFile: "cypress/support/e2e.ts",
         modifyObstructiveCode: false,
     },
     viewportWidth: 1000,
