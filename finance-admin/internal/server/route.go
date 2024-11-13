@@ -38,6 +38,8 @@ func (r route) getSuccess(req *http.Request) string {
 	switch req.URL.Query().Get("success") {
 	case "upload":
 		return "File successfully uploaded"
+	case "download":
+		return "Your file has been successfully downloaded"
 	}
 	return ""
 }
