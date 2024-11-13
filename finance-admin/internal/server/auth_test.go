@@ -37,7 +37,7 @@ func (m *mockAuthClient) CheckUserSession(ctx api.Context) (bool, error) {
 func Test_authenticate_success(t *testing.T) {
 	w := httptest.NewRecorder()
 	ctx := telemetry.ContextWithLogger(context.Background(), telemetry.NewLogger("test"))
-	r, _ := http.NewRequestWithContext(ctx, http.MethodGet, "test-url/1", nil)
+	r, _ := http.NewRequestWithContext(ctx, http.MethodGet, "test-url/1?q=abc", nil)
 
 	client := &mockAuthClient{validSession: true}
 
@@ -60,7 +60,7 @@ func Test_authenticate_success(t *testing.T) {
 func Test_authenticate_unauthorised(t *testing.T) {
 	w := httptest.NewRecorder()
 	ctx := telemetry.ContextWithLogger(context.Background(), telemetry.NewLogger("test"))
-	r, _ := http.NewRequestWithContext(ctx, http.MethodGet, "test-url/1", nil)
+	r, _ := http.NewRequestWithContext(ctx, http.MethodGet, "test-url/1?q=abc", nil)
 
 	client := &mockAuthClient{validSession: false}
 
@@ -77,13 +77,13 @@ func Test_authenticate_unauthorised(t *testing.T) {
 	assert.Equal(t, true, client.called)
 	assert.Equal(t, false, next.called)
 	assert.Equal(t, 302, w.Result().StatusCode)
-	assert.Equal(t, "https://sirius.gov.uk/auth?redirect=finance-admin%2Ftest-url%2F1", w.Result().Header.Get("Location"))
+	assert.Equal(t, "https://sirius.gov.uk/auth?redirect=finance-admin%2Ftest-url%2F1%3Fq%3Dabc", w.Result().Header.Get("Location"))
 }
 
 func Test_authenticate_error(t *testing.T) {
 	w := httptest.NewRecorder()
 	ctx := telemetry.ContextWithLogger(context.Background(), telemetry.NewLogger("test"))
-	r, _ := http.NewRequestWithContext(ctx, http.MethodGet, "test-url/1", nil)
+	r, _ := http.NewRequestWithContext(ctx, http.MethodGet, "test-url/1?q=abc", nil)
 
 	client := &mockAuthClient{validSession: false, error: errors.New("something went wrong")}
 
@@ -100,5 +100,5 @@ func Test_authenticate_error(t *testing.T) {
 	assert.Equal(t, true, client.called)
 	assert.Equal(t, false, next.called)
 	assert.Equal(t, 302, w.Result().StatusCode)
-	assert.Equal(t, "https://sirius.gov.uk/auth?redirect=finance-admin%2Ftest-url%2F1", w.Result().Header.Get("Location"))
+	assert.Equal(t, "https://sirius.gov.uk/auth?redirect=finance-admin%2Ftest-url%2F1%3Fq%3Dabc", w.Result().Header.Get("Location"))
 }
