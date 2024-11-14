@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"fmt"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/ministryofjustice/opg-go-common/securityheaders"
 	"github.com/ministryofjustice/opg-go-common/telemetry"
 	"github.com/opg-sirius-finance-admin/finance-admin-api/event"
@@ -21,7 +22,9 @@ type Dispatch interface {
 }
 
 type FileStorage interface {
+	GetFile(ctx context.Context, bucketName string, filename string, versionID string) (*s3.GetObjectOutput, error)
 	PutFile(ctx context.Context, bucketName string, fileName string, file io.Reader) error
+	FileExists(ctx context.Context, bucketName string, filename string, versionID string) bool
 }
 
 type Server struct {
@@ -47,6 +50,8 @@ func (s *Server) SetupRoutes(logger *slog.Logger) http.Handler {
 		mux.Handle(pattern, handler)
 	}
 
+	handleFunc("GET /download", s.download)
+	handleFunc("HEAD /download", s.checkDownload)
 	handleFunc("POST /uploads", s.upload)
 
 	handleFunc("POST /events", s.handleEvents)
