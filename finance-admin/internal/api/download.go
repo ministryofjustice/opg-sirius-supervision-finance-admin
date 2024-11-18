@@ -8,12 +8,11 @@ import (
 	"net/http"
 )
 
-func (c *Client) Download(ctx Context, data model.Download) error {
-	var body bytes.Buffer
+func (c *Client) Download(ctx Context, uid string) (*http.Response, error) {
+	req, err := c.newBackendRequest(ctx, http.MethodGet, fmt.Sprintf("/download?uid=%s", uid), nil)
 
-	err := json.NewEncoder(&body).Encode(data)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	req, err := c.newBackendRequest(ctx, http.MethodPost, "/downloads", &body)

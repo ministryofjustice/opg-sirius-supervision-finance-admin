@@ -34,3 +34,7 @@ services:
 
   yarn:
     command: watch
+
+  json-server:
+    volumes:
+      - ./json-server/config:/app/config

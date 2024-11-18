@@ -5,8 +5,12 @@ import (
 	"context"
 	"encoding/csv"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"github.com/aws/smithy-go"
+	"github.com/opg-sirius-finance-admin/apierror"
 	"github.com/opg-sirius-finance-admin/shared"
+	"io"
 	"net/http"
 	"os"
 )
