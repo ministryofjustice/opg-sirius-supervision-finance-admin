@@ -24,6 +24,7 @@ services:
       - ./go.mod:/app/go.mod
       - ./go.sum:/app/go.sum
       - ./apierror:/app/apierror
+      - ./db/queries:/app/db/queries
       - ./shared:/app/shared
       - ./finance-admin-api/.air.toml:/app/finance-admin-api/.air.toml
       - ./finance-admin-api/api:/app/finance-admin-api/api

@@ -3,6 +3,7 @@ package api
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"github.com/opg-sirius-finance-admin/finance-admin/internal/model"
 	"net/http"
 )
@@ -15,7 +16,7 @@ func (c *Client) Download(ctx Context, data model.Download) error {
 		return err
 	}
 
-	req, err := c.newBackendRequest(ctx, http.MethodGet, "/downloads", &body)
+	req, err := c.newBackendRequest(ctx, http.MethodPost, "/downloads", &body)
 
 	if err != nil {
 		return err
@@ -27,6 +28,8 @@ func (c *Client) Download(ctx Context, data model.Download) error {
 		return err
 	}
 	defer resp.Body.Close()
+
+	fmt.Println(resp.Body)
 
 	switch resp.StatusCode {
 	case http.StatusCreated:

@@ -3,9 +3,16 @@ package api
 import (
 	"context"
 	"github.com/opg-sirius-finance-admin/finance-admin-api/event"
+	"github.com/opg-sirius-finance-admin/finance-admin-api/testhelpers"
+	"github.com/stretchr/testify/suite"
 	"io"
 	"net/http"
 )
+
+type IntegrationSuite struct {
+	suite.Suite
+	testDB *testhelpers.TestDatabase
+}
 
 type MockDispatch struct {
 	event any

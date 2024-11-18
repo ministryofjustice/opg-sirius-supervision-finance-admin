@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"fmt"
+	"github.com/jackc/pgx/v5"
 	"github.com/ministryofjustice/opg-go-common/securityheaders"
 	"github.com/ministryofjustice/opg-go-common/telemetry"
 	"github.com/opg-sirius-finance-admin/finance-admin-api/event"
@@ -26,12 +27,13 @@ type FileStorage interface {
 
 type Server struct {
 	http        HTTPClient
+	conn        *pgx.Conn
 	dispatch    Dispatch
 	filestorage FileStorage
 }
 
-func NewServer(httpClient HTTPClient, dispatch Dispatch, filestorage FileStorage) Server {
-	return Server{httpClient, dispatch, filestorage}
+func NewServer(httpClient HTTPClient, conn *pgx.Conn, dispatch Dispatch, filestorage FileStorage) Server {
+	return Server{httpClient, conn, dispatch, filestorage}
 }
 
 func (s *Server) SetupRoutes(logger *slog.Logger) http.Handler {
@@ -46,6 +48,8 @@ func (s *Server) SetupRoutes(logger *slog.Logger) http.Handler {
 		handler := otelhttp.WithRouteTag(pattern, h)
 		mux.Handle(pattern, handler)
 	}
+
+	handleFunc("POST /downloads", s.download)
 
 	handleFunc("POST /uploads", s.upload)
 

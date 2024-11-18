@@ -31,7 +31,7 @@ clean:
 	docker compose run --rm yarn
 
 up: clean build-dev
-	docker compose -f docker-compose.yml -f docker/docker-compose.dev.yml up finance-admin finance-admin-api yarn
+	docker compose -f docker-compose.yml -f docker/docker-compose.dev.yml up finance-admin finance-admin-api finance-migration yarn
 
 down:
 	docker compose down
@@ -42,3 +42,7 @@ compile-assets:
 cypress: setup-directories clean
 	docker compose up -d localstack
 	docker compose run --build cypress
+
+start-and-seed:
+	docker compose up -d --wait sirius-db
+	docker compose run --rm --build finance-migration
