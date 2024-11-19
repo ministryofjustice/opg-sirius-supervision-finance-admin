@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/jackc/pgx/v5"
 	"github.com/ministryofjustice/opg-go-common/securityheaders"
 	"github.com/ministryofjustice/opg-go-common/telemetry"
 	"github.com/opg-sirius-finance-admin/finance-admin-api/event"
@@ -29,12 +30,13 @@ type FileStorage interface {
 
 type Server struct {
 	http        HTTPClient
+	conn        *pgx.Conn
 	dispatch    Dispatch
 	filestorage FileStorage
 }
 
-func NewServer(httpClient HTTPClient, dispatch Dispatch, filestorage FileStorage) Server {
-	return Server{httpClient, dispatch, filestorage}
+func NewServer(httpClient HTTPClient, conn *pgx.Conn, dispatch Dispatch, filestorage FileStorage) Server {
+	return Server{httpClient, conn, dispatch, filestorage}
 }
 
 func (s *Server) SetupRoutes(logger *slog.Logger) http.Handler {
@@ -50,7 +52,7 @@ func (s *Server) SetupRoutes(logger *slog.Logger) http.Handler {
 		mux.Handle(pattern, handler)
 	}
 
-	handleFunc("GET /download", s.download)
+	handleFunc("GET /downloads", s.download)
 	handleFunc("HEAD /download", s.checkDownload)
 	handleFunc("POST /uploads", s.upload)
 
