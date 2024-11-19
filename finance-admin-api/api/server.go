@@ -3,8 +3,8 @@ package api
 import (
 	"context"
 	"fmt"
-	"github.com/jackc/pgx/v5"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/jackc/pgx/v5"
 	"github.com/ministryofjustice/opg-go-common/securityheaders"
 	"github.com/ministryofjustice/opg-go-common/telemetry"
 	"github.com/opg-sirius-finance-admin/finance-admin-api/event"
@@ -52,7 +52,7 @@ func (s *Server) SetupRoutes(logger *slog.Logger) http.Handler {
 		mux.Handle(pattern, handler)
 	}
 
-	handleFunc("POST /downloads", s.download)
+	handleFunc("GET /downloads", s.download)
 	handleFunc("HEAD /download", s.checkDownload)
 	handleFunc("POST /uploads", s.upload)
 
