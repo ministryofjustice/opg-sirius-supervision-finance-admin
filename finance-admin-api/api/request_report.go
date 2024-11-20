@@ -8,6 +8,7 @@ import (
 	"github.com/opg-sirius-finance-admin/shared"
 	"net/http"
 	"os"
+	"path/filepath"
 )
 
 func (s *Server) requestReport(w http.ResponseWriter, r *http.Request) error {
@@ -20,10 +21,16 @@ func (s *Server) requestReport(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	//c, err := os.ReadFile("../db/queries/aged_debt.sql")
-	//if err != nil {
-	//	return err
-	//}
+	workingDir, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+	queryFilePath := filepath.Join(filepath.Dir(workingDir), "db/queries/aged_debt.sql")
+
+	c, err := os.ReadFile(queryFilePath)
+	if err != nil {
+		return err
+	}
 
 	agedDebtHeaders := []string{
 		"Customer Name",
@@ -64,7 +71,7 @@ func (s *Server) requestReport(w http.ResponseWriter, r *http.Request) error {
 
 	defer ef.Close()
 
-	query := "SELECT\n    'Joseph Smith' AS \"Customer Name\",\n    '12345678' AS \"Customer Number\""
+	query := string(c)
 
 	rows, err := s.conn.Query(ctx, query)
 	if err != nil {
