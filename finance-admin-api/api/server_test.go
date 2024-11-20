@@ -4,9 +4,16 @@ import (
 	"context"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/opg-sirius-finance-admin/finance-admin-api/event"
+	"github.com/opg-sirius-finance-admin/finance-admin-api/testhelpers"
+	"github.com/stretchr/testify/suite"
 	"io"
 	"net/http"
 )
+
+type IntegrationSuite struct {
+	suite.Suite
+	testDB *testhelpers.TestDatabase
+}
 
 type MockDispatch struct {
 	event any
@@ -30,12 +37,12 @@ func (m *MockFileStorage) GetFile(ctx context.Context, bucketName string, fileNa
 	return m.outgoingObject, m.err
 }
 
-func (m *MockFileStorage) PutFile(ctx context.Context, bucketName string, fileName string, file io.Reader) error {
+func (m *MockFileStorage) PutFile(ctx context.Context, bucketName string, fileName string, file io.Reader) (*string, error) {
 	m.bucketname = bucketName
 	m.filename = fileName
 	m.file = file
 
-	return nil
+	return nil, nil
 }
 
 // add a FileExists method to the MockFileStorage struct
