@@ -13,8 +13,10 @@ import (
 	"github.com/opg-sirius-finance-admin/finance-admin-api/filestorage"
 	"log/slog"
 	"net/http"
+	"net/url"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 )
@@ -51,7 +53,8 @@ func run(ctx context.Context, logger *slog.Logger) error {
 	dbPassword := env.Get("POSTGRES_PASSWORD", "")
 	pgDb := env.Get("POSTGRES_DB", "")
 
-	conn, err := pgx.Connect(ctx, fmt.Sprintf("postgresql://%s:%s@%s/%s", dbUser, dbPassword, dbConn, pgDb))
+	splitConn := strings.Split(dbConn, ":")
+	conn, err := pgx.Connect(ctx, fmt.Sprintf("user=%s password=%s host=%s port=%s dbname=%s", dbUser, url.QueryEscape(dbPassword), splitConn[0], splitConn[1], pgDb))
 
 	if err != nil {
 		return err
