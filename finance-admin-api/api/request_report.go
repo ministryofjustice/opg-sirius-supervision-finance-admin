@@ -20,7 +20,7 @@ func (s *Server) requestReport(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	c, err := os.ReadFile("/app/db/queries/aged_debt.sql")
+	c, err := os.ReadFile("../db/queries/aged_debt.sql")
 	if err != nil {
 		return err
 	}
