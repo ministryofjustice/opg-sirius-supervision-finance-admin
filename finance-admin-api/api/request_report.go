@@ -62,7 +62,7 @@ func (s *Server) requestReport(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	ef.Close()
+	defer ef.Close()
 
 	query := string(c)
 
