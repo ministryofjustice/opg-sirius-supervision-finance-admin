@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/jackc/pgx/v5"
 	"github.com/ministryofjustice/opg-go-common/securityheaders"
 	"github.com/ministryofjustice/opg-go-common/telemetry"
 	"github.com/opg-sirius-finance-admin/finance-admin-api/event"
@@ -23,18 +24,19 @@ type Dispatch interface {
 
 type FileStorage interface {
 	GetFile(ctx context.Context, bucketName string, filename string, versionID string) (*s3.GetObjectOutput, error)
-	PutFile(ctx context.Context, bucketName string, fileName string, file io.Reader) error
+	PutFile(ctx context.Context, bucketName string, fileName string, file io.Reader) (*string, error)
 	FileExists(ctx context.Context, bucketName string, filename string, versionID string) bool
 }
 
 type Server struct {
 	http        HTTPClient
+	conn        *pgx.Conn
 	dispatch    Dispatch
 	filestorage FileStorage
 }
 
-func NewServer(httpClient HTTPClient, dispatch Dispatch, filestorage FileStorage) Server {
-	return Server{httpClient, dispatch, filestorage}
+func NewServer(httpClient HTTPClient, conn *pgx.Conn, dispatch Dispatch, filestorage FileStorage) Server {
+	return Server{httpClient, conn, dispatch, filestorage}
 }
 
 func (s *Server) SetupRoutes(logger *slog.Logger) http.Handler {
@@ -52,6 +54,8 @@ func (s *Server) SetupRoutes(logger *slog.Logger) http.Handler {
 
 	handleFunc("GET /download", s.download)
 	handleFunc("HEAD /download", s.checkDownload)
+
+	handleFunc("POST /downloads", s.requestReport)
 	handleFunc("POST /uploads", s.upload)
 
 	handleFunc("POST /events", s.handleEvents)
