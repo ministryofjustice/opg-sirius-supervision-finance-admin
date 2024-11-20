@@ -20,10 +20,10 @@ func (s *Server) requestReport(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	c, err := os.ReadFile("../db/queries/aged_debt.sql")
-	if err != nil {
-		return err
-	}
+	//c, err := os.ReadFile("../db/queries/aged_debt.sql")
+	//if err != nil {
+	//	return err
+	//}
 
 	agedDebtHeaders := []string{
 		"Customer Name",
@@ -64,7 +64,7 @@ func (s *Server) requestReport(w http.ResponseWriter, r *http.Request) error {
 
 	defer ef.Close()
 
-	query := string(c)
+	query := "SELECT\n    'Joseph Smith' AS \"Customer Name\",\n    '12345678' AS \"Customer Number\""
 
 	rows, err := s.conn.Query(ctx, query)
 	if err != nil {
