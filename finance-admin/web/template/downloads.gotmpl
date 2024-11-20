@@ -11,8 +11,8 @@
                 <div class="govuk-grid-row">
                     <form
                             class="govuk-grid-column-one-third"
-                            method="get"
-                            hx-get="{{ prefix "/download" }}"
+                            method="post"
+                            hx-post="{{ prefix "/request-report" }}"
                             hx-target="#error-summary"
                     >
                         <div class="govuk-form-group">
