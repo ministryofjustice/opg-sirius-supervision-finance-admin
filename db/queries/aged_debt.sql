@@ -1,5 +1,3 @@
 SELECT
-    'test' AS "Customer Name",
-    'test' AS "Customer Number"
-
-FROM supervision_finance.finance_client
+    'Joseph Smith' AS "Customer Name",
+    '12345678' AS "Customer Number"

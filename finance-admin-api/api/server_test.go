@@ -37,12 +37,12 @@ func (m *MockFileStorage) GetFile(ctx context.Context, bucketName string, fileNa
 	return m.outgoingObject, m.err
 }
 
-func (m *MockFileStorage) PutFile(ctx context.Context, bucketName string, fileName string, file io.Reader) error {
+func (m *MockFileStorage) PutFile(ctx context.Context, bucketName string, fileName string, file io.Reader) (*string, error) {
 	m.bucketname = bucketName
 	m.filename = fileName
 	m.file = file
 
-	return nil
+	return nil, nil
 }
 
 // add a FileExists method to the MockFileStorage struct
