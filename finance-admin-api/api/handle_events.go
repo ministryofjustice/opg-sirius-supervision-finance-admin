@@ -21,7 +21,9 @@ func (s *Server) handleEvents(w http.ResponseWriter, r *http.Request) error {
 
 	if event.Source == shared.EventSourceFinanceHub && event.DetailType == shared.DetailTypeFinanceAdminUploadProcessed {
 		if detail, ok := event.Detail.(shared.FinanceAdminUploadProcessedEvent); ok {
-			err := s.SendEmailToNotify(ctx, detail)
+
+			payload := CreateNotifyPayload(detail)
+			err := s.SendEmailToNotify(ctx, payload)
 			if err != nil {
 				return err
 			}
