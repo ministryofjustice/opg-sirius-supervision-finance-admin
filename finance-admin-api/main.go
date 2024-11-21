@@ -2,8 +2,10 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/jackc/pgx/v5"
 	"github.com/ministryofjustice/opg-go-common/env"
 	"github.com/ministryofjustice/opg-go-common/telemetry"
 	"github.com/opg-sirius-finance-admin/finance-admin-api/api"
@@ -11,6 +13,7 @@ import (
 	"github.com/opg-sirius-finance-admin/finance-admin-api/filestorage"
 	"log/slog"
 	"net/http"
+	"net/url"
 	"os"
 	"os/signal"
 	"syscall"
@@ -44,7 +47,20 @@ func run(ctx context.Context, logger *slog.Logger) error {
 
 	eventClient := setupEventClient(ctx, logger)
 
-	server := api.NewServer(http.DefaultClient, eventClient, filestorageclient)
+	dbConn := env.Get("POSTGRES_CONN", "")
+	dbUser := env.Get("POSTGRES_USER", "")
+	dbPassword := env.Get("POSTGRES_PASSWORD", "")
+	pgDb := env.Get("POSTGRES_DB", "")
+
+	conn, err := pgx.Connect(ctx, fmt.Sprintf("postgresql://%s:%s@%s/%s", dbUser, url.QueryEscape(dbPassword), dbConn, pgDb))
+
+	if err != nil {
+		return err
+	}
+
+	defer conn.Close(ctx)
+
+	server := api.NewServer(http.DefaultClient, conn, eventClient, filestorageclient)
 
 	s := &http.Server{
 		Addr:    ":8080",

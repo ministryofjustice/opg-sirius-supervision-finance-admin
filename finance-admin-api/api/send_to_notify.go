@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/opg-sirius-finance-admin/shared"
+	"io"
 	"net/http"
 	"os"
 	"slices"
@@ -91,7 +92,7 @@ func formatFailedLines(failedLines map[int]string) []string {
 	return formattedLines
 }
 
-func createNotifyPayload(detail shared.FinanceAdminUploadProcessedEvent) NotifyPayload {
+func CreateNotifyPayload(detail shared.FinanceAdminUploadProcessedEvent) NotifyPayload {
 	var payload NotifyPayload
 
 	uploadType := shared.ParseReportUploadType(detail.UploadType)
@@ -132,7 +133,7 @@ func createNotifyPayload(detail shared.FinanceAdminUploadProcessedEvent) NotifyP
 	return payload
 }
 
-func (s *Server) SendEmailToNotify(ctx context.Context, detail shared.FinanceAdminUploadProcessedEvent) error {
+func (s *Server) SendEmailToNotify(ctx context.Context, payload NotifyPayload) error {
 	signedToken, err := createSignedJwtToken()
 	if err != nil {
 		return err
@@ -140,7 +141,7 @@ func (s *Server) SendEmailToNotify(ctx context.Context, detail shared.FinanceAdm
 
 	var body bytes.Buffer
 
-	err = json.NewEncoder(&body).Encode(createNotifyPayload(detail))
+	err = json.NewEncoder(&body).Encode(payload)
 	if err != nil {
 		return err
 	}
@@ -158,6 +159,12 @@ func (s *Server) SendEmailToNotify(ctx context.Context, detail shared.FinanceAdm
 	if err != nil {
 		return err
 	}
+
+	_, err = io.Copy(os.Stdout, resp.Body)
+	if err != nil {
+		return err
+	}
+
 	defer resp.Body.Close()
 
 	if resp.StatusCode == http.StatusCreated {
