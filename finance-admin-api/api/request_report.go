@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/opg-sirius-finance-admin/apierror"
+	"github.com/opg-sirius-finance-admin/db"
 	"github.com/opg-sirius-finance-admin/shared"
 	"net/http"
 	"os"
@@ -130,8 +131,7 @@ func (s *Server) requestAgedDebtReport(ctx context.Context) ([][]string, error) 
 
 	items := [][]string{agedDebtHeaders}
 
-	//rows, err := s.conn.Query(ctx, db.AgedDebtQuery)
-	rows, err := s.conn.Query(ctx, "SELECT 'test'")
+	rows, err := s.conn.Query(ctx, db.AgedDebtQuery)
 	if err != nil {
 		return nil, err
 	}

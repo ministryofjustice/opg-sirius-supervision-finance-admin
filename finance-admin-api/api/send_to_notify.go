@@ -156,12 +156,15 @@ func (s *Server) SendEmailToNotify(ctx context.Context, payload NotifyPayload) e
 	r.Header.Add("Authorization", "Bearer "+signedToken)
 
 	resp, err := s.http.Do(r)
-
-	io.Copy(os.Stdout, resp.Body)
-
 	if err != nil {
 		return err
 	}
+
+	_, err = io.Copy(os.Stdout, resp.Body)
+	if err != nil {
+		return err
+	}
+
 	defer resp.Body.Close()
 
 	if resp.StatusCode == http.StatusCreated {
