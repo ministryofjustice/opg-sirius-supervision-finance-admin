@@ -13,9 +13,6 @@ import (
 )
 
 func (s *Server) requestReport(w http.ResponseWriter, r *http.Request) error {
-	requestedDate := time.Now()
-	ctx := context.Background()
-
 	var download shared.Download
 	defer r.Body.Close()
 
@@ -23,6 +20,65 @@ func (s *Server) requestReport(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
+	go func() {
+		err := s.generateAndUploadReport(context.Background(), download, time.Now())
+		if err != nil {
+			fmt.Println(err)
+		}
+	}()
+	return nil
+}
+
+func (s *Server) generateAndUploadReport(ctx context.Context, download shared.Download, requestedDate time.Time) error {
+	var items [][]string
+	var filename string
+	var err error
+
+	switch download.ReportAccountType {
+	case "AgedDebt":
+		parsedDate, err := time.Parse("02/01/2006", download.DateOfTransaction)
+		if err != nil {
+			return err
+		}
+		filename = fmt.Sprintf("ageddebt_%s.csv", parsedDate.Format("02:01:2006"))
+		items, err = s.requestAgedDebtReport(ctx)
+		if err != nil {
+			return err
+		}
+	}
+
+	file, err := createCsv(filename, items)
+	if err != nil {
+		return err
+	}
+
+	versionId, err := s.filestorage.PutFile(
+		ctx,
+		os.Getenv("REPORTS_S3_BUCKET"),
+		filename,
+		file,
+	)
+
+	file.Close()
+
+	if err != nil {
+		return err
+	}
+
+	payload, err := createDownloadNotifyPayload(filename, versionId, requestedDate)
+	if err != nil {
+		return err
+	}
+
+	err = s.SendEmailToNotify(ctx, payload)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *Server) requestAgedDebtReport(ctx context.Context) ([][]string, error) {
 	agedDebtHeaders := []string{
 		"Customer Name",
 		"Customer number",
@@ -55,29 +111,22 @@ func (s *Server) requestReport(w http.ResponseWriter, r *http.Request) error {
 		"Debt impairment years",
 	}
 
-	ef, err := os.Create("test.csv")
+	items := [][]string{agedDebtHeaders}
+
+	rows, err := s.conn.Query(ctx, db.AgedDebtQuery)
 	if err != nil {
-		return err
-	}
-
-	defer ef.Close()
-
-	query := db.AgedDebtQuery
-
-	rows, err := s.conn.Query(ctx, query)
-	if err != nil {
-		return err
+		return nil, err
 	}
 
 	defer rows.Close()
-	var items [][]string
+
 	for rows.Next() {
 		var i []string
 		var stringValue string
 
 		values, err := rows.Values()
 		if err != nil {
-			return err
+			return nil, err
 		}
 		for _, value := range values {
 			stringValue, _ = value.(string)
@@ -86,67 +135,62 @@ func (s *Server) requestReport(w http.ResponseWriter, r *http.Request) error {
 		items = append(items, i)
 	}
 	if err := rows.Err(); err != nil {
-		return err
+		return nil, err
 	}
 
-	writer := csv.NewWriter(ef)
+	return items, nil
+}
 
-	err = writer.Write(agedDebtHeaders)
+func createCsv(filename string, items [][]string) (*os.File, error) {
+	file, err := os.Create(filename)
 	if err != nil {
-		return err
+		return nil, err
 	}
+
+	defer file.Close()
+
+	writer := csv.NewWriter(file)
 
 	for _, item := range items {
 		err = writer.Write(item)
 		if err != nil {
-			return err
+			return nil, err
 		}
 	}
 
 	writer.Flush()
 	if writer.Error() != nil {
-		return writer.Error()
+		return nil, writer.Error()
 	}
 
-	ef.Close()
+	file.Close()
 
-	rf, err := os.Open("test.csv")
+	rf, err := os.Open(filename)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	versionId, err := s.filestorage.PutFile(
-		ctx,
-		os.Getenv("REPORTS_S3_BUCKET"),
-		"test.csv",
-		rf,
-	)
+	return rf, nil
+}
 
-	rf.Close()
-
-	if err != nil {
-		return err
-	}
-
+func createDownloadNotifyPayload(filename string, versionId *string, requestedDate time.Time) (NotifyPayload, error) {
 	if versionId == nil {
-		return fmt.Errorf("S3 version ID not found")
+		return NotifyPayload{}, fmt.Errorf("S3 version ID not found")
 	}
 
 	downloadRequest := shared.DownloadRequest{
-		Key:       "test.csv",
+		Key:       filename,
 		VersionId: *versionId,
 	}
 
 	uid, err := downloadRequest.Encode()
 	if err != nil {
-		return err
+		return NotifyPayload{}, err
 	}
 
 	siriusUrl := os.Getenv("SIRIUS_PUBLIC_URL")
 	prefix := os.Getenv("PREFIX")
 	downloadLink := siriusUrl + prefix + "/download?uid=" + uid
-
-	// JSON.stringify({ Key: key, VersionId: versionId })
 
 	payload := NotifyPayload{
 		EmailAddress: "test@email.com",
@@ -164,10 +208,5 @@ func (s *Server) requestReport(w http.ResponseWriter, r *http.Request) error {
 		},
 	}
 
-	err = s.SendEmailToNotify(ctx, payload)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return payload, nil
 }
