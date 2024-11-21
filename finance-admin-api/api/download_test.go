@@ -5,7 +5,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
-	"github.com/opg-sirius-finance-admin/apierror"
+	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/apierror"
 	"github.com/stretchr/testify/assert"
 	"io"
 	"net/http"

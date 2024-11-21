@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/ministryofjustice/opg-go-common/telemetry"
-	"github.com/opg-sirius-finance-admin/finance-admin/internal/api"
+	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/api"
 	"net/http"
 	"time"
 )

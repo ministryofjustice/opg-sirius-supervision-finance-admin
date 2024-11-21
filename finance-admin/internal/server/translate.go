@@ -1,6 +1,6 @@
 package server
 
-import "github.com/opg-sirius-finance-admin/finance-admin/internal/model"
+import "github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/model"
 
 type pair struct {
 	k string

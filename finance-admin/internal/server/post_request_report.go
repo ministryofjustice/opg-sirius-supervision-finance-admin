@@ -2,8 +2,8 @@ package server
 
 import (
 	"errors"
-	"github.com/opg-sirius-finance-admin/finance-admin/internal/api"
-	"github.com/opg-sirius-finance-admin/finance-admin/internal/model"
+	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/api"
+	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/model"
 	"net/http"
 )
 
