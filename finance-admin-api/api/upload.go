@@ -94,7 +94,7 @@ func (s *Server) upload(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	err = s.filestorage.PutFile(
+	_, err = s.filestorage.PutFile(
 		ctx,
 		os.Getenv("ASYNC_S3_BUCKET"),
 		fmt.Sprintf("%s/%s", s3Directory, upload.Filename),

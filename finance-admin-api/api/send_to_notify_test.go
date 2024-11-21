@@ -138,7 +138,7 @@ func TestServer_createNotifyPayload(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			payload := createNotifyPayload(tt.detail)
+			payload := CreateNotifyPayload(tt.detail)
 			assert.Equal(t, tt.want, payload)
 		})
 	}
@@ -197,7 +197,7 @@ func Test_SendEmailToNotify(t *testing.T) {
 				UploadType:   shared.ReportTypeUploadPaymentsMOTOCard.Key(),
 			}
 
-			err := server.SendEmailToNotify(ctx, detail)
+			err := server.SendEmailToNotify(ctx, CreateNotifyPayload(detail))
 			assert.Equal(t, tt.expectedErr, err)
 		})
 	}
