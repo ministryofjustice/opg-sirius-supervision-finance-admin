@@ -5,12 +5,15 @@ import (
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
+	"github.com/opg-sirius-finance-admin/apierror"
 	"github.com/opg-sirius-finance-admin/db"
 	"github.com/opg-sirius-finance-admin/shared"
 	"net/http"
 	"os"
 	"time"
 )
+
+const reportRequestedTemplateId = "872d88b3-076e-495c-bf81-a2be2d3d234c"
 
 func (s *Server) requestReport(w http.ResponseWriter, r *http.Request) error {
 	var download shared.Download
@@ -20,27 +23,42 @@ func (s *Server) requestReport(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
+	if download.Email == "" {
+		return apierror.ValidationError{Errors: apierror.ValidationErrors{
+			"Email": {
+				"required": "This field Email needs to be looked at required",
+			},
+		},
+		}
+	}
+
 	go func() {
 		err := s.generateAndUploadReport(context.Background(), download, time.Now())
 		if err != nil {
 			fmt.Println(err)
 		}
 	}()
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+
 	return nil
 }
 
 func (s *Server) generateAndUploadReport(ctx context.Context, download shared.Download, requestedDate time.Time) error {
 	var items [][]string
 	var filename string
+	var reportName string
 	var err error
 
 	switch download.ReportAccountType {
 	case "AgedDebt":
-		parsedDate, err := time.Parse("02/01/2006", download.DateOfTransaction)
-		if err != nil {
-			return err
-		}
-		filename = fmt.Sprintf("ageddebt_%s.csv", parsedDate.Format("02:01:2006"))
+		//parsedDate, err := time.Parse("02/01/2006", requestedDate)
+		//if err != nil {
+		//	return err
+		//}
+		filename = fmt.Sprintf("ageddebt_%s.csv", requestedDate.Format("02:01:2006"))
+		reportName = "Aged Debt"
 		items, err = s.requestAgedDebtReport(ctx)
 		if err != nil {
 			return err
@@ -65,7 +83,7 @@ func (s *Server) generateAndUploadReport(ctx context.Context, download shared.Do
 		return err
 	}
 
-	payload, err := createDownloadNotifyPayload(filename, versionId, requestedDate)
+	payload, err := createDownloadNotifyPayload(download.Email, filename, versionId, requestedDate, reportName)
 	if err != nil {
 		return err
 	}
@@ -173,7 +191,7 @@ func createCsv(filename string, items [][]string) (*os.File, error) {
 	return rf, nil
 }
 
-func createDownloadNotifyPayload(filename string, versionId *string, requestedDate time.Time) (NotifyPayload, error) {
+func createDownloadNotifyPayload(emailAddress string, filename string, versionId *string, requestedDate time.Time, reportName string) (NotifyPayload, error) {
 	if versionId == nil {
 		return NotifyPayload{}, fmt.Errorf("S3 version ID not found")
 	}
@@ -193,8 +211,8 @@ func createDownloadNotifyPayload(filename string, versionId *string, requestedDa
 	downloadLink := siriusUrl + prefix + "/download?uid=" + uid
 
 	payload := NotifyPayload{
-		EmailAddress: "test@email.com",
-		TemplateId:   "bade69e4-0eb1-4896-a709-bd8f8371a629",
+		EmailAddress: emailAddress,
+		TemplateId:   reportRequestedTemplateId,
 		Personalisation: struct {
 			FileLink          string `json:"file_link"`
 			ReportName        string `json:"report_name"`
@@ -202,7 +220,7 @@ func createDownloadNotifyPayload(filename string, versionId *string, requestedDa
 			RequestedDateTime string `json:"requested_date_time"`
 		}{
 			downloadLink,
-			"Aged Debt",
+			reportName,
 			requestedDate.Format("2006-01-02"),
 			requestedDate.Format("2006-01-02 15:04:05"),
 		},
