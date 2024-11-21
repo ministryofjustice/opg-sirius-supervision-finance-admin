@@ -190,12 +190,21 @@ FROM supervision_finance.finance_client fc
 		return writer.Error()
 	}
 
+	ef.Close()
+
+	rf, err := os.Open("test.csv")
+	if err != nil {
+		return err
+	}
+
 	versionId, err := s.filestorage.PutFile(
 		ctx,
 		os.Getenv("ASYNC_S3_BUCKET"),
 		fmt.Sprintf("%s/%s", s3Directory, "test.csv"),
-		ef,
+		rf,
 	)
+
+	rf.Close()
 
 	if err != nil {
 		return err
