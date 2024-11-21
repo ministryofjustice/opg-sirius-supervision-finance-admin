@@ -64,8 +64,6 @@ func (s *Server) requestReport(w http.ResponseWriter, r *http.Request) error {
 
 	query := db.AgedDebtQuery
 
-	query = `SELECT 'test'`
-
 	rows, err := s.conn.Query(ctx, query)
 	if err != nil {
 		return err
