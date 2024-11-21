@@ -2,7 +2,7 @@ package api
 
 import (
 	"fmt"
-	"github.com/opg-sirius-finance-admin/apierror"
+	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/apierror"
 	"net/http"
 )
 

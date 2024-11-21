@@ -3,8 +3,8 @@ package api
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/opg-sirius-finance-admin/apierror"
-	"github.com/opg-sirius-finance-admin/shared"
+	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/apierror"
+	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/shared"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"

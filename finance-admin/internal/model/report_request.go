@@ -1,6 +1,6 @@
 package model
 
-import "github.com/opg-sirius-finance-admin/shared"
+import "github.com/ministryofjustice/opg-sirius-supervision-finance-admin/shared"
 
 type ReportRequest struct {
 	ReportType         string       `json:"reportType"`
