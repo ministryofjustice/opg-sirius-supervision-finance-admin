@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/opg-sirius-finance-admin/shared"
-	"io"
 	"net/http"
 	"os"
 	"slices"
@@ -156,11 +155,6 @@ func (s *Server) SendEmailToNotify(ctx context.Context, payload NotifyPayload) e
 	r.Header.Add("Authorization", "Bearer "+signedToken)
 
 	resp, err := s.http.Do(r)
-	if err != nil {
-		return err
-	}
-
-	_, err = io.Copy(os.Stdout, resp.Body)
 	if err != nil {
 		return err
 	}

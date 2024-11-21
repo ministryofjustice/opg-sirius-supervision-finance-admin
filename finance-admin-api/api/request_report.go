@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-const reportRequestedTemplateId = "872d88b3-076e-495c-bf81-a2be2d3d234c"
+const reportRequestedTemplateId = "bade69e4-0eb1-4896-a709-bd8f8371a629"
 
 func (s *Server) requestReport(w http.ResponseWriter, r *http.Request) error {
 	var download shared.Download
