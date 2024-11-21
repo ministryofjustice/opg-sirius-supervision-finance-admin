@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/opg-sirius-finance-admin/apierror"
-	"github.com/opg-sirius-finance-admin/db"
 	"github.com/opg-sirius-finance-admin/shared"
 	"net/http"
 	"os"
@@ -131,7 +130,8 @@ func (s *Server) requestAgedDebtReport(ctx context.Context) ([][]string, error) 
 
 	items := [][]string{agedDebtHeaders}
 
-	rows, err := s.conn.Query(ctx, db.AgedDebtQuery)
+	//rows, err := s.conn.Query(ctx, db.AgedDebtQuery)
+	rows, err := s.conn.Query(ctx, "SELECT 'test'")
 	if err != nil {
 		return nil, err
 	}
@@ -206,9 +206,7 @@ func createDownloadNotifyPayload(emailAddress string, filename string, versionId
 		return NotifyPayload{}, err
 	}
 
-	siriusUrl := os.Getenv("SIRIUS_PUBLIC_URL")
-	prefix := os.Getenv("PREFIX")
-	downloadLink := siriusUrl + prefix + "/download?uid=" + uid
+	downloadLink := fmt.Sprintf("%s%s/download?uid=%s", os.Getenv("SIRIUS_PUBLIC_URL"), os.Getenv("PREFIX"), uid)
 
 	payload := NotifyPayload{
 		EmailAddress: emailAddress,
