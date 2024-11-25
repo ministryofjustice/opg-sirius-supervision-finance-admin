@@ -2,6 +2,7 @@ package server
 
 import (
 	"github.com/opg-sirius-finance-admin/finance-admin/internal/api"
+	"github.com/opg-sirius-finance-admin/finance-admin/internal/components"
 	"github.com/opg-sirius-finance-admin/finance-admin/internal/model"
 	"github.com/stretchr/testify/assert"
 	"net/http"
@@ -31,7 +32,7 @@ func TestRequestReportHandlerSuccess(t *testing.T) {
 	r, _ := http.NewRequest(http.MethodPost, "/download", strings.NewReader(form.Encode()))
 	r.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
-	appVars := AppVars{
+	appVars := components.AppVars{
 		Path: "/download",
 	}
 
@@ -63,7 +64,7 @@ func TestRequestReportHandlerValidationErrors(t *testing.T) {
 	r, _ := http.NewRequest(http.MethodGet, "/download", nil)
 	r.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
-	appVars := AppVars{
+	appVars := components.AppVars{
 		Path: "/add",
 	}
 
@@ -88,7 +89,7 @@ func TestRequestReportHandlerStatusError(t *testing.T) {
 	r, _ := http.NewRequest(http.MethodGet, "/download", nil)
 	r.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
-	appVars := AppVars{
+	appVars := components.AppVars{
 		Path: "/add",
 	}
 

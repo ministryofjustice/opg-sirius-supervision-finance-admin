@@ -43,14 +43,14 @@ func DownloadFile(vars DownloadFileVars) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if vars.ErrorMessage != "" {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<h1 class=\"govuk-heading-m  govuk-!-margin-bottom-1\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<h1 data-testid=\"error-message\" class=\"govuk-heading-m  govuk-!-margin-bottom-1\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var2 string
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(vars.ErrorMessage)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/components/download_file.templ`, Line: 16, Col: 76}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/components/download_file.templ`, Line: 16, Col: 104}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {

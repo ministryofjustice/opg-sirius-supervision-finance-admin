@@ -1,6 +1,7 @@
 package server
 
 import (
+	"github.com/opg-sirius-finance-admin/finance-admin/internal/components"
 	"github.com/opg-sirius-finance-admin/finance-admin/internal/model"
 	"github.com/stretchr/testify/assert"
 	"net/http"
@@ -26,7 +27,7 @@ func TestUploadFormHandlerNoFileUploaded(t *testing.T) {
 	r, _ := http.NewRequest(http.MethodPost, "/uploads", strings.NewReader(form.Encode()))
 	r.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
-	appVars := AppVars{
+	appVars := components.AppVars{
 		Path: "/uploads",
 	}
 	appVars.EnvironmentVars.Prefix = "prefix"
@@ -53,7 +54,7 @@ func TestUploadFormHandlerSuccess(t *testing.T) {
 	r, _ := http.NewRequest(http.MethodPost, "/uploads", strings.NewReader(form.Encode()))
 	r.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
-	appVars := AppVars{
+	appVars := components.AppVars{
 		Path: "/uploads",
 	}
 
@@ -82,7 +83,7 @@ func TestUploadFormHandlerValidationErrors(t *testing.T) {
 	r, _ := http.NewRequest(http.MethodGet, "/uploads", nil)
 	r.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
-	appVars := AppVars{
+	appVars := components.AppVars{
 		Path: "/uploads",
 	}
 
