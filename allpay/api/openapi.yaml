@@ -1,0 +1,1605 @@
+openapi: 3.0.3
+info:
+  description: API for managing Direct Debit mandates and schedules.
+  title: AllPay Direct Debit API
+  version: 1.0.0
+servers:
+- url: https://localhost:8080
+paths:
+  /Customers/{SchemeCode}/Mandates/Create:
+    post:
+      description: Create a Direct Debit mandate with or without a payment schedule.
+      parameters:
+      - explode: false
+        in: path
+        name: SchemeCode
+        required: true
+        schema:
+          example: TEST
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/_Customers__SchemeCode__Mandates_Create_post_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_Customers__SchemeCode__Mandates_Create_post_200_response'
+          description: Mandate created successfully
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "422":
+          description: Unprocessable Entity
+        "500":
+          description: Internal Server Error
+      summary: Create Mandate
+  /Customers/{SchemeCode}/VariableMandates/Create:
+    post:
+      description: Create a Direct Debit variable mandate with or without a payment
+        schedule.
+      parameters:
+      - explode: false
+        in: path
+        name: SchemeCode
+        required: true
+        schema:
+          example: TEST
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/_Customers__SchemeCode__VariableMandates_Create_post_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_Customers__SchemeCode__Mandates_Create_post_200_response'
+          description: Variable Mandate created successfully
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "422":
+          description: Unprocessable Entity
+        "500":
+          description: Internal Server Error
+      summary: Create Variable Mandate
+  /Customers/{SchemeCode}/{ClientRef}/{Surname}/BankAccounts:
+    delete:
+      description: Remove the bank account holder address details so that it is the
+        same as the account details.
+      parameters:
+      - explode: false
+        in: path
+        name: SchemeCode
+        required: true
+        schema:
+          example: TEST
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: ClientRef
+        required: true
+        schema:
+          example: 121002D
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: Surname
+        required: true
+        schema:
+          example: Smith
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_Customers__SchemeCode__Mandates_Create_post_200_response'
+          description: Bank account holder details deleted successfully
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "422":
+          description: Unprocessable Entity
+        "500":
+          description: Internal Server Error
+      summary: Delete Bank Account Holder Details
+    put:
+      description: Edit the bank account holder details.
+      parameters:
+      - explode: false
+        in: path
+        name: SchemeCode
+        required: true
+        schema:
+          example: TEST
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: ClientRef
+        required: true
+        schema:
+          example: 121002D
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: Surname
+        required: true
+        schema:
+          example: Smith
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/_Customers__SchemeCode___ClientRef___Surname__BankAccounts_put_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_Customers__SchemeCode__Mandates_Create_post_200_response'
+          description: Bank account holder details updated successfully
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "422":
+          description: Unprocessable Entity
+        "500":
+          description: Internal Server Error
+      summary: Edit Bank Account Holder Details
+  /Customers/{SchemeCode}/{ClientRef}/{Surname}/BankAccountEmail:
+    delete:
+      description: Remove the email address from the Direct Debit.
+      parameters:
+      - explode: false
+        in: path
+        name: SchemeCode
+        required: true
+        schema:
+          example: TEST
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: ClientRef
+        required: true
+        schema:
+          example: 121002D
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: Surname
+        required: true
+        schema:
+          example: Smith
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_Customers__SchemeCode___ClientRef___Surname__BankAccountEmail_delete_200_response'
+          description: Email address deleted successfully
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "422":
+          description: Unprocessable Entity
+        "500":
+          description: Internal Server Error
+      summary: Delete Email Address
+    put:
+      description: Add or update an email address on a Direct Debit.
+      parameters:
+      - explode: false
+        in: path
+        name: SchemeCode
+        required: true
+        schema:
+          example: TEST
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: ClientRef
+        required: true
+        schema:
+          example: 121002D
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: Surname
+        required: true
+        schema:
+          example: Smith
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/_Customers__SchemeCode___ClientRef___Surname__BankAccountEmail_put_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_Customers__SchemeCode__Mandates_Create_post_200_response'
+          description: Email address updated successfully
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "422":
+          description: Unprocessable Entity
+        "500":
+          description: Internal Server Error
+      summary: Edit Email Address
+  /Customers/{SchemeCode}/{ClientRef}/{Surname}/BankAccountMobileNumber:
+    delete:
+      description: Remove the mobile number from the Direct Debit.
+      parameters:
+      - explode: false
+        in: path
+        name: SchemeCode
+        required: true
+        schema:
+          example: TEST
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: ClientRef
+        required: true
+        schema:
+          example: 121002D
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: Surname
+        required: true
+        schema:
+          example: Smith
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_Customers__SchemeCode__Mandates_Create_post_200_response'
+          description: Mobile number deleted successfully
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "422":
+          description: Unprocessable Entity
+        "500":
+          description: Internal Server Error
+      summary: Delete Mobile Number
+    put:
+      description: Add or update a mobile number on a Direct Debit.
+      parameters:
+      - explode: false
+        in: path
+        name: SchemeCode
+        required: true
+        schema:
+          example: TEST
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: ClientRef
+        required: true
+        schema:
+          example: 121002D
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: Surname
+        required: true
+        schema:
+          example: Smith
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/_Customers__SchemeCode___ClientRef___Surname__BankAccountMobileNumber_put_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_Customers__SchemeCode__Mandates_Create_post_200_response'
+          description: Mobile number updated successfully
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "422":
+          description: Unprocessable Entity
+        "500":
+          description: Internal Server Error
+      summary: Edit Mobile Number
+  /Customers/{SchemeCode}/{ClientRef}/{Surname}/Mandates:
+    get:
+      description: Retrieve a customer’s account holder details along with their bank
+        account details.
+      parameters:
+      - explode: false
+        in: path
+        name: SchemeCode
+        required: true
+        schema:
+          example: TEST
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: ClientRef
+        required: true
+        schema:
+          example: 121002D
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: Surname
+        required: true
+        schema:
+          example: Smith
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_Customers__SchemeCode___ClientRef___Surname__Mandates_get_200_response'
+          description: Mandate information retrieved successfully
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Retrieve Mandate Information
+    post:
+      description: "Add a new payment schedule to an existing mandate. Any existing\
+        \ currently collecting schedule will be interrupted by the new future schedule,\
+        \ but will not complete."
+      parameters:
+      - explode: false
+        in: path
+        name: SchemeCode
+        required: true
+        schema:
+          example: TEST
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: ClientRef
+        required: true
+        schema:
+          example: 121002D
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: Surname
+        required: true
+        schema:
+          example: Smith
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/_Customers__SchemeCode___ClientRef___Surname__Mandates_post_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_Customers__SchemeCode__Mandates_Create_post_200_response'
+          description: Payment schedule added successfully
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "422":
+          description: Unprocessable Entity
+        "500":
+          description: Internal Server Error
+      summary: Add Payment Schedule to an Existing Mandate
+    put:
+      description: Add a new payment schedule to an existing mandate. Any currently
+        collecting schedule will complete immediately.
+      parameters:
+      - explode: false
+        in: path
+        name: SchemeCode
+        required: true
+        schema:
+          example: TEST
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: ClientRef
+        required: true
+        schema:
+          example: 121002D
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: Surname
+        required: true
+        schema:
+          example: Smith
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/_Customers__SchemeCode___ClientRef___Surname__Mandates_put_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_Customers__SchemeCode___ClientRef___Surname__Mandates_put_200_response'
+          description: Immediate payment schedule added successfully
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "422":
+          description: Unprocessable Entity
+        "500":
+          description: Internal Server Error
+      summary: Add Immediate Payment Schedule
+  /Customers/{SchemeCode}/{ClientRef}/{Surname}/VariableMandates:
+    post:
+      description: Add a new payment schedule to an existing variable mandate. Only
+        available on schemes set up for variable direct debits.
+      parameters:
+      - explode: false
+        in: path
+        name: SchemeCode
+        required: true
+        schema:
+          example: TEST
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: ClientRef
+        required: true
+        schema:
+          example: 121002D
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: Surname
+        required: true
+        schema:
+          example: Smith
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/_Customers__SchemeCode___ClientRef___Surname__VariableMandates_post_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_Customers__SchemeCode___ClientRef___Surname__VariableMandates_post_200_response'
+          description: Payment schedule added successfully
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "422":
+          description: Unprocessable Entity
+        "500":
+          description: Internal Server Error
+      summary: Add Payment Schedule to an Existing Variable Mandate
+  /Customers/{SchemeCode}/{ClientRef}/{Surname}/Mandates/AnnualRenewal:
+    post:
+      description: Add an annual renewal schedule to a Direct Debit. The `SuppressNotification`
+        flag can be used to prevent a renewal amendment letter from being printed.
+      parameters:
+      - explode: false
+        in: path
+        name: SchemeCode
+        required: true
+        schema:
+          example: TEST
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: ClientRef
+        required: true
+        schema:
+          example: 121002D
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: Surname
+        required: true
+        schema:
+          example: Smith
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/_Customers__SchemeCode___ClientRef___Surname__Mandates_AnnualRenewal_post_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_Customers__SchemeCode___ClientRef___Surname__Mandates_put_200_response'
+          description: Annual renewal schedule added successfully
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "422":
+          description: Unprocessable Entity
+        "500":
+          description: Internal Server Error
+      summary: Add Annual Renewal Schedule
+  /Customers/{SchemeCode}/{ClientRef}/{Surname}/Mandates/Schedule:
+    get:
+      description: Retrieve the scheduled components for the live Direct Debit related
+        to the account.
+      parameters:
+      - explode: false
+        in: path
+        name: SchemeCode
+        required: true
+        schema:
+          example: TEST
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: ClientRef
+        required: true
+        schema:
+          example: 121002D
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: Surname
+        required: true
+        schema:
+          example: Smith
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_Customers__SchemeCode___ClientRef___Surname__Mandates_Schedule_get_200_response'
+          description: Schedule components retrieved successfully
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Retrieve Schedule Components
+  /Customers/{SchemeCode}/{ClientRef}/{Surname}/Mandates/Payments:
+    get:
+      description: Retrieve up to the next 6 un-triggered payments due to be taken
+        for the Direct Debit Mandate.
+      parameters:
+      - explode: false
+        in: path
+        name: SchemeCode
+        required: true
+        schema:
+          example: TEST
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: ClientRef
+        required: true
+        schema:
+          example: 121002D
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: Surname
+        required: true
+        schema:
+          example: Smith
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_Customers__SchemeCode___ClientRef___Surname__Mandates_Payments_get_200_response'
+          description: Payment schedule retrieved successfully
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Retrieve Payment Schedule
+  /Customers/{SchemeCode}/{ClientRef}/{Surname}/Mandates/Schedule/{FirstPaymentDate}/{Amount}:
+    delete:
+      description: Delete a currently collecting or future payment schedule by specifying
+        the first payment date and amount.
+      parameters:
+      - explode: false
+        in: path
+        name: SchemeCode
+        required: true
+        schema:
+          example: TEST
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: ClientRef
+        required: true
+        schema:
+          example: 121002D
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: Surname
+        required: true
+        schema:
+          example: Smith
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: FirstPaymentDate
+        required: true
+        schema:
+          example: 2016-05-29
+          format: date
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: Amount
+        required: true
+        schema:
+          example: 16000
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_Customers__SchemeCode___ClientRef___Surname__Mandates_Schedule__FirstPaymentDate___Amount__delete_200_response'
+          description: Schedule component removed successfully
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+        "422":
+          description: Unprocessable Entity
+        "500":
+          description: Internal Server Error
+      summary: Remove Schedule Components
+  /Customers/{SchemeCode}/{ClientRef}/{Surname}/Mandates/PaymentHistory:
+    get:
+      description: Retrieve up to the last 6 payments (including those triggered but
+        not yet collected) for the allpay account number associated with the Direct
+        Debit Mandate.
+      parameters:
+      - explode: false
+        in: path
+        name: SchemeCode
+        required: true
+        schema:
+          example: ABCD
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: ClientRef
+        required: true
+        schema:
+          example: SO4497
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: Surname
+        required: true
+        schema:
+          example: jones-harris
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_Customers__SchemeCode___ClientRef___Surname__Mandates_PaymentHistory_get_200_response'
+          description: Previous collection history retrieved successfully
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Show Previous Collection History
+  /Customers/{SchemeCode}/{ClientRef}/{Surname}/Mandates/{ClosureDate}:
+    delete:
+      description: "Close a mandate by specifying a closure date. If the date provided\
+        \ is today’s date, it will result in an immediate closure. A future date will\
+        \ set up a future closure."
+      parameters:
+      - explode: false
+        in: path
+        name: SchemeCode
+        required: true
+        schema:
+          example: TEST
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: ClientRef
+        required: true
+        schema:
+          example: 121002D
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: Surname
+        required: true
+        schema:
+          example: Smith
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: ClosureDate
+        required: true
+        schema:
+          example: 2023-02-11
+          format: date
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_Customers__SchemeCode___ClientRef___Surname__Mandates_put_200_response'
+          description: Mandate closed successfully
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+        "422":
+          description: Unprocessable Entity
+        "500":
+          description: Internal Server Error
+      summary: Close Mandate
+  /Customers/{SchemeCode}/Mandates/FailedPayments/{FromDate}/{ToDate}/{PageNumber}:
+    get:
+      description: Retrieve all failed payments for a scheme code within a given period
+        of time.
+      parameters:
+      - explode: false
+        in: path
+        name: SchemeCode
+        required: true
+        schema:
+          example: TEST
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: FromDate
+        required: true
+        schema:
+          example: 2023-01-01
+          format: date
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: ToDate
+        required: true
+        schema:
+          example: 2023-01-31
+          format: date
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: PageNumber
+        required: true
+        schema:
+          example: 1
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_Customers__SchemeCode__Mandates_FailedPayments__FromDate___ToDate___PageNumber__get_200_response'
+          description: Failed payments retrieved successfully
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Retrieve Failed Payments
+  /BankAccounts:
+    get:
+      description: Perform a modulus check on a sort code and account number combination
+        to validate them.
+      parameters:
+      - explode: true
+        in: query
+        name: sortcode
+        required: true
+        schema:
+          example: "0"
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: accountnumber
+        required: true
+        schema:
+          example: "12345678"
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_BankAccounts_get_200_response'
+          description: Modulus check performed successfully
+        "400":
+          description: Bad Request
+        "422":
+          description: Unprocessable Entity
+        "500":
+          description: Internal Server Error
+      summary: Modulus Check
+components:
+  schemas:
+    _Customers__SchemeCode__Mandates_Create_post_request_BankAccount_BankDetails:
+      properties:
+        AccountName:
+          example: Mr Account
+          type: string
+        SortCode:
+          example: "666666"
+          type: string
+        AccountNumber:
+          example: "66666666"
+          type: string
+      type: object
+    _Customers__SchemeCode___ClientRef___Surname__BankAccountEmail_delete_200_response:
+      example:
+        SchemeCode: SchemeCode
+        ClientReference: ClientReference
+        LastName: LastName
+      properties:
+        SchemeCode:
+          type: string
+        ClientReference:
+          type: string
+        LastName:
+          type: string
+      type: object
+    _Customers__SchemeCode__VariableMandates_Create_post_request_Schedules_inner:
+      properties:
+        ScheduleDate:
+          example: 2016-05-29
+          format: date
+          type: string
+        Amount:
+          example: 16000
+          type: integer
+      type: object
+    _Customers__SchemeCode___ClientRef___Surname__Mandates_get_200_response_Address:
+      example:
+        Town: Town
+        LastName: LastName
+        PostCode: PostCode
+        TitleInitials: TitleInitials
+        County: County
+        Line1: Line1
+        Line2: Line2
+      properties:
+        County:
+          type: string
+        LastName:
+          type: string
+        Line1:
+          type: string
+        Line2:
+          type: string
+        PostCode:
+          type: string
+        TitleInitials:
+          type: string
+        Town:
+          type: string
+      type: object
+    _Customers__SchemeCode___ClientRef___Surname__Mandates_put_request:
+      properties:
+        Schedules:
+          items:
+            $ref: '#/components/schemas/_Customers__SchemeCode__Mandates_Create_post_request_Schedules_inner'
+          type: array
+        SuppressNotification:
+          example: 1
+          type: integer
+      type: object
+    _Customers__SchemeCode___ClientRef___Surname__Mandates_Schedule_get_200_response_Schedules_inner:
+      example:
+        PaymentsRequested: 2
+        RemainingPayments: "5"
+        CollectionDay: 29th
+        FirstPaymentDate: 2016-04-29
+        Amount: 5000
+        NextPaymentDate: 2016-06-29
+        Frequency: Monthly
+        PreviousPaymentDate: 2016-05-29
+        TotalPayments: "9"
+      properties:
+        Amount:
+          example: 5000
+          type: integer
+        CollectionDay:
+          example: 29th
+          type: string
+        FirstPaymentDate:
+          example: 2016-04-29
+          format: date
+          type: string
+        Frequency:
+          example: Monthly
+          type: string
+        NextPaymentDate:
+          example: 2016-06-29
+          format: date
+          type: string
+        PaymentsRequested:
+          example: 2
+          type: integer
+        PreviousPaymentDate:
+          example: 2016-05-29
+          format: date
+          type: string
+        RemainingPayments:
+          example: "5"
+          type: string
+        TotalPayments:
+          example: "9"
+          type: string
+      type: object
+    _Customers__SchemeCode___ClientRef___Surname__Mandates_put_200_response:
+      example:
+        success: true
+      properties:
+        success:
+          example: true
+          type: boolean
+      type: object
+    _Customers__SchemeCode__Mandates_Create_post_request:
+      properties:
+        Customer:
+          $ref: '#/components/schemas/_Customers__SchemeCode__Mandates_Create_post_request_Customer'
+        Schedules:
+          items:
+            $ref: '#/components/schemas/_Customers__SchemeCode__Mandates_Create_post_request_Schedules_inner'
+          type: array
+        BankAccount:
+          $ref: '#/components/schemas/_Customers__SchemeCode__Mandates_Create_post_request_BankAccount'
+      type: object
+    _Customers__SchemeCode__Mandates_Create_post_request_Customer:
+      properties:
+        MobileNumber:
+          example: "07700900000"
+          type: string
+        Email:
+          example: test@test.com
+          type: string
+        TitleInitials:
+          example: MR A
+          type: string
+        Address:
+          $ref: '#/components/schemas/_Customers__SchemeCode__Mandates_Create_post_request_Customer_Address'
+        SchemeCode:
+          example: TEST
+          type: string
+        ClientReference:
+          example: 121002D
+          type: string
+        LastName:
+          example: Smith
+          type: string
+      type: object
+    _BankAccounts_get_200_response_address:
+      example:
+        town: town
+        postcode: postcode
+        line2: line2
+        line1: line1
+      properties:
+        line1:
+          type: string
+        line2:
+          type: string
+        town:
+          type: string
+        postcode:
+          type: string
+      type: object
+    _Customers__SchemeCode__Mandates_Create_post_request_Schedules_inner:
+      properties:
+        ScheduleDate:
+          example: 2016-05-29
+          format: date
+          type: string
+        Amount:
+          example: 16000
+          type: integer
+        Frequency:
+          example: M
+          type: string
+        TotalPayments:
+          example: 0
+          type: integer
+      type: object
+    _Customers__SchemeCode___ClientRef___Surname__BankAccountMobileNumber_put_request:
+      properties:
+        MobileNumber:
+          example: "07700900000"
+          type: string
+      type: object
+    _Customers__SchemeCode___ClientRef___Surname__Mandates_Payments_get_200_response_Payments_inner:
+      example:
+        Type: Fixed
+        PaymentDate: 2016-07-01
+        Amount: 1
+        Frequency: Once
+      properties:
+        Amount:
+          example: 1
+          type: integer
+        Frequency:
+          example: Once
+          type: string
+        PaymentDate:
+          example: 2016-07-01
+          format: date
+          type: string
+        Type:
+          example: Fixed
+          type: string
+      type: object
+    _BankAccounts_get_200_response:
+      example:
+        valid: true
+        address:
+          town: town
+          postcode: postcode
+          line2: line2
+          line1: line1
+        directCreditCapable: true
+        bankName: bankName
+        directDebitCapable: true
+        branch: branch
+      properties:
+        valid:
+          type: boolean
+        bankName:
+          type: string
+        branch:
+          type: string
+        address:
+          $ref: '#/components/schemas/_BankAccounts_get_200_response_address'
+        directDebitCapable:
+          type: boolean
+        directCreditCapable:
+          type: boolean
+      type: object
+    _Customers__SchemeCode__Mandates_Create_post_request_BankAccount_Address:
+      properties:
+        Line1:
+          example: test line 1
+          type: string
+        Line2:
+          example: test line 2
+          type: string
+        Town:
+          example: My Town
+          type: string
+        PostCode:
+          example: My Postcode
+          type: string
+      type: object
+    _Customers__SchemeCode__Mandates_Create_post_request_BankAccount:
+      properties:
+        BankDetails:
+          $ref: '#/components/schemas/_Customers__SchemeCode__Mandates_Create_post_request_BankAccount_BankDetails'
+        Address:
+          $ref: '#/components/schemas/_Customers__SchemeCode__Mandates_Create_post_request_BankAccount_Address'
+      type: object
+    _Customers__SchemeCode___ClientRef___Surname__Mandates_Schedule_get_200_response:
+      example:
+        Schedules:
+        - PaymentsRequested: 2
+          RemainingPayments: "5"
+          CollectionDay: 29th
+          FirstPaymentDate: 2016-04-29
+          Amount: 5000
+          NextPaymentDate: 2016-06-29
+          Frequency: Monthly
+          PreviousPaymentDate: 2016-05-29
+          TotalPayments: "9"
+        - PaymentsRequested: 2
+          RemainingPayments: "5"
+          CollectionDay: 29th
+          FirstPaymentDate: 2016-04-29
+          Amount: 5000
+          NextPaymentDate: 2016-06-29
+          Frequency: Monthly
+          PreviousPaymentDate: 2016-05-29
+          TotalPayments: "9"
+        TotalRecords: 1
+      properties:
+        Schedules:
+          items:
+            $ref: '#/components/schemas/_Customers__SchemeCode___ClientRef___Surname__Mandates_Schedule_get_200_response_Schedules_inner'
+          type: array
+        TotalRecords:
+          example: 1
+          type: integer
+      type: object
+    _Customers__SchemeCode___ClientRef___Surname__VariableMandates_post_200_response:
+      example:
+        mandateId: "12345"
+      properties:
+        mandateId:
+          example: "12345"
+          type: string
+      type: object
+    _Customers__SchemeCode___ClientRef___Surname__Mandates_post_request_Schedules_inner:
+      properties:
+        ScheduleDate:
+          example: 2023-12-01
+          format: date
+          type: string
+        Amount:
+          example: 1000
+          type: integer
+        Frequency:
+          example: M
+          type: string
+        TotalPayments:
+          example: 12
+          type: integer
+      type: object
+    _Customers__SchemeCode___ClientRef___Surname__BankAccounts_put_request_Address:
+      properties:
+        TitleInitials:
+          example: MR N
+          type: string
+        LastName:
+          example: TEST
+          type: string
+        Line1:
+          example: 123 Any street
+          type: string
+        Line2:
+          example: Line 2
+          type: string
+        Town:
+          example: Any Town
+          type: string
+        County:
+          type: string
+          example: null
+        PostCode:
+          example: AB12 3CD
+          type: string
+      type: object
+    _Customers__SchemeCode___ClientRef___Surname__Mandates_Schedule__FirstPaymentDate___Amount__delete_200_response:
+      example:
+        SchemeCode: WAHA
+        ClientReference: TESTREF01
+        LastName: SMITH
+      properties:
+        ClientReference:
+          example: TESTREF01
+          type: string
+        LastName:
+          example: SMITH
+          type: string
+        SchemeCode:
+          example: WAHA
+          type: string
+      type: object
+    _Customers__SchemeCode___ClientRef___Surname__Mandates_PaymentHistory_get_200_response:
+      example:
+        SchemeCode: ABCD
+        Payments:
+        - PaymentDate: 2015-11-16
+          Amount: 1625
+        - PaymentDate: 2015-11-16
+          Amount: 1625
+        TotalRecords: 3
+        ClientReference: SO4497
+        LastName: jones-harris
+      properties:
+        ClientReference:
+          example: SO4497
+          type: string
+        LastName:
+          example: jones-harris
+          type: string
+        Payments:
+          items:
+            $ref: '#/components/schemas/_Customers__SchemeCode___ClientRef___Surname__Mandates_PaymentHistory_get_200_response_Payments_inner'
+          type: array
+        SchemeCode:
+          example: ABCD
+          type: string
+        TotalRecords:
+          example: 3
+          type: integer
+      type: object
+    _Customers__SchemeCode___ClientRef___Surname__BankAccounts_put_request:
+      properties:
+        Address:
+          $ref: '#/components/schemas/_Customers__SchemeCode___ClientRef___Surname__BankAccounts_put_request_Address'
+      type: object
+    _Customers__SchemeCode__Mandates_Create_post_request_Customer_Address:
+      properties:
+        Line1:
+          example: 123 Anystreet
+          type: string
+        Line2:
+          example: Test
+          type: string
+        Town:
+          example: AnyTown
+          type: string
+        County:
+          example: test
+          type: string
+        PostCode:
+          example: AB12 3CD
+          type: string
+      type: object
+    _Customers__SchemeCode___ClientRef___Surname__Mandates_get_200_response:
+      example:
+        Address:
+          Town: Town
+          LastName: LastName
+          PostCode: PostCode
+          TitleInitials: TitleInitials
+          County: County
+          Line1: Line1
+          Line2: Line2
+        SchemeCode: SchemeCode
+        ClientReference: ClientReference
+        LastName: LastName
+      properties:
+        Address:
+          $ref: '#/components/schemas/_Customers__SchemeCode___ClientRef___Surname__Mandates_get_200_response_Address'
+        ClientReference:
+          type: string
+        LastName:
+          type: string
+        SchemeCode:
+          type: string
+      type: object
+    _Customers__SchemeCode___ClientRef___Surname__VariableMandates_post_request:
+      properties:
+        Schedules:
+          items:
+            $ref: '#/components/schemas/_Customers__SchemeCode__VariableMandates_Create_post_request_Schedules_inner'
+          type: array
+      type: object
+    _Customers__SchemeCode__VariableMandates_Create_post_request_BankAccount_Address:
+      properties:
+        TitleInitials:
+          example: Mr
+          type: string
+        LastName:
+          example: Account
+          type: string
+        County:
+          example: A County
+          type: string
+        Line1:
+          example: test line 1
+          type: string
+        Line2:
+          example: test line 2
+          type: string
+        Town:
+          example: My Town
+          type: string
+        PostCode:
+          example: My Postcode
+          type: string
+      type: object
+    _Customers__SchemeCode__VariableMandates_Create_post_request:
+      properties:
+        Customer:
+          $ref: '#/components/schemas/_Customers__SchemeCode__Mandates_Create_post_request_Customer'
+        Schedules:
+          items:
+            $ref: '#/components/schemas/_Customers__SchemeCode__VariableMandates_Create_post_request_Schedules_inner'
+          type: array
+        BankAccount:
+          $ref: '#/components/schemas/_Customers__SchemeCode__VariableMandates_Create_post_request_BankAccount'
+      type: object
+    _Customers__SchemeCode___ClientRef___Surname__Mandates_post_request:
+      properties:
+        Schedules:
+          items:
+            $ref: '#/components/schemas/_Customers__SchemeCode___ClientRef___Surname__Mandates_post_request_Schedules_inner'
+          type: array
+      type: object
+    _Customers__SchemeCode___ClientRef___Surname__Mandates_AnnualRenewal_post_request:
+      properties:
+        Schedules:
+          items:
+            $ref: '#/components/schemas/_Customers__SchemeCode___ClientRef___Surname__Mandates_AnnualRenewal_post_request_Schedules_inner'
+          type: array
+        SuppressNotification:
+          example: 1
+          type: integer
+      type: object
+    _Customers__SchemeCode___ClientRef___Surname__Mandates_Payments_get_200_response:
+      example:
+        SchemeCode: ABCD
+        Payments:
+        - Type: Fixed
+          PaymentDate: 2016-07-01
+          Amount: 1
+          Frequency: Once
+        - Type: Fixed
+          PaymentDate: 2016-07-01
+          Amount: 1
+          Frequency: Once
+        TotalRecords: 3
+        ClientReference: abc123
+        LastName: davies
+      properties:
+        ClientReference:
+          example: abc123
+          type: string
+        LastName:
+          example: davies
+          type: string
+        Payments:
+          items:
+            $ref: '#/components/schemas/_Customers__SchemeCode___ClientRef___Surname__Mandates_Payments_get_200_response_Payments_inner'
+          type: array
+        SchemeCode:
+          example: ABCD
+          type: string
+        TotalRecords:
+          example: 3
+          type: integer
+      type: object
+    _Customers__SchemeCode__Mandates_FailedPayments__FromDate___ToDate___PageNumber__get_200_response:
+      example:
+        failedPayments:
+        - lastName: JONES
+          processedDate: 2016-05-26T00:00:00Z
+          schemeCode: ESLP
+          amount: 202971
+          clientReference: Y037477
+          reasonCode: "BACS 0 : Refer to payer"
+          collectionDate: 2016-05-20T00:00:00Z
+          line1: FLAT 2
+          isRepresented: true
+        - lastName: JONES
+          processedDate: 2016-05-26T00:00:00Z
+          schemeCode: ESLP
+          amount: 202971
+          clientReference: Y037477
+          reasonCode: "BACS 0 : Refer to payer"
+          collectionDate: 2016-05-20T00:00:00Z
+          line1: FLAT 2
+          isRepresented: true
+      properties:
+        failedPayments:
+          items:
+            $ref: '#/components/schemas/_Customers__SchemeCode__Mandates_FailedPayments__FromDate___ToDate___PageNumber__get_200_response_failedPayments_inner'
+          type: array
+      type: object
+    _Customers__SchemeCode__Mandates_Create_post_200_response:
+      example:
+        SchemeCode: TEST
+        ClientReference: 121002D
+        LastName: Smith
+      properties:
+        SchemeCode:
+          example: TEST
+          type: string
+        ClientReference:
+          example: 121002D
+          type: string
+        LastName:
+          example: Smith
+          type: string
+      type: object
+    _Customers__SchemeCode___ClientRef___Surname__BankAccountEmail_put_request:
+      properties:
+        Email:
+          example: email.address@allpay.net
+          type: string
+      type: object
+    _Customers__SchemeCode___ClientRef___Surname__Mandates_PaymentHistory_get_200_response_Payments_inner:
+      example:
+        PaymentDate: 2015-11-16
+        Amount: 1625
+      properties:
+        Amount:
+          example: 1625
+          type: integer
+        PaymentDate:
+          example: 2015-11-16
+          format: date
+          type: string
+      type: object
+    _Customers__SchemeCode__VariableMandates_Create_post_request_BankAccount:
+      properties:
+        BankDetails:
+          $ref: '#/components/schemas/_Customers__SchemeCode__Mandates_Create_post_request_BankAccount_BankDetails'
+        Address:
+          $ref: '#/components/schemas/_Customers__SchemeCode__VariableMandates_Create_post_request_BankAccount_Address'
+      type: object
+    _Customers__SchemeCode___ClientRef___Surname__Mandates_AnnualRenewal_post_request_Schedules_inner:
+      properties:
+        ScheduleDate:
+          example: 2023-12-01
+          format: date
+          type: string
+        Amount:
+          example: 1000
+          type: integer
+        Frequency:
+          example: A
+          type: string
+        TotalPayments:
+          example: 1
+          type: integer
+      type: object
+    _Customers__SchemeCode__Mandates_FailedPayments__FromDate___ToDate___PageNumber__get_200_response_failedPayments_inner:
+      example:
+        lastName: JONES
+        processedDate: 2016-05-26T00:00:00Z
+        schemeCode: ESLP
+        amount: 202971
+        clientReference: Y037477
+        reasonCode: "BACS 0 : Refer to payer"
+        collectionDate: 2016-05-20T00:00:00Z
+        line1: FLAT 2
+        isRepresented: true
+      properties:
+        amount:
+          example: 202971
+          type: integer
+        clientReference:
+          example: Y037477
+          type: string
+        collectionDate:
+          example: 2016-05-20T00:00:00Z
+          format: date-time
+          type: string
+        isRepresented:
+          example: true
+          type: boolean
+        lastName:
+          example: JONES
+          type: string
+        line1:
+          example: FLAT 2
+          type: string
+        processedDate:
+          example: 2016-05-26T00:00:00Z
+          format: date-time
+          type: string
+        reasonCode:
+          example: "BACS 0 : Refer to payer"
+          type: string
+        schemeCode:
+          example: ESLP
+          type: string
+      type: object

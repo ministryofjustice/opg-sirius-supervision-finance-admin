@@ -107,3 +107,9 @@ services:
       dockerfile: docker/json-server/Dockerfile
     ports:
       - '3000:3000'
+
+  allpay-mock:
+    build:
+        dockerfile: allpay/Dockerfile
+    ports:
+        - '8765:8080'
