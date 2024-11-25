@@ -10,10 +10,9 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
-	"testing"
 )
 
-func (suite *IntegrationSuite) TestServer_download(t *testing.T) {
+func (suite *IntegrationSuite) TestServer_download() {
 	conn := suite.testDB.GetConn()
 
 	req := httptest.NewRequest(http.MethodGet, "/download?uid=eyJLZXkiOiJ0ZXN0LmNzdiIsIlZlcnNpb25JZCI6InZwckF4c1l0TFZzYjVQOUhfcUhlTlVpVTlNQm5QTmN6In0=", nil)
@@ -33,13 +32,13 @@ func (suite *IntegrationSuite) TestServer_download(t *testing.T) {
 	res := w.Result()
 	defer res.Body.Close()
 
-	assert.Equal(t, fileContent, w.Body.String())
-	assert.Equal(t, http.StatusOK, w.Code)
-	assert.Equal(t, res.Header.Get("Content-Type"), "text/csv")
-	assert.Equal(t, res.Header.Get("Content-Disposition"), "attachment; filename=test.csv")
+	assert.Equal(suite.T(), fileContent, w.Body.String())
+	assert.Equal(suite.T(), http.StatusOK, w.Code)
+	assert.Equal(suite.T(), res.Header.Get("Content-Type"), "text/csv")
+	assert.Equal(suite.T(), res.Header.Get("Content-Disposition"), "attachment; filename=test.csv")
 }
 
-func (suite *IntegrationSuite) TestServer_download_noMatch(t *testing.T) {
+func (suite *IntegrationSuite) TestServer_download_noMatch() {
 	conn := suite.testDB.GetConn()
 
 	req := httptest.NewRequest(http.MethodGet, "/download?uid=eyJLZXkiOiJ0ZXN0LmNzdiIsIlZlcnNpb25JZCI6InZwckF4c1l0TFZzYjVQOUhfcUhlTlVpVTlNQm5QTmN6In0=", nil)
@@ -52,5 +51,5 @@ func (suite *IntegrationSuite) TestServer_download_noMatch(t *testing.T) {
 	err := server.download(w, req)
 
 	expected := apierror.NotFoundError(&types.NoSuchKey{})
-	assert.ErrorAs(t, err, &expected)
+	assert.ErrorAs(suite.T(), err, &expected)
 }

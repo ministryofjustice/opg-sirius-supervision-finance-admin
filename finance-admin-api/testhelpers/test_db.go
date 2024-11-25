@@ -43,7 +43,7 @@ func InitDb() *TestDatabase {
 
 	_, b, _, _ := runtime.Caller(0)
 	testPath := filepath.Dir(b)
-	basePath = filepath.Join(testPath, "../../..")
+	basePath = filepath.Join(testPath, "../..")
 
 	container, err := postgres.Run(
 		ctx,
@@ -51,7 +51,7 @@ func InitDb() *TestDatabase {
 		postgres.WithDatabase(dbname),
 		postgres.WithUsername(user),
 		postgres.WithPassword(password),
-		postgres.WithInitScripts(basePath+"/migrations/1_baseline.sql"),
+		postgres.WithInitScripts(basePath+"/db/1_baseline.sql"),
 		testcontainers.WithWaitStrategy(
 			wait.ForLog("database system is ready to accept connections").
 				WithOccurrence(2).

@@ -11,7 +11,7 @@ import (
 	"testing"
 )
 
-func (suite *IntegrationSuite) Test_upload(t *testing.T) {
+func (suite *IntegrationSuite) Test_upload() {
 	conn := suite.testDB.GetConn()
 
 	var b bytes.Buffer
@@ -39,11 +39,11 @@ func (suite *IntegrationSuite) Test_upload(t *testing.T) {
 
 	expected := ""
 
-	assert.Equal(t, expected, w.Body.String())
-	assert.Equal(t, http.StatusCreated, w.Code)
+	assert.Equal(suite.T(), expected, w.Body.String())
+	assert.Equal(suite.T(), http.StatusCreated, w.Code)
 }
 
-func (suite *IntegrationSuite) TestUploadIncorrectCSVHeaders(t *testing.T) {
+func (suite *IntegrationSuite) TestUploadIncorrectCSVHeaders() {
 	conn := suite.testDB.GetConn()
 
 	var b bytes.Buffer
@@ -70,10 +70,10 @@ func (suite *IntegrationSuite) TestUploadIncorrectCSVHeaders(t *testing.T) {
 			"incorrect-headers": "CSV headers do not match for the report trying to be uploaded",
 		},
 	}}
-	assert.Equal(t, expected, err)
+	assert.Equal(suite.T(), expected, err)
 }
 
-func (suite *IntegrationSuite) TestUploadFailedToReadCSVHeaders(t *testing.T) {
+func (suite *IntegrationSuite) TestUploadFailedToReadCSVHeaders() {
 	conn := suite.testDB.GetConn()
 
 	var b bytes.Buffer
@@ -100,7 +100,7 @@ func (suite *IntegrationSuite) TestUploadFailedToReadCSVHeaders(t *testing.T) {
 			"read-failed": "Failed to read CSV headers",
 		},
 	}}
-	assert.Equal(t, expected, err)
+	assert.Equal(suite.T(), expected, err)
 }
 
 func Test_reportHeadersByType(t *testing.T) {
