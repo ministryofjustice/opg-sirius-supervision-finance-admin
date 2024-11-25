@@ -59,7 +59,7 @@ func (s *Server) generateAndUploadReport(ctx context.Context, download shared.Do
 		//}
 		filename = fmt.Sprintf("ageddebt_%s.csv", requestedDate.Format("02:01:2006"))
 		reportName = "Aged Debt"
-		items, err = s.requestAgedDebtReport(ctx)
+		items, err = s.requestAgedDebtReport(ctx, download.FromDateField, download.ToDateField)
 		if err != nil {
 			return err
 		}
@@ -96,7 +96,7 @@ func (s *Server) generateAndUploadReport(ctx context.Context, download shared.Do
 	return nil
 }
 
-func (s *Server) requestAgedDebtReport(ctx context.Context) ([][]string, error) {
+func (s *Server) requestAgedDebtReport(ctx context.Context, fromDate *shared.Date, toDate *shared.Date) ([][]string, error) {
 	agedDebtHeaders := []string{
 		"Customer Name",
 		"Customer number",
@@ -131,7 +131,18 @@ func (s *Server) requestAgedDebtReport(ctx context.Context) ([][]string, error) 
 
 	items := [][]string{agedDebtHeaders}
 
-	rows, err := s.conn.Query(ctx, db.AgedDebtQuery)
+	if fromDate == nil {
+		from := shared.NewDate("")
+		fromDate = &from
+	}
+
+	if toDate == nil {
+		to := shared.Date{Time: time.Now()}
+		toDate = &to
+	}
+
+	rows, err := s.conn.Query(ctx, db.AgedDebtQuery, fromDate.Time.Format("2006-01-02"), toDate.Time.Format("2006-01-02"))
+
 	if err != nil {
 		return nil, err
 	}

@@ -21,6 +21,7 @@ const AgedDebtQuery = `WITH outstanding_invoices AS (SELECT i.id,
                                   ORDER BY id
                                   LIMIT 1
                                   ) sl ON TRUE
+							WHERE i.raiseddate >= $1 AND i.raiseddate <= $2
                               GROUP BY i.id, i.amount, sl.supervision_level
                               HAVING i.amount > COALESCE(SUM(la.amount), 0)),
      age_per_client AS (SELECT fc.client_id, MAX(oi.age) AS age
