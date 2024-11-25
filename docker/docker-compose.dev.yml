@@ -8,6 +8,7 @@ services:
       - ./go.mod:/app/go.mod
       - ./go.sum:/app/go.sum
       - ./shared:/app/shared
+      - ./apierror:/app/apierror
       - ./finance-admin/.air.toml:/app/finance-admin/.air.toml
       - ./finance-admin/internal:/app/finance-admin/internal
       - ./finance-admin/main_test.go:/app/finance-admin/main_test.go

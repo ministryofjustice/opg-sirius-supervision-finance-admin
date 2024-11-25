@@ -24,7 +24,7 @@ templ Page(vars PageVars, comp templ.Component) {
         <body class="govuk-template__body sirius-finance">
             <sirius-header></sirius-header>
 
-            <div class="govuk-width-container app-width-container">
+            <div class="govuk-!-margin-left-3">
                 <main class="govuk-main-wrapper app-main-class" role="main">
                     if vars.SuccessMessage != "" {
                         <h1>{ vars.SuccessMessage }</h1>
@@ -52,7 +52,7 @@ templ contentHeader() {
 templ navigation(prefix string) {
 	<div class="govuk-grid-row govuk-!-margin-top-5  govuk-!-margin-bottom-0">
         <div class="govuk-grid-column-full">
-            <nav class="moj-sub-navigation" aria-label="Secondary navigation">
+            <nav id="sub-nav" class="moj-sub-navigation" aria-label="Secondary navigation">
                 <ul class="moj-sub-navigation__list">
                     @tab("Downloads", prefix, "downloads")
                     @tab("Uploads", prefix, "uploads")
@@ -66,6 +66,7 @@ templ navigation(prefix string) {
 templ tab(title string, prefix string, path string) {
     <li class="moj-sub-navigation__item" data-cy={ path + "-tab" }>
         <a
+                id={ "tab-" + path }
                 class="moj-sub-navigation__link selectable-nav"
                 hx-get={ prefix + "/" + path }
                 hx-target="#main-content"

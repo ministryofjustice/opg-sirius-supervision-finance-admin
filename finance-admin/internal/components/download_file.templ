@@ -1,0 +1,30 @@
+package components
+
+import "fmt"
+
+type DownloadFileVars struct {
+	ErrorMessage string
+	Filename     string
+	Uid          string
+	AppVars
+}
+
+templ DownloadFile(vars DownloadFileVars) {
+	<div class="govuk-grid-row govuk-!-margin-top-5  govuk-!-margin-bottom-5">
+		<div class="govuk-grid-column-full">
+			if vars.ErrorMessage != "" {
+				<h1 class="govuk-heading-m  govuk-!-margin-bottom-1">{ vars.ErrorMessage }</h1>
+			} else {
+				<h1 class="govuk-heading-m  govuk-!-margin-bottom-1">{ vars.Filename } is ready to download</h1>
+				<div class="govuk-button-group govuk-!-margin-top-5">
+					<a
+						id="download-button"
+						class="govuk-button"
+						href={ templ.URL(fmt.Sprintf("%s/download/callback?uid=%s", vars.EnvironmentVars.Prefix, vars.Uid)) }
+						download
+					>Download</a>
+				</div>
+			}
+		</div>
+	</div>
+}

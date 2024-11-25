@@ -5,10 +5,10 @@ import (
 	"net/http"
 )
 
-type GetAnnualInvoicingLettersHandler struct {
+type AnnualInvoicingLettersTabHandler struct {
 	router
 }
 
-func (h *GetAnnualInvoicingLettersHandler) render(v components.AppVars, w http.ResponseWriter, r *http.Request) error {
+func (h *AnnualInvoicingLettersTabHandler) render(v components.AppVars, w http.ResponseWriter, r *http.Request) error {
 	return h.execute(w, r, components.AnnualInvoicingLetters())
 }

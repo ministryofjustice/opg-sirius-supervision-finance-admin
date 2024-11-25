@@ -31,7 +31,7 @@ type router interface {
 	execute(io.Writer, *http.Request, templ.Component) error
 }
 
-func New(logger *slog.Logger, client ApiClient, envVars components.EnvironmentVars) http.Handler {
+func New(logger *slog.Logger, client *api.Client, envVars components.EnvironmentVars) http.Handler {
 	r := route{client: client, envVars: envVars}
 	mux := http.NewServeMux()
 	auth := Authenticator{
@@ -46,14 +46,14 @@ func New(logger *slog.Logger, client ApiClient, envVars components.EnvironmentVa
 
 	handleMux("GET /downloads", &DownloadsTabHandler{&r})
 	handleMux("GET /uploads", &UploadsTabHandler{&r})
-	handleMux("GET /annual-invoicing-letters", &GetAnnualInvoicingLettersHandler{&r})
+	handleMux("GET /annual-invoicing-letters", &AnnualInvoicingLettersTabHandler{&r})
 
 	//forms
 	handleMux("POST /request-report", &RequestReportHandler{&r})
 	handleMux("POST /uploads", &UploadFormHandler{&r})
 
 	// file download
-	handleMux("GET /download", &GetDownloadHandler{&route{client: client, tmpl: templates["download-button.gotmpl"], partial: "download"}})
+	handleMux("GET /download", &GetDownloadHandler{&r})
 
 	downloadMux := func(pattern string, h http.Handler) {
 		mux.Handle(pattern, telemetry.Middleware(logger)(auth.Authenticate(h)))
