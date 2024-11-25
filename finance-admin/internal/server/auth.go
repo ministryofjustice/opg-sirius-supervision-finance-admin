@@ -3,13 +3,14 @@ package server
 import (
 	"fmt"
 	"github.com/ministryofjustice/opg-go-common/telemetry"
+	"github.com/opg-sirius-finance-admin/finance-admin/internal/components"
 	"net/http"
 	"net/url"
 )
 
 type Authenticator struct {
 	Client  AuthClient
-	EnvVars EnvironmentVars
+	EnvVars components.EnvironmentVars
 }
 
 func (a *Authenticator) Authenticate(next http.Handler) http.Handler {

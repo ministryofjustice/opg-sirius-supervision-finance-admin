@@ -5,19 +5,20 @@ import (
 	"errors"
 	"github.com/ministryofjustice/opg-go-common/telemetry"
 	"github.com/opg-sirius-finance-admin/finance-admin/internal/api"
+	"github.com/opg-sirius-finance-admin/finance-admin/internal/components"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 )
 
-type mockHandler struct {
+type mockAuthHandler struct {
 	w      http.ResponseWriter
 	r      *http.Request
 	called bool
 }
 
-func (m *mockHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (m *mockAuthHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	m.w = w
 	m.r = r
 	m.called = true
@@ -43,11 +44,11 @@ func Test_authenticate_success(t *testing.T) {
 
 	auth := Authenticator{
 		Client: client,
-		EnvVars: EnvironmentVars{
+		EnvVars: components.EnvironmentVars{
 			SiriusPublicURL: "https://sirius.gov.uk",
 		},
 	}
-	next := &mockHandler{}
+	next := &mockAuthHandler{}
 	auth.Authenticate(next).ServeHTTP(w, r)
 
 	assert.Equal(t, true, client.called)
@@ -66,12 +67,12 @@ func Test_authenticate_unauthorised(t *testing.T) {
 
 	auth := Authenticator{
 		Client: client,
-		EnvVars: EnvironmentVars{
+		EnvVars: components.EnvironmentVars{
 			SiriusPublicURL: "https://sirius.gov.uk",
 			Prefix:          "finance-admin/",
 		},
 	}
-	next := &mockHandler{}
+	next := &mockAuthHandler{}
 	auth.Authenticate(next).ServeHTTP(w, r)
 
 	assert.Equal(t, true, client.called)
@@ -89,12 +90,12 @@ func Test_authenticate_error(t *testing.T) {
 
 	auth := Authenticator{
 		Client: client,
-		EnvVars: EnvironmentVars{
+		EnvVars: components.EnvironmentVars{
 			SiriusPublicURL: "https://sirius.gov.uk",
 			Prefix:          "finance-admin/",
 		},
 	}
-	next := &mockHandler{}
+	next := &mockAuthHandler{}
 	auth.Authenticate(next).ServeHTTP(w, r)
 
 	assert.Equal(t, true, client.called)

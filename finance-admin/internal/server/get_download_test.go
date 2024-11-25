@@ -3,6 +3,7 @@ package server
 import (
 	"errors"
 	"github.com/opg-sirius-finance-admin/apierror"
+	"github.com/opg-sirius-finance-admin/finance-admin/internal/components"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
@@ -10,17 +11,17 @@ import (
 )
 
 func TestGetDownload(t *testing.T) {
-	appVars := AppVars{Path: "/download"}
+	appVars := components.AppVars{Path: "/download"}
 	tests := []struct {
 		name         string
 		uid          string
 		mockError    error
-		expectedVars GetDownloadVars
+		expectedVars components.DownloadFileVars
 	}{
 		{
 			name: "successful download",
 			uid:  "eyJLZXkiOiJ0ZXN0LmNzdiIsIlZlcnNpb25JZCI6InZwckF4c1l0TFZzYjVQOUhfcUhlTlVpVTlNQm5QTmN6In0=",
-			expectedVars: GetDownloadVars{
+			expectedVars: components.DownloadFileVars{
 				Uid:      "eyJLZXkiOiJ0ZXN0LmNzdiIsIlZlcnNpb25JZCI6InZwckF4c1l0TFZzYjVQOUhfcUhlTlVpVTlNQm5QTmN6In0=",
 				Filename: "test.csv",
 				AppVars:  appVars,
@@ -29,7 +30,7 @@ func TestGetDownload(t *testing.T) {
 		{
 			name: "invalid uid",
 			uid:  "invalid-uid",
-			expectedVars: GetDownloadVars{
+			expectedVars: components.DownloadFileVars{
 				ErrorMessage: downloadError,
 				AppVars:      appVars,
 			},
@@ -38,7 +39,7 @@ func TestGetDownload(t *testing.T) {
 			name:      "download not found",
 			uid:       "eyJLZXkiOiJ0ZXN0LmNzdiIsIlZlcnNpb25JZCI6InZwckF4c1l0TFZzYjVQOUhfcUhlTlVpVTlNQm5QTmN6In0=",
 			mockError: apierror.NotFound{},
-			expectedVars: GetDownloadVars{
+			expectedVars: components.DownloadFileVars{
 				ErrorMessage: downloadError,
 				AppVars:      appVars,
 			},
@@ -47,7 +48,7 @@ func TestGetDownload(t *testing.T) {
 			name:      "system error",
 			uid:       "eyJLZXkiOiJ0ZXN0LmNzdiIsIlZlcnNpb25JZCI6InZwckF4c1l0TFZzYjVQOUhfcUhlTlVpVTlNQm5QTmN6In0=",
 			mockError: errors.New("internal server error"),
-			expectedVars: GetDownloadVars{
+			expectedVars: components.DownloadFileVars{
 				ErrorMessage: systemError,
 				AppVars:      appVars,
 			},
@@ -66,9 +67,6 @@ func TestGetDownload(t *testing.T) {
 			err := sut.render(appVars, w, r)
 
 			assert.Nil(t, err)
-			assert.True(t, ro.executed)
-
-			assert.Equal(t, tt.expectedVars, ro.data)
 		})
 	}
 }

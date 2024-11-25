@@ -1,36 +1,30 @@
 package server
 
 import (
+	"github.com/a-h/templ"
+	"github.com/opg-sirius-finance-admin/finance-admin/internal/components"
+	"io"
 	"net/http"
 )
 
-type PageData struct {
-	Data           any
-	SuccessMessage string
-}
-
 type route struct {
 	client  ApiClient
-	tmpl    Template
-	partial string
+	envVars components.EnvironmentVars
 }
 
 func (r route) Client() ApiClient {
 	return r.client
 }
 
-// execute is an abstraction of the Template execute functions in order to conditionally render either a full template or
-// a block, in response to a header added by HTMX. If the header is not present, the function will also fetch all
-// additional data needed by the page for a full page load.
-func (r route) execute(w http.ResponseWriter, req *http.Request, data any) error {
+func (r route) execute(w io.Writer, req *http.Request, component templ.Component) error {
+	ctx := req.Context()
 	if IsHxRequest(req) {
-		return r.tmpl.ExecuteTemplate(w, r.partial, data)
+		return component.Render(ctx, w)
 	} else {
-		data := PageData{
-			Data:           data,
-			SuccessMessage: r.getSuccess(req),
-		}
-		return r.tmpl.Execute(w, data)
+		var data components.PageVars
+		data.EnvironmentVars = r.envVars
+
+		return components.Page(data, component).Render(ctx, w)
 	}
 }
 

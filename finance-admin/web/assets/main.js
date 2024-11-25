@@ -35,6 +35,8 @@ htmx.onLoad(content => {
         element.addEventListener("click", () => htmx.addClass(htmx.find(".moj-banner--success"), "hide"));
     });
 
+    setCurrentTab();
+
     if (document.getElementById('reports-type')) {
         htmx.findAll("#reports-type").forEach((element) => {
             element.addEventListener("change", function() {
@@ -181,3 +183,14 @@ htmx.onLoad(content => {
         })
     }
 });
+
+const setCurrentTab = () => {
+    const currentUrl = window.location.pathname;
+    const path = currentUrl.substring(currentUrl.lastIndexOf('/') + 1);
+    const el = document.querySelector(`#tab-${path}`);
+    if (el) {
+        document.querySelectorAll(".selectable-nav")
+            .forEach((element) => element.removeAttribute('aria-current'))
+        el.setAttribute('aria-current', "page");
+    }
+}

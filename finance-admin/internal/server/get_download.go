@@ -3,6 +3,7 @@ package server
 import (
 	"errors"
 	"github.com/opg-sirius-finance-admin/apierror"
+	"github.com/opg-sirius-finance-admin/finance-admin/internal/components"
 	"github.com/opg-sirius-finance-admin/shared"
 	"net/http"
 )
@@ -12,23 +13,16 @@ const (
 	systemError   = "Sorry, there is a problem with the service. Please try again later."
 )
 
-type GetDownloadVars struct {
-	Uid          string
-	Filename     string
-	ErrorMessage string
-	AppVars
-}
-
 type GetDownloadHandler struct {
 	router
 }
 
-func (h *GetDownloadHandler) render(v AppVars, w http.ResponseWriter, r *http.Request) error {
+func (h *GetDownloadHandler) render(v components.AppVars, w http.ResponseWriter, r *http.Request) error {
 	ctx := getContext(r)
 	uid := r.URL.Query().Get("uid")
 
 	var downloadRequest shared.DownloadRequest
-	data := GetDownloadVars{AppVars: v}
+	data := components.DownloadFileVars{AppVars: v}
 
 	err := downloadRequest.Decode(uid)
 	if err != nil {
@@ -48,5 +42,5 @@ func (h *GetDownloadHandler) render(v AppVars, w http.ResponseWriter, r *http.Re
 		}
 	}
 
-	return h.execute(w, r, data)
+	return h.execute(w, r, components.DownloadFile(data))
 }

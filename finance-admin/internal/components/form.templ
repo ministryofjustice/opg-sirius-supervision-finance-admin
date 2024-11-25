@@ -1,0 +1,34 @@
+package components
+
+import "github.com/opg-sirius-finance-admin/finance-admin/internal/model"
+
+templ dropdown[T model.Enum](id string, name string, label string, options []T) {
+	<div class="govuk-form-group" id={ "f-" + name }>
+		<label class="govuk-label" for={ id }>
+			{ label }
+			<span id={ "error-message__" + name }></span>
+		</label>
+		<select data-cy="report-type" class="govuk-select" id={ id } name={ name }>
+			<option value=""></option>
+			for _, o := range options {
+				<option value={ o.Key() } id={ o.Key() }>{ o.Translation() }</option>
+			}
+		</select>
+	</div>
+}
+
+templ hiddenFieldWrapper(id string) {
+	<div class="hide" id={ id + "-field-input"}>
+		{ children... }
+	</div>
+}
+
+templ dateField(id string, name string, label string) {
+	<div class="govuk-form-group" id={ "f-" + name }>
+		<label class="govuk-label" for={ id }>
+			Date from
+			<span id={ "error-message__" + name }></span>
+		</label>
+		<input disabled class="govuk-input govuk-input--width-10" id={id} name={name} type="date"/>
+	</div>
+}
