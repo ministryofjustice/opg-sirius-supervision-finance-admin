@@ -3,10 +3,37 @@ package api
 import (
 	"context"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/ministryofjustice/opg-go-common/telemetry"
 	"github.com/opg-sirius-finance-admin/finance-admin-api/event"
+	"github.com/opg-sirius-finance-admin/finance-admin-api/testhelpers"
+	"github.com/stretchr/testify/suite"
 	"io"
 	"net/http"
+	"testing"
 )
+
+type IntegrationSuite struct {
+	suite.Suite
+	testDB *testhelpers.TestDatabase
+	ctx    context.Context
+}
+
+func (suite *IntegrationSuite) SetupTest() {
+	suite.testDB = testhelpers.InitDb()
+	suite.ctx = telemetry.ContextWithLogger(context.Background(), telemetry.NewLogger("finance-admin-api-test"))
+}
+
+func TestSuite(t *testing.T) {
+	suite.Run(t, new(IntegrationSuite))
+}
+
+func (suite *IntegrationSuite) TearDownSuite() {
+	suite.testDB.TearDown()
+}
+
+func (suite *IntegrationSuite) AfterTest(suiteName, testName string) {
+	suite.testDB.Restore()
+}
 
 type MockDispatch struct {
 	event any
@@ -30,12 +57,12 @@ func (m *MockFileStorage) GetFile(ctx context.Context, bucketName string, fileNa
 	return m.outgoingObject, m.err
 }
 
-func (m *MockFileStorage) PutFile(ctx context.Context, bucketName string, fileName string, file io.Reader) error {
+func (m *MockFileStorage) PutFile(ctx context.Context, bucketName string, fileName string, file io.Reader) (*string, error) {
 	m.bucketname = bucketName
 	m.filename = fileName
 	m.file = file
 
-	return nil
+	return nil, nil
 }
 
 // add a FileExists method to the MockFileStorage struct
