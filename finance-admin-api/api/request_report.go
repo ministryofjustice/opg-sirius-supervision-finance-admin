@@ -32,10 +32,12 @@ func (s *Server) requestReport(w http.ResponseWriter, r *http.Request) error {
 		}
 	}
 
-	err := s.generateAndUploadReport(context.Background(), download, time.Now())
-	if err != nil {
-		return err
-	}
+	go func() {
+		err := s.generateAndUploadReport(context.Background(), download, time.Now())
+		if err != nil {
+			fmt.Println(err)
+		}
+	}()
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)

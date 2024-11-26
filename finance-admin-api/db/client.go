@@ -39,13 +39,15 @@ func (c *Client) Close(ctx context.Context) error {
 type ReportQuery interface {
 	GetHeaders() []string
 	GetQuery() string
-	GetParams() []string
+	GetParams() []any
 }
 
 func (c *Client) Run(ctx context.Context, query ReportQuery) ([][]string, error) {
 	items := [][]string{query.GetHeaders()}
 
-	rows, err := c.db.Query(ctx, AgedDebtQuery, query.GetParams())
+	params := query.GetParams()
+
+	rows, err := c.db.Query(ctx, AgedDebtQuery, params...)
 
 	if err != nil {
 		return nil, err
