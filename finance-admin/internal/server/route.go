@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"net/http"
 )
 
@@ -40,6 +41,8 @@ func (r route) getSuccess(req *http.Request) string {
 		return "File successfully uploaded"
 	case "download":
 		return "Your file has been successfully downloaded"
+	case "request_report":
+		return fmt.Sprintf("Your download of %s report has started. You will be notified by email when it’s ready.", req.URL.Query().Get("reportAccountType"))
 	}
 	return ""
 }
