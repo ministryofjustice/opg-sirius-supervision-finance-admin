@@ -68,6 +68,10 @@ func (c *Client) PutFile(ctx context.Context, bucketName string, fileName string
 		SSEKMSKeyId:          aws.String(os.Getenv("S3_ENCRYPTION_KEY")),
 	})
 
+	if output == nil {
+		return nil, err
+	}
+
 	return output.VersionId, err
 }
 

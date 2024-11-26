@@ -46,7 +46,6 @@ func (s *Server) requestReport(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (s *Server) generateAndUploadReport(ctx context.Context, download shared.Download, requestedDate time.Time) error {
-	var items [][]string
 	var query db.ReportQuery
 	var err error
 
@@ -61,12 +60,12 @@ func (s *Server) generateAndUploadReport(ctx context.Context, download shared.Do
 		}
 	}
 
-	items, err = s.conn.Run(ctx, query)
+	rows, err := s.conn.Run(ctx, query)
 	if err != nil {
 		return err
 	}
 
-	file, err := createCsv(filename, items)
+	file, err := createCsv(filename, rows)
 	if err != nil {
 		return err
 	}

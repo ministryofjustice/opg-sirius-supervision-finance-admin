@@ -43,35 +43,19 @@ type ReportQuery interface {
 }
 
 func (c *Client) Run(ctx context.Context, query ReportQuery) ([][]string, error) {
-	items := [][]string{query.GetHeaders()}
+	headers := [][]string{query.GetHeaders()}
 
-	params := query.GetParams()
-
-	rows, err := c.db.Query(ctx, AgedDebtQuery, params...)
-
+	rows, err := c.db.Query(ctx, query.GetQuery(), query.GetParams()...)
 	if err != nil {
 		return nil, err
 	}
 
 	defer rows.Close()
 
-	for rows.Next() {
-		var i []string
-		var stringValue string
-
-		values, err := rows.Values()
-		if err != nil {
-			return nil, err
-		}
-		for _, value := range values {
-			stringValue, _ = value.(string)
-			i = append(i, stringValue)
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
+	stringRows, err := pgx.CollectRows(rows, pgx.RowTo[[]string])
+	if err != nil {
+		return nil, fmt.Errorf("CollectRows error: %v", err)
 	}
 
-	return items, nil
+	return append(headers, stringRows...), nil
 }
