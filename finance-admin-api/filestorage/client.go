@@ -59,8 +59,8 @@ func (c *Client) GetFile(ctx context.Context, bucketName string, filename string
 	})
 }
 
-func (c *Client) PutFile(ctx context.Context, bucketName string, fileName string, file io.Reader) error {
-	_, err := c.s3.PutObject(ctx, &s3.PutObjectInput{
+func (c *Client) PutFile(ctx context.Context, bucketName string, fileName string, file io.Reader) (*string, error) {
+	output, err := c.s3.PutObject(ctx, &s3.PutObjectInput{
 		Bucket:               &bucketName,
 		Key:                  &fileName,
 		Body:                 file,
@@ -68,7 +68,11 @@ func (c *Client) PutFile(ctx context.Context, bucketName string, fileName string
 		SSEKMSKeyId:          aws.String(os.Getenv("S3_ENCRYPTION_KEY")),
 	})
 
-	return err
+	if output == nil {
+		return nil, err
+	}
+
+	return output.VersionId, err
 }
 
 func (c *Client) FileExists(ctx context.Context, bucketName string, filename string, versionID string) bool {
