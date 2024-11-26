@@ -5,35 +5,32 @@ import (
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
+	"testing"
 )
 
-func (suite *IntegrationSuite) TestCheckDownload() {
-	conn := suite.testDB.GetConn()
-
+func TestCheckDownload(t *testing.T) {
 	req := httptest.NewRequest(http.MethodHead, "/download?uid=eyJLZXkiOiJ0ZXN0LmNzdiIsIlZlcnNpb25JZCI6InZwckF4c1l0TFZzYjVQOUhfcUhlTlVpVTlNQm5QTmN6In0=", nil)
 	w := httptest.NewRecorder()
 
 	mockS3 := MockFileStorage{}
 	mockS3.exists = true
 
-	server := NewServer(nil, conn.Conn, nil, &mockS3)
+	server := NewServer(nil, nil, nil, &mockS3)
 	err := server.checkDownload(w, req)
 
-	assert.NoError(suite.T(), err)
-	assert.Equal(suite.T(), http.StatusOK, w.Code)
+	assert.NoError(t, err)
+	assert.Equal(t, http.StatusOK, w.Code)
 }
 
-func (suite *IntegrationSuite) TestCheckDownload_noMatch() {
-	conn := suite.testDB.GetConn()
-
+func TestCheckDownload_noMatch(t *testing.T) {
 	req := httptest.NewRequest(http.MethodHead, "/download?uid=eyJLZXkiOiJ0ZXN0LmNzdiIsIlZlcnNpb25JZCI6InZwckF4c1l0TFZzYjVQOUhfcUhlTlVpVTlNQm5QTmN6In0=", nil)
 	w := httptest.NewRecorder()
 
 	mockS3 := MockFileStorage{}
 	mockS3.exists = false
 
-	server := NewServer(nil, conn.Conn, nil, &mockS3)
+	server := NewServer(nil, nil, nil, &mockS3)
 	err := server.checkDownload(w, req)
 
-	assert.ErrorIs(suite.T(), err, apierror.NotFound{})
+	assert.ErrorIs(t, err, apierror.NotFound{})
 }

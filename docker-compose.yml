@@ -62,7 +62,7 @@ services:
     ports:
       - "5431:5432"
     volumes:
-      - ./db/1_baseline.sql:/docker-entrypoint-initdb.d/1_baseline.sql
+      - ./migrations/1_baseline.sql:/docker-entrypoint-initdb.d/1_baseline.sql
     healthcheck:
       test: pg_isready --username=user --dbname=finance
       interval: 5s

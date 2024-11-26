@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/jackc/pgx/v5"
 	"github.com/ministryofjustice/opg-go-common/securityheaders"
 	"github.com/ministryofjustice/opg-go-common/telemetry"
 	"github.com/opg-sirius-finance-admin/finance-admin-api/event"
@@ -12,6 +11,7 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
+	"time"
 )
 
 type HTTPClient interface {
@@ -28,14 +28,18 @@ type FileStorage interface {
 	FileExists(ctx context.Context, bucketName string, filename string, versionID string) bool
 }
 
+type DbConn interface {
+	GetAgedDebt(ctx context.Context, fromDate time.Time, toDate time.Time) ([][]string, error)
+}
+
 type Server struct {
 	http        HTTPClient
-	conn        *pgx.Conn
+	conn        DbConn
 	dispatch    Dispatch
 	filestorage FileStorage
 }
 
-func NewServer(httpClient HTTPClient, conn *pgx.Conn, dispatch Dispatch, filestorage FileStorage) Server {
+func NewServer(httpClient HTTPClient, conn DbConn, dispatch Dispatch, filestorage FileStorage) Server {
 	return Server{httpClient, conn, dispatch, filestorage}
 }
 

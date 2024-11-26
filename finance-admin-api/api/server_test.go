@@ -3,37 +3,12 @@ package api
 import (
 	"context"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/ministryofjustice/opg-go-common/telemetry"
+	"github.com/opg-sirius-finance-admin/finance-admin-api/db"
 	"github.com/opg-sirius-finance-admin/finance-admin-api/event"
-	"github.com/opg-sirius-finance-admin/finance-admin-api/testhelpers"
-	"github.com/stretchr/testify/suite"
 	"io"
 	"net/http"
-	"testing"
+	"time"
 )
-
-type IntegrationSuite struct {
-	suite.Suite
-	testDB *testhelpers.TestDatabase
-	ctx    context.Context
-}
-
-func (suite *IntegrationSuite) SetupTest() {
-	suite.testDB = testhelpers.InitDb()
-	suite.ctx = telemetry.ContextWithLogger(context.Background(), telemetry.NewLogger("finance-admin-api-test"))
-}
-
-func TestSuite(t *testing.T) {
-	suite.Run(t, new(IntegrationSuite))
-}
-
-func (suite *IntegrationSuite) TearDownSuite() {
-	suite.testDB.TearDown()
-}
-
-func (suite *IntegrationSuite) AfterTest(suiteName, testName string) {
-	suite.testDB.Restore()
-}
 
 type MockDispatch struct {
 	event any
@@ -45,6 +20,7 @@ func (m *MockDispatch) FinanceAdminUpload(ctx context.Context, event event.Finan
 }
 
 type MockFileStorage struct {
+	versionId      string
 	bucketname     string
 	filename       string
 	file           io.Reader
@@ -62,12 +38,26 @@ func (m *MockFileStorage) PutFile(ctx context.Context, bucketName string, fileNa
 	m.filename = fileName
 	m.file = file
 
-	return nil, nil
+	return &m.versionId, nil
 }
 
 // add a FileExists method to the MockFileStorage struct
 func (m *MockFileStorage) FileExists(ctx context.Context, bucketName string, filename string, versionID string) bool {
 	return m.exists
+}
+
+type MockDb struct {
+	query    string
+	fromDate time.Time
+	toDate   time.Time
+}
+
+func (m *MockDb) GetAgedDebt(ctx context.Context, fromDate time.Time, toDate time.Time) ([][]string, error) {
+	m.query = db.AgedDebtQuery
+	m.fromDate = fromDate
+	m.toDate = toDate
+
+	return nil, nil
 }
 
 type MockHttpClient struct {

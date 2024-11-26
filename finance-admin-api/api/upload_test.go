@@ -11,9 +11,7 @@ import (
 	"testing"
 )
 
-func (suite *IntegrationSuite) Test_upload() {
-	conn := suite.testDB.GetConn()
-
+func Test_upload(t *testing.T) {
 	var b bytes.Buffer
 
 	uploadForm := &shared.Upload{
@@ -31,7 +29,7 @@ func (suite *IntegrationSuite) Test_upload() {
 	mockDispatch := MockDispatch{}
 	mockFileStorage := MockFileStorage{}
 
-	server := Server{&mockHttpClient, conn.Conn, &mockDispatch, &mockFileStorage}
+	server := Server{&mockHttpClient, nil, &mockDispatch, &mockFileStorage}
 	_ = server.upload(w, req)
 
 	res := w.Result()
@@ -39,13 +37,11 @@ func (suite *IntegrationSuite) Test_upload() {
 
 	expected := ""
 
-	assert.Equal(suite.T(), expected, w.Body.String())
-	assert.Equal(suite.T(), http.StatusCreated, w.Code)
+	assert.Equal(t, expected, w.Body.String())
+	assert.Equal(t, http.StatusCreated, w.Code)
 }
 
-func (suite *IntegrationSuite) TestUploadIncorrectCSVHeaders() {
-	conn := suite.testDB.GetConn()
-
+func TestUploadIncorrectCSVHeaders(t *testing.T) {
 	var b bytes.Buffer
 
 	uploadForm := &shared.Upload{
@@ -62,7 +58,7 @@ func (suite *IntegrationSuite) TestUploadIncorrectCSVHeaders() {
 	mockHttpClient := MockHttpClient{}
 	mockDispatch := MockDispatch{}
 
-	server := Server{&mockHttpClient, conn.Conn, &mockDispatch, nil}
+	server := Server{&mockHttpClient, nil, &mockDispatch, nil}
 	err := server.upload(w, req)
 
 	expected := apierror.ValidationError{Errors: apierror.ValidationErrors{
@@ -70,12 +66,10 @@ func (suite *IntegrationSuite) TestUploadIncorrectCSVHeaders() {
 			"incorrect-headers": "CSV headers do not match for the report trying to be uploaded",
 		},
 	}}
-	assert.Equal(suite.T(), expected, err)
+	assert.Equal(t, expected, err)
 }
 
-func (suite *IntegrationSuite) TestUploadFailedToReadCSVHeaders() {
-	conn := suite.testDB.GetConn()
-
+func TestUploadFailedToReadCSVHeaders(t *testing.T) {
 	var b bytes.Buffer
 
 	uploadForm := &shared.Upload{
@@ -92,7 +86,7 @@ func (suite *IntegrationSuite) TestUploadFailedToReadCSVHeaders() {
 	mockHttpClient := MockHttpClient{}
 	mockDispatch := MockDispatch{}
 
-	server := Server{&mockHttpClient, conn.Conn, &mockDispatch, nil}
+	server := Server{&mockHttpClient, nil, &mockDispatch, nil}
 	err := server.upload(w, req)
 
 	expected := apierror.ValidationError{Errors: apierror.ValidationErrors{
@@ -100,7 +94,7 @@ func (suite *IntegrationSuite) TestUploadFailedToReadCSVHeaders() {
 			"read-failed": "Failed to read CSV headers",
 		},
 	}}
-	assert.Equal(suite.T(), expected, err)
+	assert.Equal(t, expected, err)
 }
 
 func Test_reportHeadersByType(t *testing.T) {

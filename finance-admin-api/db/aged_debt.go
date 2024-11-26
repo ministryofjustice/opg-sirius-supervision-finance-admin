@@ -1,5 +1,10 @@
 package db
 
+import (
+	"context"
+	"time"
+)
+
 const AgedDebtQuery = `WITH outstanding_invoices AS (SELECT i.id,
                                      i.finance_client_id,
                                      i.feetype,
@@ -85,3 +90,65 @@ FROM supervision_finance.finance_client fc
       AND c.orderstatus = 'ACTIVE'
     LIMIT 1
     ) active_orders ON TRUE;`
+
+func (c *Client) GetAgedDebt(ctx context.Context, fromDate time.Time, toDate time.Time) ([][]string, error) {
+	items := [][]string{{
+		"Customer Name",
+		"Customer number",
+		"SOP number",
+		"Deputy type",
+		"Active case?",
+		"Entity",
+		"Receivable cost centre",
+		"Receivable cost centre description",
+		"Receivable account code",
+		"Revenue cost centre",
+		"Revenue cost centre description",
+		"Revenue account code",
+		"Revenue account code description",
+		"Invoice type",
+		"Trx number",
+		"Transaction Description",
+		"Invoice date",
+		"Due date",
+		"Financial year",
+		"Payment terms",
+		"Original amount",
+		"Outstanding amount",
+		"Current",
+		"0-1 years",
+		"1-2 years",
+		"2-3 years",
+		"3-5 years",
+		"5+ years",
+		"Debt impairment years",
+	}}
+
+	rows, err := c.db.Query(ctx, AgedDebtQuery, fromDate.Format("2006-01-02"), toDate.Format("2006-01-02"))
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var i []string
+		var stringValue string
+
+		values, err := rows.Values()
+		if err != nil {
+			return nil, err
+		}
+		for _, value := range values {
+			stringValue, _ = value.(string)
+			i = append(i, stringValue)
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return items, nil
+}

@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/opg-sirius-finance-admin/apierror"
-	"github.com/opg-sirius-finance-admin/db"
 	"github.com/opg-sirius-finance-admin/shared"
 	"net/http"
 	"os"
@@ -53,13 +52,18 @@ func (s *Server) generateAndUploadReport(ctx context.Context, download shared.Do
 
 	switch download.ReportAccountType {
 	case "AgedDebt":
-		//parsedDate, err := time.Parse("02/01/2006", requestedDate)
-		//if err != nil {
-		//	return err
-		//}
 		filename = fmt.Sprintf("ageddebt_%s.csv", requestedDate.Format("02:01:2006"))
 		reportName = "Aged Debt"
-		items, err = s.requestAgedDebtReport(ctx, download.FromDateField, download.ToDateField)
+		if download.FromDateField == nil {
+			from := shared.NewDate("")
+			download.FromDateField = &from
+		}
+		if download.ToDateField == nil {
+			to := shared.Date{Time: time.Now()}
+			download.ToDateField = &to
+		}
+
+		items, err = s.conn.GetAgedDebt(ctx, download.FromDateField.Time, download.ToDateField.Time)
 		if err != nil {
 			return err
 		}
@@ -94,80 +98,6 @@ func (s *Server) generateAndUploadReport(ctx context.Context, download shared.Do
 	}
 
 	return nil
-}
-
-func (s *Server) requestAgedDebtReport(ctx context.Context, fromDate *shared.Date, toDate *shared.Date) ([][]string, error) {
-	agedDebtHeaders := []string{
-		"Customer Name",
-		"Customer number",
-		"SOP number",
-		"Deputy type",
-		"Active case?",
-		"Entity",
-		"Receivable cost centre",
-		"Receivable cost centre description",
-		"Receivable account code",
-		"Revenue cost centre",
-		"Revenue cost centre description",
-		"Revenue account code",
-		"Revenue account code description",
-		"Invoice type",
-		"Trx number",
-		"Transaction Description",
-		"Invoice date",
-		"Due date",
-		"Financial year",
-		"Payment terms",
-		"Original amount",
-		"Outstanding amount",
-		"Current",
-		"0-1 years",
-		"1-2 years",
-		"2-3 years",
-		"3-5 years",
-		"5+ years",
-		"Debt impairment years",
-	}
-
-	items := [][]string{agedDebtHeaders}
-
-	if fromDate == nil {
-		from := shared.NewDate("")
-		fromDate = &from
-	}
-
-	if toDate == nil {
-		to := shared.Date{Time: time.Now()}
-		toDate = &to
-	}
-
-	rows, err := s.conn.Query(ctx, db.AgedDebtQuery, fromDate.Time.Format("2006-01-02"), toDate.Time.Format("2006-01-02"))
-
-	if err != nil {
-		return nil, err
-	}
-
-	defer rows.Close()
-
-	for rows.Next() {
-		var i []string
-		var stringValue string
-
-		values, err := rows.Values()
-		if err != nil {
-			return nil, err
-		}
-		for _, value := range values {
-			stringValue, _ = value.(string)
-			i = append(i, stringValue)
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-
-	return items, nil
 }
 
 func createCsv(filename string, items [][]string) (*os.File, error) {
