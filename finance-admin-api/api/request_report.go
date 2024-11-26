@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/opg-sirius-finance-admin/apierror"
+	"github.com/opg-sirius-finance-admin/finance-admin-api/db"
 	"github.com/opg-sirius-finance-admin/shared"
 	"net/http"
 	"os"
@@ -47,26 +48,24 @@ func (s *Server) requestReport(w http.ResponseWriter, r *http.Request) error {
 func (s *Server) generateAndUploadReport(ctx context.Context, download shared.Download, requestedDate time.Time) error {
 	var items [][]string
 	var filename string
-	var reportName string
+	var query db.ReportQuery
 	var err error
 
-	switch download.ReportAccountType {
-	case "AgedDebt":
-		filename = fmt.Sprintf("ageddebt_%s.csv", requestedDate.Format("02:01:2006"))
-		reportName = "Aged Debt"
-		if download.FromDateField == nil {
-			from := shared.NewDate("")
-			download.FromDateField = &from
-		}
-		if download.ToDateField == nil {
-			to := shared.Date{Time: time.Now()}
-			download.ToDateField = &to
-		}
+	accountType := shared.ParseReportAccountType(download.ReportAccountType)
 
-		items, err = s.conn.GetAgedDebt(ctx, download.FromDateField.Time, download.ToDateField.Time)
-		if err != nil {
-			return err
+	switch accountType {
+	case shared.ReportAccountTypeAgedDebt:
+		filename = fmt.Sprintf("ageddebt_%s.csv", requestedDate.Format("02:01:2006"))
+
+		query = &db.AgedDebt{
+			FromDate: download.FromDateField,
+			ToDate:   download.ToDateField,
 		}
+	}
+
+	items, err = s.conn.Run(ctx, query)
+	if err != nil {
+		return err
 	}
 
 	file, err := createCsv(filename, items)
@@ -87,7 +86,7 @@ func (s *Server) generateAndUploadReport(ctx context.Context, download shared.Do
 		return err
 	}
 
-	payload, err := createDownloadNotifyPayload(download.Email, filename, versionId, requestedDate, reportName)
+	payload, err := createDownloadNotifyPayload(download.Email, filename, versionId, requestedDate, accountType.Translation())
 	if err != nil {
 		return err
 	}

@@ -7,7 +7,6 @@ import (
 	"github.com/opg-sirius-finance-admin/finance-admin-api/event"
 	"io"
 	"net/http"
-	"time"
 )
 
 type MockDispatch struct {
@@ -47,15 +46,11 @@ func (m *MockFileStorage) FileExists(ctx context.Context, bucketName string, fil
 }
 
 type MockDb struct {
-	query    string
-	fromDate time.Time
-	toDate   time.Time
+	query db.ReportQuery
 }
 
-func (m *MockDb) GetAgedDebt(ctx context.Context, fromDate time.Time, toDate time.Time) ([][]string, error) {
-	m.query = db.AgedDebtQuery
-	m.fromDate = fromDate
-	m.toDate = toDate
+func (m *MockDb) Run(ctx context.Context, query db.ReportQuery) ([][]string, error) {
+	m.query = query
 
 	return nil, nil
 }

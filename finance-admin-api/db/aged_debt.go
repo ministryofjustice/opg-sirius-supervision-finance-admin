@@ -1,9 +1,14 @@
 package db
 
 import (
-	"context"
+	"github.com/opg-sirius-finance-admin/shared"
 	"time"
 )
+
+type AgedDebt struct {
+	FromDate *shared.Date
+	ToDate   *shared.Date
+}
 
 const AgedDebtQuery = `WITH outstanding_invoices AS (SELECT i.id,
                                      i.finance_client_id,
@@ -91,8 +96,8 @@ FROM supervision_finance.finance_client fc
     LIMIT 1
     ) active_orders ON TRUE;`
 
-func (c *Client) GetAgedDebt(ctx context.Context, fromDate time.Time, toDate time.Time) ([][]string, error) {
-	items := [][]string{{
+func (a *AgedDebt) GetHeaders() []string {
+	return []string{
 		"Customer Name",
 		"Customer number",
 		"SOP number",
@@ -122,33 +127,23 @@ func (c *Client) GetAgedDebt(ctx context.Context, fromDate time.Time, toDate tim
 		"3-5 years",
 		"5+ years",
 		"Debt impairment years",
-	}}
+	}
+}
 
-	rows, err := c.db.Query(ctx, AgedDebtQuery, fromDate.Format("2006-01-02"), toDate.Format("2006-01-02"))
+func (a *AgedDebt) GetQuery() string {
+	return AgedDebtQuery
+}
 
-	if err != nil {
-		return nil, err
+func (a *AgedDebt) GetParams() []string {
+	if a.FromDate == nil {
+		from := shared.NewDate("")
+		a.FromDate = &from
 	}
 
-	defer rows.Close()
-
-	for rows.Next() {
-		var i []string
-		var stringValue string
-
-		values, err := rows.Values()
-		if err != nil {
-			return nil, err
-		}
-		for _, value := range values {
-			stringValue, _ = value.(string)
-			i = append(i, stringValue)
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
+	if a.ToDate == nil {
+		to := shared.Date{Time: time.Now()}
+		a.ToDate = &to
 	}
 
-	return items, nil
+	return []string{a.FromDate.Time.Format("2006-01-02"), a.ToDate.Time.Format("2006-01-02")}
 }

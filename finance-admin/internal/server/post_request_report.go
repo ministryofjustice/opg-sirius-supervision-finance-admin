@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/opg-sirius-finance-admin/finance-admin/internal/api"
 	"github.com/opg-sirius-finance-admin/finance-admin/internal/model"
+	"github.com/opg-sirius-finance-admin/shared"
 	"net/http"
 )
 
@@ -28,7 +29,7 @@ func (h *RequestReportHandler) render(v AppVars, w http.ResponseWriter, r *http.
 		email              = params.Get("email")
 	)
 
-	parsedReportAccountType := model.ParseReportAccountType(reportAccountType)
+	parsedReportAccountType := shared.ParseReportAccountType(reportAccountType)
 
 	data := model.NewReportRequest(reportType, reportJournalType, reportScheduleType, reportAccountType, reportDebtType, dateOfTransaction, dateTo, dateFrom, email)
 	err := h.Client().RequestReport(ctx, data)
