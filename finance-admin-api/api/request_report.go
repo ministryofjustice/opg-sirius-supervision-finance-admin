@@ -8,6 +8,7 @@ import (
 	"github.com/opg-sirius-finance-admin/apierror"
 	"github.com/opg-sirius-finance-admin/finance-admin-api/db"
 	"github.com/opg-sirius-finance-admin/shared"
+	"log"
 	"net/http"
 	"os"
 	"time"
@@ -35,7 +36,7 @@ func (s *Server) requestReport(w http.ResponseWriter, r *http.Request) error {
 	go func() {
 		err := s.generateAndUploadReport(context.Background(), download, time.Now())
 		if err != nil {
-			fmt.Println(err)
+			log.Fatal(err)
 		}
 	}()
 
@@ -47,16 +48,14 @@ func (s *Server) requestReport(w http.ResponseWriter, r *http.Request) error {
 
 func (s *Server) generateAndUploadReport(ctx context.Context, download shared.Download, requestedDate time.Time) error {
 	var items [][]string
-	var filename string
 	var query db.ReportQuery
 	var err error
 
 	accountType := shared.ParseReportAccountType(download.ReportAccountType)
+	filename := fmt.Sprintf("%s_%s.csv", accountType.Key(), requestedDate.Format("02:01:2006"))
 
 	switch accountType {
 	case shared.ReportAccountTypeAgedDebt:
-		filename = fmt.Sprintf("ageddebt_%s.csv", requestedDate.Format("02:01:2006"))
-
 		query = &db.AgedDebt{
 			FromDate: download.FromDateField,
 			ToDate:   download.ToDateField,
