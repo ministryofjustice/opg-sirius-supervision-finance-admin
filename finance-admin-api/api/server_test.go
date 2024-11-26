@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/opg-sirius-finance-admin/finance-admin-api/db"
 	"github.com/opg-sirius-finance-admin/finance-admin-api/event"
 	"io"
 	"net/http"
@@ -18,6 +19,7 @@ func (m *MockDispatch) FinanceAdminUpload(ctx context.Context, event event.Finan
 }
 
 type MockFileStorage struct {
+	versionId      string
 	bucketname     string
 	filename       string
 	file           io.Reader
@@ -30,17 +32,27 @@ func (m *MockFileStorage) GetFile(ctx context.Context, bucketName string, fileNa
 	return m.outgoingObject, m.err
 }
 
-func (m *MockFileStorage) PutFile(ctx context.Context, bucketName string, fileName string, file io.Reader) error {
+func (m *MockFileStorage) PutFile(ctx context.Context, bucketName string, fileName string, file io.Reader) (*string, error) {
 	m.bucketname = bucketName
 	m.filename = fileName
 	m.file = file
 
-	return nil
+	return &m.versionId, nil
 }
 
 // add a FileExists method to the MockFileStorage struct
 func (m *MockFileStorage) FileExists(ctx context.Context, bucketName string, filename string, versionID string) bool {
 	return m.exists
+}
+
+type MockDb struct {
+	query db.ReportQuery
+}
+
+func (m *MockDb) Run(ctx context.Context, query db.ReportQuery) ([][]string, error) {
+	m.query = query
+
+	return nil, nil
 }
 
 type MockHttpClient struct {

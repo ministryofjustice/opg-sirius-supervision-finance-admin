@@ -91,7 +91,7 @@ func formatFailedLines(failedLines map[int]string) []string {
 	return formattedLines
 }
 
-func createNotifyPayload(detail shared.FinanceAdminUploadProcessedEvent) NotifyPayload {
+func CreateNotifyPayload(detail shared.FinanceAdminUploadProcessedEvent) NotifyPayload {
 	var payload NotifyPayload
 
 	uploadType := shared.ParseReportUploadType(detail.UploadType)
@@ -132,7 +132,7 @@ func createNotifyPayload(detail shared.FinanceAdminUploadProcessedEvent) NotifyP
 	return payload
 }
 
-func (s *Server) SendEmailToNotify(ctx context.Context, detail shared.FinanceAdminUploadProcessedEvent) error {
+func (s *Server) SendEmailToNotify(ctx context.Context, payload NotifyPayload) error {
 	signedToken, err := createSignedJwtToken()
 	if err != nil {
 		return err
@@ -140,7 +140,7 @@ func (s *Server) SendEmailToNotify(ctx context.Context, detail shared.FinanceAdm
 
 	var body bytes.Buffer
 
-	err = json.NewEncoder(&body).Encode(createNotifyPayload(detail))
+	err = json.NewEncoder(&body).Encode(payload)
 	if err != nil {
 		return err
 	}
@@ -158,6 +158,7 @@ func (s *Server) SendEmailToNotify(ctx context.Context, detail shared.FinanceAdm
 	if err != nil {
 		return err
 	}
+
 	defer resp.Body.Close()
 
 	if resp.StatusCode == http.StatusCreated {
