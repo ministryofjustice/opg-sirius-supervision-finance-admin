@@ -8,7 +8,6 @@ import (
 	"github.com/opg-sirius-finance-admin/apierror"
 	"github.com/opg-sirius-finance-admin/finance-admin-api/db"
 	"github.com/opg-sirius-finance-admin/shared"
-	"log"
 	"net/http"
 	"os"
 	"time"
@@ -33,12 +32,10 @@ func (s *Server) requestReport(w http.ResponseWriter, r *http.Request) error {
 		}
 	}
 
-	go func() {
-		err := s.generateAndUploadReport(context.Background(), download, time.Now())
-		if err != nil {
-			log.Fatal(err)
-		}
-	}()
+	err := s.generateAndUploadReport(context.Background(), download, time.Now())
+	if err != nil {
+		return err
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
