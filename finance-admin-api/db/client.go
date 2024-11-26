@@ -50,12 +50,24 @@ func (c *Client) Run(ctx context.Context, query ReportQuery) ([][]string, error)
 		return nil, err
 	}
 
-	defer rows.Close()
+	stringRows, err := pgx.CollectRows[[]string](rows, rowToStringMap)
 
-	stringRows, err := pgx.CollectRows(rows, pgx.RowTo[[]string])
 	if err != nil {
-		return nil, fmt.Errorf("CollectRows error: %v", err)
+		return nil, err
 	}
 
 	return append(headers, stringRows...), nil
+}
+
+func rowToStringMap(row pgx.CollectableRow) ([]string, error) {
+	var stringRow []string
+	values, err := row.Values()
+	if err != nil {
+		return nil, err
+	}
+
+	for _, value := range values {
+		stringRow = append(stringRow, fmt.Sprintf("%#v", value))
+	}
+	return stringRow, nil
 }
