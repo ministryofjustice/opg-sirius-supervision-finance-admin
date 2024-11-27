@@ -15,7 +15,7 @@ func (c *Client) RequestReport(ctx Context, data model.ReportRequest) error {
 		return err
 	}
 
-	req, err := c.newBackendRequest(ctx, http.MethodGet, "/downloads", &body)
+	req, err := c.newBackendRequest(ctx, http.MethodPost, "/downloads", &body)
 
 	if err != nil {
 		return err
