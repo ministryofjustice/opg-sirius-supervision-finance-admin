@@ -81,8 +81,6 @@ func (s *Server) generateAndUploadReport(ctx context.Context, download shared.Do
 		file,
 	)
 
-	file.Close()
-
 	if err != nil {
 		return err
 	}
@@ -106,8 +104,6 @@ func createCsv(filename string, items [][]string) (*os.File, error) {
 		return nil, err
 	}
 
-	defer file.Close()
-
 	writer := csv.NewWriter(file)
 
 	for _, item := range items {
@@ -120,6 +116,13 @@ func createCsv(filename string, items [][]string) (*os.File, error) {
 	writer.Flush()
 
 	return file, writer.Error()
+}
+
+type reportRequestedNotifyPersonalisation struct {
+	FileLink          string `json:"file_link"`
+	ReportName        string `json:"report_name"`
+	RequestedDate     string `json:"requested_date"`
+	RequestedDateTime string `json:"requested_date_time"`
 }
 
 func createDownloadNotifyPayload(emailAddress string, filename string, versionId *string, requestedDate time.Time, reportName string) (NotifyPayload, error) {
@@ -142,12 +145,7 @@ func createDownloadNotifyPayload(emailAddress string, filename string, versionId
 	payload := NotifyPayload{
 		EmailAddress: emailAddress,
 		TemplateId:   reportRequestedTemplateId,
-		Personalisation: struct {
-			FileLink          string `json:"file_link"`
-			ReportName        string `json:"report_name"`
-			RequestedDate     string `json:"requested_date"`
-			RequestedDateTime string `json:"requested_date_time"`
-		}{
+		Personalisation: reportRequestedNotifyPersonalisation{
 			downloadLink,
 			reportName,
 			requestedDate.Format("2006-01-02"),

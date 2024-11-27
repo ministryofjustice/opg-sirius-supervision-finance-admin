@@ -90,12 +90,10 @@ func TestRun(t *testing.T) {
 
 	dbClient := mockDbClient{values: values}
 	mockClient := Client{dbClient}
-	ctx := context.Background()
 
-	headers := []string{"Name", "Address", "Balance"}
-	query := mockQueryReport{headers: headers}
+	query := mockQueryReport{headers: []string{"Name", "Address", "Balance"}}
 
-	got, err := mockClient.Run(ctx, query)
+	got, err := mockClient.Run(context.Background(), query)
 
 	want := [][]string{
 		{"Name", "Address", "Balance"},
@@ -110,11 +108,8 @@ func TestRun(t *testing.T) {
 func TestRunError(t *testing.T) {
 	dbClient := mockDbClient{err: fmt.Errorf("Oh dear!")}
 	mockClient := Client{dbClient}
-	ctx := context.Background()
 
-	query := mockQueryReport{}
-
-	got, err := mockClient.Run(ctx, query)
+	got, err := mockClient.Run(context.Background(), mockQueryReport{})
 
 	want := fmt.Errorf("Oh dear!")
 

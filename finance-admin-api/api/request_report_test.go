@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/csv"
 	"encoding/json"
+	"fmt"
 	"github.com/opg-sirius-finance-admin/apierror"
 	"github.com/opg-sirius-finance-admin/shared"
 	"github.com/stretchr/testify/assert"
@@ -118,7 +119,6 @@ func TestCreateCsv(t *testing.T) {
 	_ = writer.Write([]string{"test", "hehe"})
 	_ = writer.Write([]string{"123 Real Street", "Bingopolis"})
 	writer.Flush()
-	want.Close()
 
 	items := [][]string{{"test", "hehe"}, {"123 Real Street", "Bingopolis"}}
 	_, err := createCsv("test2.csv", items)
@@ -137,4 +137,33 @@ func TestCreateCsvNoItems(t *testing.T) {
 
 	assert.Nil(t, err)
 	assert.Equal(t, "", string(gotBytes))
+}
+
+func TestCreateDownloadNotifyPayload(t *testing.T) {
+	emailAddress := "test@email.com"
+	reportName := "test report"
+	downloadRequest := shared.DownloadRequest{
+		Key:       "test.csv",
+		VersionId: "1",
+	}
+	uid, _ := downloadRequest.Encode()
+	requestedDate, _ := time.Parse("2006-01-02 15:04:05", "2024-01-01 13:37:00")
+	os.Setenv("SIRIUS_PUBLIC_URL", "www.sirius.com")
+	os.Setenv("PREFIX", "/finance")
+
+	want := NotifyPayload{
+		EmailAddress: emailAddress,
+		TemplateId:   reportRequestedTemplateId,
+		Personalisation: reportRequestedNotifyPersonalisation{
+			FileLink:          fmt.Sprintf("www.sirius.com/finance/download?uid=%s", uid),
+			ReportName:        reportName,
+			RequestedDate:     "2024-01-01",
+			RequestedDateTime: "2024-01-01 13:37:00",
+		},
+	}
+
+	payload, err := createDownloadNotifyPayload(emailAddress, downloadRequest.Key, &downloadRequest.VersionId, requestedDate, reportName)
+
+	assert.Equal(t, want, payload)
+	assert.Nil(t, err)
 }

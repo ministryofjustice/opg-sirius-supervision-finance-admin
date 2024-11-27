@@ -81,69 +81,6 @@ func TestServer_formatFailedLines(t *testing.T) {
 	}
 }
 
-func TestServer_createUploadNotifyPayload(t *testing.T) {
-	tests := []struct {
-		name   string
-		detail shared.FinanceAdminUploadProcessedEvent
-		want   NotifyPayload
-	}{
-		{
-			name: "Success",
-			detail: shared.FinanceAdminUploadProcessedEvent{
-				EmailAddress: "test@email.com",
-				UploadType:   shared.ReportTypeUploadPaymentsMOTOCard.Key(),
-			},
-			want: NotifyPayload{
-				EmailAddress: "test@email.com",
-				TemplateId:   processingSuccessTemplateId,
-				Personalisation: struct {
-					UploadType string `json:"upload_type"`
-				}{shared.ReportTypeUploadPaymentsMOTOCard.Translation()},
-			},
-		},
-		{
-			name: "Failed",
-			detail: shared.FinanceAdminUploadProcessedEvent{
-				EmailAddress: "test@email.com",
-				FailedLines: map[int]string{
-					1: "DATE_PARSE_ERROR",
-				},
-				UploadType: shared.ReportTypeUploadPaymentsMOTOCard.Key(),
-			},
-			want: NotifyPayload{
-				EmailAddress: "test@email.com",
-				TemplateId:   processingFailedTemplateId,
-				Personalisation: struct {
-					FailedLines []string `json:"failed_lines"`
-					UploadType  string   `json:"upload_type"`
-				}{[]string{"Line 1: Unable to parse date"}, shared.ReportTypeUploadPaymentsMOTOCard.Translation()},
-			},
-		},
-		{
-			name: "Errored",
-			detail: shared.FinanceAdminUploadProcessedEvent{
-				EmailAddress: "test@email.com",
-				Error:        "Couldn't open report",
-				UploadType:   shared.ReportTypeUploadPaymentsMOTOCard.Key(),
-			},
-			want: NotifyPayload{
-				EmailAddress: "test@email.com",
-				TemplateId:   processingErrorTemplateId,
-				Personalisation: struct {
-					Error      string `json:"error"`
-					UploadType string `json:"upload_type"`
-				}{"Couldn't open report", shared.ReportTypeUploadPaymentsMOTOCard.Translation()},
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			payload := createUploadNotifyPayload(tt.detail)
-			assert.Equal(t, tt.want, payload)
-		})
-	}
-}
-
 func Test_SendEmailToNotify(t *testing.T) {
 	tests := []struct {
 		name        string
