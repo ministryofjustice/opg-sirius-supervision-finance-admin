@@ -67,7 +67,7 @@ func rowToStringMap(row pgx.CollectableRow) ([]string, error) {
 	}
 
 	for _, value := range values {
-		stringRow = append(stringRow, fmt.Sprintf("%#v", value))
+		stringRow = append(stringRow, fmt.Sprintf("%v", value))
 	}
 	return stringRow, nil
 }
