@@ -6,7 +6,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/ministryofjustice/opg-go-common/securityheaders"
 	"github.com/ministryofjustice/opg-go-common/telemetry"
-	"github.com/opg-sirius-finance-admin/finance-admin-api/event"
+	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin-api/event"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"io"
 	"log/slog"

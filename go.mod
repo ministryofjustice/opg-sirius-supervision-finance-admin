@@ -1,4 +1,4 @@
-module github.com/opg-sirius-finance-admin
+module github.com/ministryofjustice/opg-sirius-supervision-finance-admin
 
 go 1.22.7
 
@@ -8,13 +8,12 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.32.4
 	github.com/aws/aws-sdk-go-v2/config v1.28.4
 	github.com/aws/aws-sdk-go-v2/credentials v1.17.45
-	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.17.38
 	github.com/aws/aws-sdk-go-v2/service/eventbridge v1.35.5
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.67.0
 	github.com/aws/aws-sdk-go-v2/service/sts v1.33.0
 	github.com/aws/smithy-go v1.22.0
 	github.com/golang-jwt/jwt/v5 v5.2.1
-	github.com/ministryofjustice/opg-go-common v1.34.0
+	github.com/ministryofjustice/opg-go-common v1.36.0
 	github.com/stretchr/testify v1.9.0
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.57.0
 )

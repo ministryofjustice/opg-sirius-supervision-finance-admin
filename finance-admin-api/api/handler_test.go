@@ -3,7 +3,7 @@ package api
 import (
 	"errors"
 	"github.com/ministryofjustice/opg-go-common/telemetry"
-	"github.com/opg-sirius-finance-admin/apierror"
+	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/apierror"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"

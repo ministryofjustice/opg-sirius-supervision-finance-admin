@@ -2,8 +2,8 @@ package server
 
 import (
 	"errors"
-	"github.com/opg-sirius-finance-admin/apierror"
-	"github.com/opg-sirius-finance-admin/shared"
+	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/apierror"
+	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/shared"
 	"net/http"
 )
 
