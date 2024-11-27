@@ -29,7 +29,7 @@ func Test_upload(t *testing.T) {
 	mockDispatch := MockDispatch{}
 	mockFileStorage := MockFileStorage{}
 
-	server := Server{&mockHttpClient, &mockDispatch, &mockFileStorage}
+	server := Server{&mockHttpClient, nil, &mockDispatch, &mockFileStorage}
 	_ = server.upload(w, req)
 
 	res := w.Result()
@@ -58,7 +58,7 @@ func TestUploadIncorrectCSVHeaders(t *testing.T) {
 	mockHttpClient := MockHttpClient{}
 	mockDispatch := MockDispatch{}
 
-	server := Server{&mockHttpClient, &mockDispatch, nil}
+	server := Server{&mockHttpClient, nil, &mockDispatch, nil}
 	err := server.upload(w, req)
 
 	expected := apierror.ValidationError{Errors: apierror.ValidationErrors{
@@ -86,7 +86,7 @@ func TestUploadFailedToReadCSVHeaders(t *testing.T) {
 	mockHttpClient := MockHttpClient{}
 	mockDispatch := MockDispatch{}
 
-	server := Server{&mockHttpClient, &mockDispatch, nil}
+	server := Server{&mockHttpClient, nil, &mockDispatch, nil}
 	err := server.upload(w, req)
 
 	expected := apierror.ValidationError{Errors: apierror.ValidationErrors{
