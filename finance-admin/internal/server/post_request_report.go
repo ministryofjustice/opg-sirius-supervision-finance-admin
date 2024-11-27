@@ -2,8 +2,10 @@ package server
 
 import (
 	"errors"
+	"fmt"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/api"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/model"
+	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/shared"
 	"net/http"
 )
 
@@ -27,6 +29,8 @@ func (h *RequestReportHandler) render(v AppVars, w http.ResponseWriter, r *http.
 		email              = params.Get("email")
 	)
 
+	parsedReportAccountType := shared.ParseReportAccountType(reportAccountType)
+
 	data := model.NewReportRequest(reportType, reportJournalType, reportScheduleType, reportAccountType, reportDebtType, dateOfTransaction, dateTo, dateFrom, email)
 	err := h.Client().RequestReport(ctx, data)
 
@@ -45,6 +49,8 @@ func (h *RequestReportHandler) render(v AppVars, w http.ResponseWriter, r *http.
 			err = h.execute(w, r, data)
 		}
 	}
+
+	w.Header().Add("HX-Redirect", fmt.Sprintf("%s/downloads?success=request_report&reportAccountType=%s", v.EnvironmentVars.Prefix, parsedReportAccountType.Translation()))
 
 	return err
 }
