@@ -3,7 +3,7 @@ package api
 import (
 	"bytes"
 	"context"
-	"github.com/opg-sirius-finance-admin/shared"
+	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/shared"
 	"github.com/stretchr/testify/assert"
 	"io"
 	"net/http"

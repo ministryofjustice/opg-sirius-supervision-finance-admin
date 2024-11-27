@@ -2,7 +2,7 @@ package server
 
 import (
 	"errors"
-	"github.com/opg-sirius-finance-admin/apierror"
+	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/apierror"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"

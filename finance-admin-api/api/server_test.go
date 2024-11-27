@@ -3,8 +3,8 @@ package api
 import (
 	"context"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/opg-sirius-finance-admin/finance-admin-api/db"
-	"github.com/opg-sirius-finance-admin/finance-admin-api/event"
+	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin-api/event"
+	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin-api/db"
 	"io"
 	"net/http"
 )

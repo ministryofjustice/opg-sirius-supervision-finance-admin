@@ -2,7 +2,7 @@ package event
 
 import (
 	"context"
-	"github.com/opg-sirius-finance-admin/shared"
+	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/shared"
 )
 
 type FinanceAdminUpload struct {

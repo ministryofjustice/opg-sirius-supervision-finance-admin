@@ -1,4 +1,4 @@
-module github.com/opg-sirius-finance-admin
+module github.com/ministryofjustice/opg-sirius-supervision-finance-admin
 
 go 1.22.7
 
@@ -14,7 +14,7 @@ require (
 	github.com/aws/smithy-go v1.22.0
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/jackc/pgx/v5 v5.7.1
-	github.com/ministryofjustice/opg-go-common v1.34.0
+	github.com/ministryofjustice/opg-go-common v1.36.0
 	github.com/stretchr/testify v1.9.0
 	github.com/testcontainers/testcontainers-go v0.34.0
 	github.com/testcontainers/testcontainers-go/modules/postgres v0.34.0
