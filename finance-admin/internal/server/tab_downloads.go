@@ -2,6 +2,7 @@ package server
 
 import (
 	"github.com/opg-sirius-finance-admin/finance-admin/internal/model"
+	"github.com/opg-sirius-finance-admin/shared"
 	"net/http"
 )
 
@@ -9,8 +10,8 @@ type GetDownloadsVars struct {
 	ReportsTypes        []model.ReportsType
 	ReportJournalTypes  []model.ReportJournalType
 	ReportScheduleTypes []model.ReportScheduleType
-	ReportAccountTypes  []model.ReportAccountType
 	ReportDebtTypes     []model.ReportDebtType
+	ReportAccountTypes  []shared.ReportAccountType
 	AppVars
 }
 
@@ -23,8 +24,8 @@ func (h *DownloadsTabHandler) render(v AppVars, w http.ResponseWriter, r *http.R
 		model.ReportsTypes,
 		model.ReportJournalTypes,
 		model.ReportScheduleTypes,
-		model.ReportAccountTypes,
 		model.ReportDebtTypes,
+		shared.ReportAccountTypes,
 		v}
 	data.selectTab("downloads")
 	return h.execute(w, r, data)
