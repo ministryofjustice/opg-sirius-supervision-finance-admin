@@ -104,6 +104,8 @@ func createCsv(filename string, items [][]string) (*os.File, error) {
 		return nil, err
 	}
 
+	defer file.Close()
+
 	writer := csv.NewWriter(file)
 
 	for _, item := range items {
@@ -114,8 +116,11 @@ func createCsv(filename string, items [][]string) (*os.File, error) {
 	}
 
 	writer.Flush()
+	if writer.Error() != nil {
+		return nil, writer.Error()
+	}
 
-	return file, writer.Error()
+	return os.Open(filename)
 }
 
 type reportRequestedNotifyPersonalisation struct {
