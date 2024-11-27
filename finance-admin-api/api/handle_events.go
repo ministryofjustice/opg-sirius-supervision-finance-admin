@@ -22,7 +22,7 @@ func (s *Server) handleEvents(w http.ResponseWriter, r *http.Request) error {
 	if event.Source == shared.EventSourceFinanceHub && event.DetailType == shared.DetailTypeFinanceAdminUploadProcessed {
 		if detail, ok := event.Detail.(shared.FinanceAdminUploadProcessedEvent); ok {
 
-			payload := CreateNotifyPayload(detail)
+			payload := createUploadNotifyPayload(detail)
 			err := s.SendEmailToNotify(ctx, payload)
 			if err != nil {
 				return err
@@ -35,4 +35,45 @@ func (s *Server) handleEvents(w http.ResponseWriter, r *http.Request) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	return nil
+}
+
+func createUploadNotifyPayload(detail shared.FinanceAdminUploadProcessedEvent) NotifyPayload {
+	var payload NotifyPayload
+
+	uploadType := shared.ParseReportUploadType(detail.UploadType)
+	if detail.Error != "" {
+		payload = NotifyPayload{
+			detail.EmailAddress,
+			processingErrorTemplateId,
+			struct {
+				Error      string `json:"error"`
+				UploadType string `json:"upload_type"`
+			}{
+				detail.Error,
+				uploadType.Translation(),
+			},
+		}
+	} else if len(detail.FailedLines) != 0 {
+		payload = NotifyPayload{
+			detail.EmailAddress,
+			processingFailedTemplateId,
+			struct {
+				FailedLines []string `json:"failed_lines"`
+				UploadType  string   `json:"upload_type"`
+			}{
+				formatFailedLines(detail.FailedLines),
+				uploadType.Translation(),
+			},
+		}
+	} else {
+		payload = NotifyPayload{
+			detail.EmailAddress,
+			processingSuccessTemplateId,
+			struct {
+				UploadType string `json:"upload_type"`
+			}{uploadType.Translation()},
+		}
+	}
+
+	return payload
 }

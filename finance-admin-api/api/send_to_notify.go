@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/opg-sirius-finance-admin/shared"
 	"net/http"
 	"os"
 	"slices"
@@ -89,47 +88,6 @@ func formatFailedLines(failedLines map[int]string) []string {
 	}
 
 	return formattedLines
-}
-
-func CreateNotifyPayload(detail shared.FinanceAdminUploadProcessedEvent) NotifyPayload {
-	var payload NotifyPayload
-
-	uploadType := shared.ParseReportUploadType(detail.UploadType)
-	if detail.Error != "" {
-		payload = NotifyPayload{
-			detail.EmailAddress,
-			processingErrorTemplateId,
-			struct {
-				Error      string `json:"error"`
-				UploadType string `json:"upload_type"`
-			}{
-				detail.Error,
-				uploadType.Translation(),
-			},
-		}
-	} else if len(detail.FailedLines) != 0 {
-		payload = NotifyPayload{
-			detail.EmailAddress,
-			processingFailedTemplateId,
-			struct {
-				FailedLines []string `json:"failed_lines"`
-				UploadType  string   `json:"upload_type"`
-			}{
-				formatFailedLines(detail.FailedLines),
-				uploadType.Translation(),
-			},
-		}
-	} else {
-		payload = NotifyPayload{
-			detail.EmailAddress,
-			processingSuccessTemplateId,
-			struct {
-				UploadType string `json:"upload_type"`
-			}{uploadType.Translation()},
-		}
-	}
-
-	return payload
 }
 
 func (s *Server) SendEmailToNotify(ctx context.Context, payload NotifyPayload) error {

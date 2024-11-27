@@ -9,17 +9,6 @@ import (
 	"testing"
 )
 
-type mockQueryReport struct {
-	headers []string
-}
-
-func (m mockQueryReport) GetQuery() string { return "" }
-func (m mockQueryReport) GetParams() []any { return nil }
-
-func (m mockQueryReport) GetHeaders() []string {
-	return m.headers
-}
-
 type mockRow struct {
 	values       [][]any
 	err          error
@@ -85,6 +74,17 @@ func TestRowToStringMapError(t *testing.T) {
 	assert.Equal(t, want, err)
 }
 
+type mockQueryReport struct {
+	headers []string
+}
+
+func (m mockQueryReport) GetQuery() string { return "" }
+func (m mockQueryReport) GetParams() []any { return nil }
+
+func (m mockQueryReport) GetHeaders() []string {
+	return m.headers
+}
+
 func TestRun(t *testing.T) {
 	values := [][]any{{"Joseph Smith", "123 Fake Street", 125}, {"Not Joseph Smith", "28 Real Avenue", 50000}}
 
@@ -97,10 +97,11 @@ func TestRun(t *testing.T) {
 
 	got, err := mockClient.Run(ctx, query)
 
-	want := append([][]string{headers}, [][]string{
+	want := [][]string{
+		{"Name", "Address", "Balance"},
 		{"Joseph Smith", "123 Fake Street", "125"},
 		{"Not Joseph Smith", "28 Real Avenue", "50000"},
-	}...)
+	}
 
 	assert.Equal(t, want, got)
 	assert.Nil(t, err)

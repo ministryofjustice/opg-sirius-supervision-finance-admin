@@ -81,7 +81,7 @@ func TestServer_formatFailedLines(t *testing.T) {
 	}
 }
 
-func TestServer_createNotifyPayload(t *testing.T) {
+func TestServer_createUploadNotifyPayload(t *testing.T) {
 	tests := []struct {
 		name   string
 		detail shared.FinanceAdminUploadProcessedEvent
@@ -138,7 +138,7 @@ func TestServer_createNotifyPayload(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			payload := CreateNotifyPayload(tt.detail)
+			payload := createUploadNotifyPayload(tt.detail)
 			assert.Equal(t, tt.want, payload)
 		})
 	}
@@ -197,7 +197,7 @@ func Test_SendEmailToNotify(t *testing.T) {
 				UploadType:   shared.ReportTypeUploadPaymentsMOTOCard.Key(),
 			}
 
-			err := server.SendEmailToNotify(ctx, CreateNotifyPayload(detail))
+			err := server.SendEmailToNotify(ctx, createUploadNotifyPayload(detail))
 			assert.Equal(t, tt.expectedErr, err)
 		})
 	}

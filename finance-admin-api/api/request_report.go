@@ -72,6 +72,8 @@ func (s *Server) generateAndUploadReport(ctx context.Context, download shared.Do
 		return err
 	}
 
+	defer file.Close()
+
 	versionId, err := s.filestorage.PutFile(
 		ctx,
 		os.Getenv("REPORTS_S3_BUCKET"),

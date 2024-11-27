@@ -129,3 +129,12 @@ func TestCreateCsv(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, string(wantBytes), string(gotBytes))
 }
+
+func TestCreateCsvNoItems(t *testing.T) {
+	items := [][]string{}
+	_, err := createCsv("test.csv", items)
+	gotBytes, _ := os.ReadFile("test.csv")
+
+	assert.Nil(t, err)
+	assert.Equal(t, "", string(gotBytes))
+}
