@@ -74,11 +74,11 @@ SELECT CONCAT(p.firstname, ' ', p.surname)                 AS "Customer Name",
        CASE WHEN oi.age = 4 THEN oi.outstanding ELSE '0' END AS "3-5 years",
        CASE WHEN oi.age > 4 THEN oi.outstanding ELSE '0' END AS "5+ years",
        CASE
-           WHEN apc.age < 2 THEN '0-1'
-           WHEN apc.age = 2 THEN '1-2'
-           WHEN apc.age = 3 THEN '2-3'
-           WHEN apc.age = 4 THEN '3-5'
-           ELSE '5+' END                                   AS "Debt impairment years"
+           WHEN apc.age < 2 THEN "="0-1""
+           WHEN apc.age = 2 THEN "="1-2""
+           WHEN apc.age = 3 THEN "="2-3""
+           WHEN apc.age = 4 THEN "="3-5""
+           ELSE "="5+"" END                                   AS "Debt impairment years"
 FROM supervision_finance.finance_client fc
          JOIN outstanding_invoices oi ON fc.id = oi.finance_client_id
          JOIN age_per_client apc ON fc.client_id = apc.client_id
