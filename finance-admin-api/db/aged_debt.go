@@ -17,8 +17,8 @@ const AgedDebtQuery = `WITH outstanding_invoices AS (SELECT i.id,
                                      i.reference,
                                      i.raiseddate,
                                      i.raiseddate + '30 days'::INTERVAL                                  AS due_date,
-                                     (i.amount / 100.0)::NUMERIC(10, 2)                                  AS amount,
-                                     ((i.amount - SUM(COALESCE(la.amount, 0))) / 100.00)::NUMERIC(10, 2) AS outstanding,
+                                     ((i.amount / 100.0)::NUMERIC(10, 2))::varchar(255)                                  AS amount,
+                                     (((i.amount - SUM(COALESCE(la.amount, 0))) / 100.00)::NUMERIC(10, 2))::varchar(255) AS outstanding,
                                      EXTRACT(YEAR FROM
                                              AGE(NOW(), (i.raiseddate + '30 days'::INTERVAL)))::INT         age
                               FROM supervision_finance.invoice i
@@ -43,7 +43,7 @@ SELECT CONCAT(p.firstname, ' ', p.surname)                 AS "Customer Name",
        fc.sop_number                                       AS "SOP number",
        d.deputytype                                        AS "Deputy type",
        COALESCE(active_orders.is_active, 'No')             AS "Active case?",
-       '''0470'                                              AS "Entity",
+       '0470'                                              AS "Entity",
        '99999999'                                          AS "Receivable cost centre",
        'BALANCE SHEET'                                     AS "Receivable cost centre description",
        '1816100000'                                        AS "Receivable account code",
@@ -61,24 +61,24 @@ SELECT CONCAT(p.firstname, ' ', p.surname)                 AS "Customer Name",
            ELSE EXTRACT(YEAR FROM oi.raiseddate) - 1
            END                                             AS "Financial year",
        '30 NET'                                            AS "Payment terms",
-       oi.amount                                           AS "Original amount",
-       oi.outstanding                                      AS "Outstanding amount",
+       oi.amount                             AS "Original amount",
+       oi.outstanding                        AS "Outstanding amount",
        CASE
            WHEN NOW() < (oi.due_date + '1 day'::INTERVAL) THEN oi.outstanding
-           ELSE 0 END                                      AS "Current",
+           ELSE '0' END                                      AS "Current",
        CASE
            WHEN NOW() > oi.due_date AND oi.age < 2 THEN oi.outstanding
-           ELSE 0 END                                      AS "0-1 years",
-       CASE WHEN oi.age = 2 THEN oi.outstanding ELSE 0 END AS "1-2 years",
-       CASE WHEN oi.age = 3 THEN oi.outstanding ELSE 0 END AS "2-3 years",
-       CASE WHEN oi.age = 4 THEN oi.outstanding ELSE 0 END AS "3-5 years",
-       CASE WHEN oi.age > 4 THEN oi.outstanding ELSE 0 END AS "5+ years",
+           ELSE '0' END                                      AS "0-1 years",
+       CASE WHEN oi.age = 2 THEN oi.outstanding ELSE '0' END AS "1-2 years",
+       CASE WHEN oi.age = 3 THEN oi.outstanding ELSE '0' END AS "2-3 years",
+       CASE WHEN oi.age = 4 THEN oi.outstanding ELSE '0' END AS "3-5 years",
+       CASE WHEN oi.age > 4 THEN oi.outstanding ELSE '0' END AS "5+ years",
        CASE
-           WHEN apc.age < 2 THEN '''0-1'
-           WHEN apc.age = 2 THEN '''1-2'
-           WHEN apc.age = 3 THEN '''2-3'
-           WHEN apc.age = 4 THEN '''3-5'
-           ELSE '''5+' END                                   AS "Debt impairment years"
+           WHEN apc.age < 2 THEN '0-1'
+           WHEN apc.age = 2 THEN '1-2'
+           WHEN apc.age = 3 THEN '2-3'
+           WHEN apc.age = 4 THEN '3-5'
+           ELSE '5+' END                                   AS "Debt impairment years"
 FROM supervision_finance.finance_client fc
          JOIN outstanding_invoices oi ON fc.id = oi.finance_client_id
          JOIN age_per_client apc ON fc.client_id = apc.client_id

@@ -3,6 +3,7 @@ package api
 import (
 	"bytes"
 	"context"
+	"encoding/csv"
 	"encoding/json"
 	"github.com/opg-sirius-finance-admin/apierror"
 	"github.com/opg-sirius-finance-admin/shared"
@@ -10,6 +11,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 	"time"
 )
@@ -106,4 +108,24 @@ func TestGenerateAndUploadReport(t *testing.T) {
 	err := server.generateAndUploadReport(ctx, download, timeNow)
 
 	assert.Equal(t, nil, err)
+}
+
+func TestCreateCsv(t *testing.T) {
+	want, _ := os.Create("test.csv")
+	defer want.Close()
+
+	writer := csv.NewWriter(want)
+	_ = writer.Write([]string{"test", "hehe"})
+	_ = writer.Write([]string{"123 Real Street", "Bingopolis"})
+	writer.Flush()
+	want.Close()
+
+	items := [][]string{{"test", "hehe"}, {"123 Real Street", "Bingopolis"}}
+	_, err := createCsv("test2.csv", items)
+
+	wantBytes, _ := os.ReadFile("test.csv")
+	gotBytes, _ := os.ReadFile("test2.csv")
+
+	assert.Nil(t, err)
+	assert.Equal(t, string(wantBytes), string(gotBytes))
 }

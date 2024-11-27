@@ -51,7 +51,6 @@ func (c *Client) Run(ctx context.Context, query ReportQuery) ([][]string, error)
 	}
 
 	stringRows, err := pgx.CollectRows[[]string](rows, rowToStringMap)
-
 	if err != nil {
 		return nil, err
 	}

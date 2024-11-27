@@ -5,6 +5,7 @@ import (
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
+	"github.com/ministryofjustice/opg-go-common/telemetry"
 	"github.com/opg-sirius-finance-admin/apierror"
 	"github.com/opg-sirius-finance-admin/finance-admin-api/db"
 	"github.com/opg-sirius-finance-admin/shared"
@@ -35,7 +36,8 @@ func (s *Server) requestReport(w http.ResponseWriter, r *http.Request) error {
 	go func() {
 		err := s.generateAndUploadReport(context.Background(), download, time.Now())
 		if err != nil {
-			fmt.Println(err)
+			logger := telemetry.LoggerFromContext(r.Context())
+			logger.Error(err.Error())
 		}
 	}()
 
@@ -114,18 +116,8 @@ func createCsv(filename string, items [][]string) (*os.File, error) {
 	}
 
 	writer.Flush()
-	if writer.Error() != nil {
-		return nil, writer.Error()
-	}
 
-	file.Close()
-
-	rf, err := os.Open(filename)
-	if err != nil {
-		return nil, err
-	}
-
-	return rf, nil
+	return file, writer.Error()
 }
 
 func createDownloadNotifyPayload(emailAddress string, filename string, versionId *string, requestedDate time.Time, reportName string) (NotifyPayload, error) {
