@@ -1,7 +1,7 @@
 package db
 
 import (
-	"github.com/opg-sirius-finance-admin/shared"
+	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/shared"
 	"time"
 )
 
