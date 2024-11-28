@@ -4,7 +4,6 @@ import (
 	"github.com/ministryofjustice/opg-go-common/securityheaders"
 	"github.com/ministryofjustice/opg-go-common/telemetry"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/api"
-	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/model"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/shared"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"html/template"
@@ -15,7 +14,7 @@ import (
 )
 
 type ApiClient interface {
-	RequestReport(api.Context, model.ReportRequest) error
+	RequestReport(api.Context, shared.ReportRequest) error
 	Upload(api.Context, shared.Upload) error
 	CheckDownload(api.Context, string) error
 	Download(api.Context, string) (*http.Response, error)

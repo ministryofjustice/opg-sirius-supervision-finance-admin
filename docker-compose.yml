@@ -28,6 +28,10 @@ services:
     ports:
       - "8181:8080"
     environment:
+      POSTGRES_CONN: sirius-db:5432
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: finance
       ASYNC_S3_BUCKET: opg-backoffice-async-uploads-local
       AWS_REGION: eu-west-1
       AWS_S3_ENDPOINT: http://localstack:4566
@@ -36,6 +40,7 @@ services:
       AWS_SECRET_ACCESS_KEY: localstack
       EVENT_BUS_NAME: local-main
       REPORTS_S3_BUCKET: opg-backoffice-finance-reports-local
+      FINANCE_HUB_LIVE_DATE: 2024-01-01
       S3_ENCRYPTION_KEY: alias/aws/s3
     healthcheck:
       test: wget -O /dev/null -S 'http://localhost:8080/health-check' 2>&1 | grep 'HTTP/1.1 200 OK' || exit 1
@@ -46,6 +51,37 @@ services:
     depends_on:
       localstack:
         condition: service_healthy
+      sirius-db:
+        condition: service_healthy
+
+  sirius-db:
+    image: postgres:13-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: finance
+    ports:
+      - "5431:5432"
+    volumes:
+      - ./migrations/1_baseline.sql:/docker-entrypoint-initdb.d/1_baseline.sql
+    healthcheck:
+      test: pg_isready --username=user --dbname=finance
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  finance-migration:
+    image: 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-migration:latest
+    depends_on:
+      sirius-db:
+        condition: service_healthy
+    environment:
+      DB_USER: user
+      DB_PASSWORD: password
+      DB_CONNECTION: sirius-db:5432
+      DB_NAME: finance
+      DB_SCHEMA: supervision_finance
+    command: "up"
 
   localstack:
     image: localstack/localstack:3.8

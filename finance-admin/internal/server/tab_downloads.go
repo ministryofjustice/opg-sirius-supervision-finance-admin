@@ -2,15 +2,16 @@ package server
 
 import (
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/model"
+	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/shared"
 	"net/http"
 )
 
 type GetDownloadsVars struct {
-	ReportsTypes        []model.ReportsType
-	ReportJournalTypes  []model.ReportJournalType
+	ReportsTypes        []shared.ReportsType
+	ReportJournalTypes  []shared.ReportJournalType
 	ReportScheduleTypes []model.ReportScheduleType
-	ReportAccountTypes  []model.ReportAccountType
 	ReportDebtTypes     []model.ReportDebtType
+	ReportAccountTypes  []shared.ReportAccountType
 	AppVars
 }
 
@@ -20,11 +21,11 @@ type DownloadsTabHandler struct {
 
 func (h *DownloadsTabHandler) render(v AppVars, w http.ResponseWriter, r *http.Request) error {
 	data := GetDownloadsVars{
-		model.ReportsTypes,
-		model.ReportJournalTypes,
+		shared.ReportsTypes,
+		shared.ReportJournalTypes,
 		model.ReportScheduleTypes,
-		model.ReportAccountTypes,
 		model.ReportDebtTypes,
+		shared.ReportAccountTypes,
 		v}
 	data.selectTab("downloads")
 	return h.execute(w, r, data)

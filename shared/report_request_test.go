@@ -1,7 +1,6 @@
-package model
+package shared
 
 import (
-	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/shared"
 	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
@@ -48,9 +47,9 @@ func TestNewReportRequest(t *testing.T) {
 				ReportScheduleType: "reportScheduleType",
 				ReportAccountType:  "reportAccountType",
 				ReportDebtType:     "reportDebtType",
-				DateOfTransaction:  &shared.Date{Time: dateOfTransaction},
-				ToDateField:        &shared.Date{Time: dateTo},
-				FromDateField:      &shared.Date{Time: dateFrom},
+				DateOfTransaction:  &Date{Time: dateOfTransaction},
+				ToDateField:        &Date{Time: dateTo},
+				FromDateField:      &Date{Time: dateFrom},
 				Email:              "Something@example.com",
 			},
 		},
