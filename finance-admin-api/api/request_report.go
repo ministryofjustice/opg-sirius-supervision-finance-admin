@@ -20,8 +20,6 @@ func (s *Server) requestReport(w http.ResponseWriter, r *http.Request) error {
 	var reportRequest shared.ReportRequest
 	defer r.Body.Close()
 
-	logger := telemetry.LoggerFromContext(r.Context())
-
 	if err := json.NewDecoder(r.Body).Decode(&reportRequest); err != nil {
 		return err
 	}
@@ -38,7 +36,7 @@ func (s *Server) requestReport(w http.ResponseWriter, r *http.Request) error {
 	go func() {
 		err := s.generateAndUploadReport(context.Background(), reportRequest, time.Now())
 		if err != nil {
-			logger.Error(err.Error())
+			telemetry.LoggerFromContext(r.Context()).Error(err.Error())
 		}
 	}()
 

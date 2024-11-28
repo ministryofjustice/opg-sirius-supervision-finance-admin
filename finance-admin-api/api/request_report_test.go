@@ -6,6 +6,7 @@ import (
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
+	"github.com/ministryofjustice/opg-go-common/telemetry"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/apierror"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/shared"
 	"github.com/stretchr/testify/assert"
@@ -20,6 +21,8 @@ import (
 func TestRequestReport(t *testing.T) {
 	var b bytes.Buffer
 
+	ctx := telemetry.ContextWithLogger(context.Background(), telemetry.NewLogger("test"))
+
 	downloadForm := &shared.ReportRequest{
 		ReportType:        "AccountsReceivable",
 		ReportAccountType: "AgedDebt",
@@ -27,7 +30,8 @@ func TestRequestReport(t *testing.T) {
 	}
 
 	_ = json.NewEncoder(&b).Encode(downloadForm)
-	req := httptest.NewRequest(http.MethodPost, "/downloads", &b)
+
+	r, _ := http.NewRequestWithContext(ctx, http.MethodPost, "/downloads", &b)
 	w := httptest.NewRecorder()
 
 	mockHttpClient := MockHttpClient{}
@@ -36,7 +40,7 @@ func TestRequestReport(t *testing.T) {
 	mockDb := MockDb{}
 
 	server := Server{&mockHttpClient, &mockDb, &mockDispatch, &mockFileStorage}
-	_ = server.requestReport(w, req)
+	_ = server.requestReport(w, r)
 
 	res := w.Result()
 	defer res.Body.Close()
