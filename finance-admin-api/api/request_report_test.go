@@ -83,6 +83,7 @@ func TestRequestReportNoEmail(t *testing.T) {
 
 	assert.Equal(t, expected, err)
 }
+
 func TestGenerateAndUploadReport(t *testing.T) {
 	mockHttpClient := MockHttpClient{}
 	mockDispatch := MockDispatch{}
@@ -97,7 +98,9 @@ func TestGenerateAndUploadReport(t *testing.T) {
 	timeNow, _ := time.Parse("2006-01-02", "2024-01-01")
 	toDate := shared.NewDate("2024-01-01")
 	fromDate := shared.NewDate("2024-10-01")
-	download := shared.ReportRequest{
+
+	reportRequest := shared.ReportRequest{
+		ReportType:        "AccountsReceivable",
 		ReportAccountType: "AgedDebt",
 		ToDateField:       &toDate,
 		FromDateField:     &fromDate,
@@ -110,7 +113,7 @@ func TestGenerateAndUploadReport(t *testing.T) {
 		}, nil
 	}
 
-	err := server.generateAndUploadReport(ctx, download, timeNow)
+	err := server.generateAndUploadReport(ctx, reportRequest, timeNow)
 
 	assert.Equal(t, nil, err)
 }

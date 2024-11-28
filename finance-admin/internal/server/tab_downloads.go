@@ -7,8 +7,8 @@ import (
 )
 
 type GetDownloadsVars struct {
-	ReportsTypes        []model.ReportsType
-	ReportJournalTypes  []model.ReportJournalType
+	ReportsTypes        []shared.ReportsType
+	ReportJournalTypes  []shared.ReportJournalType
 	ReportScheduleTypes []model.ReportScheduleType
 	ReportDebtTypes     []model.ReportDebtType
 	ReportAccountTypes  []shared.ReportAccountType
@@ -21,8 +21,8 @@ type DownloadsTabHandler struct {
 
 func (h *DownloadsTabHandler) render(v AppVars, w http.ResponseWriter, r *http.Request) error {
 	data := GetDownloadsVars{
-		model.ReportsTypes,
-		model.ReportJournalTypes,
+		shared.ReportsTypes,
+		shared.ReportJournalTypes,
 		model.ReportScheduleTypes,
 		model.ReportDebtTypes,
 		shared.ReportAccountTypes,

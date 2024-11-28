@@ -24,12 +24,50 @@ func (s *Server) requestReport(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	if reportRequest.Email == "" {
+	if reportRequest.ReportAccountType == "AgedDebt" && reportRequest.Email == "" {
 		return apierror.ValidationError{Errors: apierror.ValidationErrors{
 			"Email": {
 				"required": "This field Email needs to be looked at required",
 			},
 		},
+		}
+	}
+
+	if reportRequest.ReportJournalType == "NonReceiptTransactions" {
+		goLiveDate := os.Getenv("FINANCE_HUB_LIVE_DATE")
+		parsedGoLiveDate, err := time.Parse("2006-01-02 00:00:00 +0000 UTC", goLiveDate)
+		if err != nil {
+			return err
+		}
+
+		if reportRequest.DateOfTransaction == nil {
+			return apierror.ValidationError{Errors: apierror.ValidationErrors{
+				"Date": {
+					"required": "This field Date needs attention required",
+				},
+			},
+			}
+		}
+
+		if reportRequest.DateOfTransaction.Time.Before(parsedGoLiveDate) {
+			return apierror.ValidationError{Errors: apierror.ValidationErrors{
+				"Date": {
+					"after": fmt.Sprintf("This field must be after %s", parsedGoLiveDate.Format("02/01/2006")),
+				},
+			},
+			}
+		}
+
+		nowTime := time.Now()
+		todayTime := time.Date(nowTime.Year(), nowTime.Month(), nowTime.Day(), 0, 0, 0, 0, nowTime.Location())
+
+		if !reportRequest.DateOfTransaction.Time.Before(todayTime) {
+			return apierror.ValidationError{Errors: apierror.ValidationErrors{
+				"Date": {
+					"before": "This field must be before today",
+				},
+			},
+			}
 		}
 	}
 
@@ -49,12 +87,28 @@ func (s *Server) requestReport(w http.ResponseWriter, r *http.Request) error {
 func (s *Server) generateAndUploadReport(ctx context.Context, reportRequest shared.ReportRequest, requestedDate time.Time) error {
 	var query db.ReportQuery
 	var err error
+	var filename string
+	var reportName string
 
-	accountType := shared.ParseReportAccountType(reportRequest.ReportAccountType)
-	filename := fmt.Sprintf("%s_%s.csv", accountType.Key(), requestedDate.Format("02:01:2006"))
+	reportType := shared.ParseReportsType(reportRequest.ReportType)
 
-	switch reportRequest.ReportType {
-	case "AccountsReceivable":
+	switch reportType {
+	case shared.ReportsTypeJournal:
+		journalType := shared.ParseReportJournalType(reportRequest.ReportJournalType)
+		filename = fmt.Sprintf("%s_%s.csv", journalType.Key(), requestedDate.Format("02:01:2006"))
+		reportName = journalType.Translation()
+
+		switch journalType {
+		case shared.ReportTypeNonReceiptTransactions:
+			query = &db.NonReceiptTransactions{
+				Date: reportRequest.DateOfTransaction,
+			}
+		}
+	case shared.ReportsTypeAccountsReceivable:
+		accountType := shared.ParseReportAccountType(reportRequest.ReportAccountType)
+		filename = fmt.Sprintf("%s_%s.csv", accountType.Key(), requestedDate.Format("02:01:2006"))
+		reportName = accountType.Translation()
+
 		switch accountType {
 		case shared.ReportAccountTypeAgedDebt:
 			query = &db.AgedDebt{
@@ -87,7 +141,7 @@ func (s *Server) generateAndUploadReport(ctx context.Context, reportRequest shar
 		return err
 	}
 
-	payload, err := createDownloadNotifyPayload(reportRequest.Email, filename, versionId, requestedDate, accountType.Translation())
+	payload, err := createDownloadNotifyPayload(reportRequest.Email, filename, versionId, requestedDate, reportName)
 	if err != nil {
 		return err
 	}
