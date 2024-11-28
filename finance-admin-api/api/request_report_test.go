@@ -20,7 +20,7 @@ import (
 func TestRequestReport(t *testing.T) {
 	var b bytes.Buffer
 
-	downloadForm := &shared.Download{
+	downloadForm := &shared.ReportRequest{
 		ReportType:        "AccountsReceivable",
 		ReportAccountType: "AgedDebt",
 		Email:             "joseph@test.com",
@@ -50,7 +50,7 @@ func TestRequestReport(t *testing.T) {
 func TestRequestReportNoEmail(t *testing.T) {
 	var b bytes.Buffer
 
-	downloadForm := shared.Download{
+	downloadForm := shared.ReportRequest{
 		ReportType:        "AccountsReceivable",
 		ReportAccountType: "AgedDebt",
 		Email:             "",
@@ -93,7 +93,7 @@ func TestGenerateAndUploadReport(t *testing.T) {
 	timeNow, _ := time.Parse("2006-01-02", "2024-01-01")
 	toDate := shared.NewDate("2024-01-01")
 	fromDate := shared.NewDate("2024-10-01")
-	download := shared.Download{
+	download := shared.ReportRequest{
 		ReportAccountType: "AgedDebt",
 		ToDateField:       &toDate,
 		FromDateField:     &fromDate,

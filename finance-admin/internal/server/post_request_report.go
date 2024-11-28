@@ -31,7 +31,7 @@ func (h *RequestReportHandler) render(v AppVars, w http.ResponseWriter, r *http.
 
 	parsedReportAccountType := shared.ParseReportAccountType(reportAccountType)
 
-	data := model.NewReportRequest(reportType, reportJournalType, reportScheduleType, reportAccountType, reportDebtType, dateOfTransaction, dateTo, dateFrom, email)
+	data := shared.NewReportRequest(reportType, reportJournalType, reportScheduleType, reportAccountType, reportDebtType, dateOfTransaction, dateTo, dateFrom, email)
 	err := h.Client().RequestReport(ctx, data)
 
 	if err != nil {

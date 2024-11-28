@@ -17,14 +17,14 @@ import (
 const reportRequestedTemplateId = "bade69e4-0eb1-4896-a709-bd8f8371a629"
 
 func (s *Server) requestReport(w http.ResponseWriter, r *http.Request) error {
-	var download shared.Download
+	var reportRequest shared.ReportRequest
 	defer r.Body.Close()
 
-	if err := json.NewDecoder(r.Body).Decode(&download); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&reportRequest); err != nil {
 		return err
 	}
 
-	if download.Email == "" {
+	if reportRequest.Email == "" {
 		return apierror.ValidationError{Errors: apierror.ValidationErrors{
 			"Email": {
 				"required": "This field Email needs to be looked at required",
@@ -34,7 +34,7 @@ func (s *Server) requestReport(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	go func() {
-		err := s.generateAndUploadReport(context.Background(), download, time.Now())
+		err := s.generateAndUploadReport(context.Background(), reportRequest, time.Now())
 		if err != nil {
 			logger := telemetry.LoggerFromContext(r.Context())
 			logger.Error(err.Error())
@@ -47,18 +47,18 @@ func (s *Server) requestReport(w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 
-func (s *Server) generateAndUploadReport(ctx context.Context, download shared.Download, requestedDate time.Time) error {
+func (s *Server) generateAndUploadReport(ctx context.Context, reportRequest shared.ReportRequest, requestedDate time.Time) error {
 	var query db.ReportQuery
 	var err error
 
-	accountType := shared.ParseReportAccountType(download.ReportAccountType)
+	accountType := shared.ParseReportAccountType(reportRequest.ReportAccountType)
 	filename := fmt.Sprintf("%s_%s.csv", accountType.Key(), requestedDate.Format("02:01:2006"))
 
 	switch accountType {
 	case shared.ReportAccountTypeAgedDebt:
 		query = &db.AgedDebt{
-			FromDate: download.FromDateField,
-			ToDate:   download.ToDateField,
+			FromDate: reportRequest.FromDateField,
+			ToDate:   reportRequest.ToDateField,
 		}
 	}
 
@@ -85,7 +85,7 @@ func (s *Server) generateAndUploadReport(ctx context.Context, download shared.Do
 		return err
 	}
 
-	payload, err := createDownloadNotifyPayload(download.Email, filename, versionId, requestedDate, accountType.Translation())
+	payload, err := createDownloadNotifyPayload(reportRequest.Email, filename, versionId, requestedDate, accountType.Translation())
 	if err != nil {
 		return err
 	}

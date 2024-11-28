@@ -5,15 +5,6 @@ import (
 	"encoding/json"
 )
 
-type Download struct {
-	ReportType        string `json:"reportType"`
-	ReportAccountType string `json:"reportAccountType"`
-	DateOfTransaction string `json:"dateOfTransaction"`
-	Email             string `json:"email"`
-	ToDateField       *Date  `json:"toDateField"`
-	FromDateField     *Date  `json:"fromDateField"`
-}
-
 type DownloadRequest struct {
 	Key       string
 	VersionId string
