@@ -20,6 +20,8 @@ func (s *Server) requestReport(w http.ResponseWriter, r *http.Request) error {
 	var reportRequest shared.ReportRequest
 	defer r.Body.Close()
 
+	logger := telemetry.LoggerFromContext(r.Context())
+
 	if err := json.NewDecoder(r.Body).Decode(&reportRequest); err != nil {
 		return err
 	}
@@ -36,7 +38,6 @@ func (s *Server) requestReport(w http.ResponseWriter, r *http.Request) error {
 	go func() {
 		err := s.generateAndUploadReport(context.Background(), reportRequest, time.Now())
 		if err != nil {
-			logger := telemetry.LoggerFromContext(r.Context())
 			logger.Error(err.Error())
 		}
 	}()
@@ -54,11 +55,14 @@ func (s *Server) generateAndUploadReport(ctx context.Context, reportRequest shar
 	accountType := shared.ParseReportAccountType(reportRequest.ReportAccountType)
 	filename := fmt.Sprintf("%s_%s.csv", accountType.Key(), requestedDate.Format("02:01:2006"))
 
-	switch accountType {
-	case shared.ReportAccountTypeAgedDebt:
-		query = &db.AgedDebt{
-			FromDate: reportRequest.FromDateField,
-			ToDate:   reportRequest.ToDateField,
+	switch reportRequest.ReportType {
+	case "AccountsReceivable":
+		switch accountType {
+		case shared.ReportAccountTypeAgedDebt:
+			query = &db.AgedDebt{
+				FromDate: reportRequest.FromDateField,
+				ToDate:   reportRequest.ToDateField,
+			}
 		}
 	}
 
