@@ -2,7 +2,6 @@ package server
 
 import (
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/api"
-	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/model"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/shared"
 	"io"
 	"net/http"
@@ -58,7 +57,7 @@ func (m mockApiClient) Upload(context api.Context, data shared.Upload) error {
 	return m.error
 }
 
-func (m mockApiClient) RequestReport(context api.Context, data model.ReportRequest) error {
+func (m mockApiClient) RequestReport(context api.Context, data shared.ReportRequest) error {
 	return m.error
 }
 
