@@ -6,11 +6,13 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/ministryofjustice/opg-go-common/securityheaders"
 	"github.com/ministryofjustice/opg-go-common/telemetry"
+	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin-api/db"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin-api/event"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"io"
 	"log/slog"
 	"net/http"
+	"os"
 )
 
 type HTTPClient interface {
@@ -23,18 +25,23 @@ type Dispatch interface {
 
 type FileStorage interface {
 	GetFile(ctx context.Context, bucketName string, filename string, versionID string) (*s3.GetObjectOutput, error)
-	PutFile(ctx context.Context, bucketName string, fileName string, file io.Reader) error
+	PutFile(ctx context.Context, bucketName string, fileName string, file io.Reader) (*string, error)
 	FileExists(ctx context.Context, bucketName string, filename string, versionID string) bool
+}
+
+type Reports interface {
+	Generate(ctx context.Context, filename string, reportQuery db.ReportQuery) (*os.File, error)
 }
 
 type Server struct {
 	http        HTTPClient
+	reports     Reports
 	dispatch    Dispatch
 	filestorage FileStorage
 }
 
-func NewServer(httpClient HTTPClient, dispatch Dispatch, filestorage FileStorage) Server {
-	return Server{httpClient, dispatch, filestorage}
+func NewServer(httpClient HTTPClient, reports Reports, dispatch Dispatch, filestorage FileStorage) Server {
+	return Server{httpClient, reports, dispatch, filestorage}
 }
 
 func (s *Server) SetupRoutes(logger *slog.Logger) http.Handler {
@@ -52,6 +59,8 @@ func (s *Server) SetupRoutes(logger *slog.Logger) http.Handler {
 
 	handleFunc("GET /download", s.download)
 	handleFunc("HEAD /download", s.checkDownload)
+
+	handleFunc("POST /downloads", s.requestReport)
 	handleFunc("POST /uploads", s.upload)
 
 	handleFunc("POST /events", s.handleEvents)

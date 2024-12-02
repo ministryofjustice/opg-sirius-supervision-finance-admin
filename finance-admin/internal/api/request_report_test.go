@@ -19,7 +19,7 @@ func TestRequestReport(t *testing.T) {
 	dateTo := shared.NewDate("2025-06-15")
 	dateFrom := shared.NewDate("2022-07-21")
 
-	data := model.ReportRequest{
+	data := shared.ReportRequest{
 		ReportType:         "reportType",
 		ReportJournalType:  "reportJournalType",
 		ReportScheduleType: "reportScheduleType",
@@ -46,7 +46,7 @@ func TestRequestReportUnauthorised(t *testing.T) {
 	mockClient := &MockClient{}
 	client, _ := NewClient(mockClient, "http://localhost:3000", "")
 
-	data := model.ReportRequest{
+	data := shared.ReportRequest{
 		ReportType:         "reportType",
 		ReportJournalType:  "reportJournalType",
 		ReportScheduleType: "reportScheduleType",
@@ -74,7 +74,7 @@ func TestRequestReportReturnsBadRequestError(t *testing.T) {
 	mockClient := &MockClient{}
 	client, _ := NewClient(mockClient, "http://localhost:3000", "")
 
-	data := model.ReportRequest{
+	data := shared.ReportRequest{
 		ReportType:         "reportType",
 		ReportJournalType:  "reportJournalType",
 		ReportScheduleType: "reportScheduleType",
@@ -104,7 +104,7 @@ func TestRequestReportReturnsBadRequestError(t *testing.T) {
 }
 
 func TestRequestReportReturnsValidationError(t *testing.T) {
-	data := model.ReportRequest{
+	data := shared.ReportRequest{
 		ReportType:         "",
 		ReportJournalType:  "reportJournalType",
 		ReportScheduleType: "reportScheduleType",
