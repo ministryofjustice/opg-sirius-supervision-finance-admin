@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	"github.com/ministryofjustice/opg-go-common/telemetry"
@@ -34,9 +33,10 @@ func (s *Server) requestReport(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	go func() {
-		err := s.generateAndUploadReport(context.Background(), reportRequest, time.Now())
+		ctx := context.Background()
+		err := s.generateAndUploadReport(ctx, reportRequest, time.Now())
 		if err != nil {
-			telemetry.LoggerFromContext(r.Context()).Error(err.Error())
+			telemetry.LoggerFromContext(ctx).Error(err.Error())
 		}
 	}()
 
@@ -64,12 +64,7 @@ func (s *Server) generateAndUploadReport(ctx context.Context, reportRequest shar
 		}
 	}
 
-	rows, err := s.conn.Run(ctx, query)
-	if err != nil {
-		return err
-	}
-
-	file, err := createCsv(filename, rows)
+	file, err := s.reports.Generate(ctx, filename, query)
 	if err != nil {
 		return err
 	}
@@ -98,31 +93,6 @@ func (s *Server) generateAndUploadReport(ctx context.Context, reportRequest shar
 	}
 
 	return nil
-}
-
-func createCsv(filename string, items [][]string) (*os.File, error) {
-	file, err := os.Create(filename)
-	if err != nil {
-		return nil, err
-	}
-
-	defer file.Close()
-
-	writer := csv.NewWriter(file)
-
-	for _, item := range items {
-		err = writer.Write(item)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	writer.Flush()
-	if writer.Error() != nil {
-		return nil, writer.Error()
-	}
-
-	return os.Open(filename)
 }
 
 type reportRequestedNotifyPersonalisation struct {

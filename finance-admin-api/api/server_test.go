@@ -3,10 +3,11 @@ package api
 import (
 	"context"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin-api/event"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin-api/db"
+	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin-api/event"
 	"io"
 	"net/http"
+	"os"
 )
 
 type MockDispatch struct {
@@ -45,13 +46,12 @@ func (m *MockFileStorage) FileExists(ctx context.Context, bucketName string, fil
 	return m.exists
 }
 
-type MockDb struct {
+type MockReports struct {
 	query db.ReportQuery
 }
 
-func (m *MockDb) Run(ctx context.Context, query db.ReportQuery) ([][]string, error) {
+func (m *MockReports) Generate(ctx context.Context, filename string, query db.ReportQuery) (*os.File, error) {
 	m.query = query
-
 	return nil, nil
 }
 

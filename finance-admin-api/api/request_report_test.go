@@ -3,7 +3,6 @@ package api
 import (
 	"bytes"
 	"context"
-	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	"github.com/ministryofjustice/opg-go-common/telemetry"
@@ -37,9 +36,9 @@ func TestRequestReport(t *testing.T) {
 	mockHttpClient := MockHttpClient{}
 	mockDispatch := MockDispatch{}
 	mockFileStorage := MockFileStorage{}
-	mockDb := MockDb{}
+	mockReports := MockReports{}
 
-	server := Server{&mockHttpClient, &mockDb, &mockDispatch, &mockFileStorage}
+	server := Server{&mockHttpClient, &mockReports, &mockDispatch, &mockFileStorage}
 	_ = server.requestReport(w, r)
 
 	res := w.Result()
@@ -87,11 +86,11 @@ func TestGenerateAndUploadReport(t *testing.T) {
 	mockHttpClient := MockHttpClient{}
 	mockDispatch := MockDispatch{}
 	mockFileStorage := MockFileStorage{}
-	mockDb := MockDb{}
+	mockReports := MockReports{}
 
 	mockFileStorage.versionId = "123"
 
-	server := Server{&mockHttpClient, &mockDb, &mockDispatch, &mockFileStorage}
+	server := Server{&mockHttpClient, &mockReports, &mockDispatch, &mockFileStorage}
 
 	ctx := context.Background()
 	timeNow, _ := time.Parse("2006-01-02", "2024-01-01")
@@ -113,34 +112,6 @@ func TestGenerateAndUploadReport(t *testing.T) {
 	err := server.generateAndUploadReport(ctx, download, timeNow)
 
 	assert.Equal(t, nil, err)
-}
-
-func TestCreateCsv(t *testing.T) {
-	want, _ := os.Create("test.csv")
-	defer want.Close()
-
-	writer := csv.NewWriter(want)
-	_ = writer.Write([]string{"test", "hehe"})
-	_ = writer.Write([]string{"123 Real Street", "Bingopolis"})
-	writer.Flush()
-
-	items := [][]string{{"test", "hehe"}, {"123 Real Street", "Bingopolis"}}
-	_, err := createCsv("test2.csv", items)
-
-	wantBytes, _ := os.ReadFile("test.csv")
-	gotBytes, _ := os.ReadFile("test2.csv")
-
-	assert.Nil(t, err)
-	assert.Equal(t, string(wantBytes), string(gotBytes))
-}
-
-func TestCreateCsvNoItems(t *testing.T) {
-	items := [][]string{}
-	_, err := createCsv("test.csv", items)
-	gotBytes, _ := os.ReadFile("test.csv")
-
-	assert.Nil(t, err)
-	assert.Equal(t, "", string(gotBytes))
 }
 
 func TestCreateDownloadNotifyPayload(t *testing.T) {

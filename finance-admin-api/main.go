@@ -8,8 +8,8 @@ import (
 	"github.com/ministryofjustice/opg-go-common/telemetry"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin-api/api"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin-api/event"
-	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin-api/db"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin-api/filestorage"
+	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin-api/reports"
 	"log/slog"
 	"net/http"
 	"os"
@@ -45,14 +45,12 @@ func run(ctx context.Context, logger *slog.Logger) error {
 
 	eventClient := setupEventClient(ctx, logger)
 
-	conn, err := db.NewClient(ctx)
+	reportsClient, err := reports.NewClient(ctx)
 	if err != nil {
 		return err
 	}
 
-	defer conn.Close(ctx)
-
-	server := api.NewServer(http.DefaultClient, conn, eventClient, filestorageclient)
+	server := api.NewServer(http.DefaultClient, reportsClient, eventClient, filestorageclient)
 
 	s := &http.Server{
 		Addr:    ":8080",
