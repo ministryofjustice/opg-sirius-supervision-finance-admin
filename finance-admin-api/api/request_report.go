@@ -61,6 +61,8 @@ func (s *Server) generateAndUploadReport(ctx context.Context, reportRequest shar
 				FromDate: reportRequest.FromDateField,
 				ToDate:   reportRequest.ToDateField,
 			}
+		case shared.ReportAccountTypeAgedDebtByCustomer:
+			query = &db.AgedDebtByCustomer{}
 		}
 	}
 
