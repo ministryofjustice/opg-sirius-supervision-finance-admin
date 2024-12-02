@@ -9,10 +9,15 @@ import (
 
 type DbClient interface {
 	Run(ctx context.Context, query db.ReportQuery) ([][]string, error)
+	Close(ctx context.Context) error
 }
 
 type Client struct {
 	db DbClient
+}
+
+func (c *Client) Close(ctx context.Context) error {
+	return c.db.Close(ctx)
 }
 
 func NewClient(ctx context.Context) (*Client, error) {
@@ -20,7 +25,6 @@ func NewClient(ctx context.Context) (*Client, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer dbClient.Close(ctx)
 
 	return &Client{db: dbClient}, nil
 }

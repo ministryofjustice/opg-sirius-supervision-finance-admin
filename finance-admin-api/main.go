@@ -49,6 +49,7 @@ func run(ctx context.Context, logger *slog.Logger) error {
 	if err != nil {
 		return err
 	}
+	defer reportsClient.Close(ctx)
 
 	server := api.NewServer(http.DefaultClient, reportsClient, eventClient, filestorageclient)
 
