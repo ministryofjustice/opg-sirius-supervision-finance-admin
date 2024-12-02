@@ -91,6 +91,17 @@ htmx.onLoad(content => {
 
             switch (this.value) {
                 case "AgedDebt":
+                    document.querySelector('#email-field').removeAttribute("disabled");
+                    document.querySelector('#date-to-field').removeAttribute("disabled");
+                    document.querySelector('#date-from-field').removeAttribute("disabled");
+                    htmx.removeClass(htmx.find("#email-field-input"), "hide")
+                    htmx.removeClass(htmx.find("#date-to-field-input"), "hide")
+                    htmx.removeClass(htmx.find("#date-from-field-input"), "hide")
+                    break;
+                case "AgedDebtByCustomer":
+                    document.querySelector('#email-field').removeAttribute("disabled");
+                    htmx.removeClass(htmx.find("#email-field-input"), "hide")
+                    break;
                 case "UnappliedReceipts":
                 case "CustomerAgeingBuckets":
                     document.querySelector('#date-field').removeAttribute("disabled");
