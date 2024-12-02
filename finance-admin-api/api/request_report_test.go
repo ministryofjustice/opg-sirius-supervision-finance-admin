@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/ministryofjustice/opg-go-common/telemetry"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/apierror"
+	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin-api/db"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/shared"
 	"github.com/stretchr/testify/assert"
 	"io"
@@ -53,6 +54,8 @@ func TestRequestReport(t *testing.T) {
 func TestRequestReportNoEmail(t *testing.T) {
 	var b bytes.Buffer
 
+	ctx := telemetry.ContextWithLogger(context.Background(), telemetry.NewLogger("test"))
+
 	downloadForm := shared.ReportRequest{
 		ReportType:        "AccountsReceivable",
 		ReportAccountType: "AgedDebt",
@@ -60,7 +63,7 @@ func TestRequestReportNoEmail(t *testing.T) {
 	}
 
 	_ = json.NewEncoder(&b).Encode(downloadForm)
-	req := httptest.NewRequest(http.MethodPost, "/downloads", &b)
+	r, _ := http.NewRequestWithContext(ctx, http.MethodPost, "/downloads", &b)
 	w := httptest.NewRecorder()
 
 	mockHttpClient := MockHttpClient{}
@@ -68,7 +71,7 @@ func TestRequestReportNoEmail(t *testing.T) {
 	mockFileStorage := MockFileStorage{}
 
 	server := Server{&mockHttpClient, nil, &mockDispatch, &mockFileStorage}
-	err := server.requestReport(w, req)
+	err := server.requestReport(w, r)
 
 	res := w.Result()
 	defer res.Body.Close()
@@ -82,6 +85,7 @@ func TestRequestReportNoEmail(t *testing.T) {
 
 	assert.Equal(t, expected, err)
 }
+
 func TestGenerateAndUploadReport(t *testing.T) {
 	mockHttpClient := MockHttpClient{}
 	mockDispatch := MockDispatch{}
@@ -97,6 +101,7 @@ func TestGenerateAndUploadReport(t *testing.T) {
 	toDate := shared.NewDate("2024-01-01")
 	fromDate := shared.NewDate("2024-10-01")
 	download := shared.ReportRequest{
+		ReportType:        "AccountsReceivable",
 		ReportAccountType: "AgedDebt",
 		ToDateField:       &toDate,
 		FromDateField:     &fromDate,
@@ -111,6 +116,9 @@ func TestGenerateAndUploadReport(t *testing.T) {
 
 	err := server.generateAndUploadReport(ctx, download, timeNow)
 
+	expectedQuery := db.AgedDebt{FromDate: &fromDate, ToDate: &toDate}
+
+	assert.Equal(t, &expectedQuery, mockReports.query)
 	assert.Equal(t, nil, err)
 }
 
