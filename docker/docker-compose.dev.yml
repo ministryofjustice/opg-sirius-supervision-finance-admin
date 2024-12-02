@@ -32,6 +32,7 @@ services:
       - ./finance-admin-api/filestorage:/app/finance-admin-api/filestorage
       - ./finance-admin-api/event:/app/finance-admin-api/event
       - ./finance-admin-api/db:/app/finance-admin-api/db
+      - ./finance-admin-api/reports:/app/finance-admin-api/reports
       - ./finance-admin-api/main.go:/app/finance-admin-api/main.go
 
   yarn:
