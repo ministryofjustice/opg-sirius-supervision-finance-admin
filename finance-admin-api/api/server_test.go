@@ -3,12 +3,39 @@ package api
 import (
 	"context"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/ministryofjustice/opg-go-common/telemetry"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin-api/db"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin-api/event"
+	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin-api/testhelpers"
+	"github.com/stretchr/testify/suite"
 	"io"
 	"net/http"
 	"os"
+	"testing"
 )
+
+type IntegrationSuite struct {
+	suite.Suite
+	testDB *testhelpers.TestDatabase
+	ctx    context.Context
+}
+
+func (suite *IntegrationSuite) SetupTest() {
+	suite.testDB = testhelpers.InitDb()
+	suite.ctx = telemetry.ContextWithLogger(context.Background(), telemetry.NewLogger("finance-api-test"))
+}
+
+func TestSuite(t *testing.T) {
+	suite.Run(t, new(IntegrationSuite))
+}
+
+func (suite *IntegrationSuite) TearDownSuite() {
+	suite.testDB.TearDown()
+}
+
+func (suite *IntegrationSuite) AfterTest(suiteName, testName string) {
+	suite.testDB.Restore()
+}
 
 type MockDispatch struct {
 	event any
