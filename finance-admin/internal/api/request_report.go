@@ -4,10 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/model"
+	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/shared"
 	"net/http"
 )
 
-func (c *Client) RequestReport(ctx Context, data model.ReportRequest) error {
+func (c *Client) RequestReport(ctx Context, data shared.ReportRequest) error {
 	var body bytes.Buffer
 
 	err := json.NewEncoder(&body).Encode(data)
@@ -15,7 +16,7 @@ func (c *Client) RequestReport(ctx Context, data model.ReportRequest) error {
 		return err
 	}
 
-	req, err := c.newBackendRequest(ctx, http.MethodGet, "/downloads", &body)
+	req, err := c.newBackendRequest(ctx, http.MethodPost, "/downloads", &body)
 
 	if err != nil {
 		return err
