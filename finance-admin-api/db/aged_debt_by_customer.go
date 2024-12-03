@@ -34,18 +34,18 @@ SELECT CONCAT(p.firstname, ' ', p.surname)                                      
        d.deputytype                                                                "Deputy type",
        COALESCE(active_orders.is_active, 'No')                                     "Active case?",
        tbc.total_outstanding AS                                                    "Outstanding amount",
-       CASE WHEN tbc.max_age = 0 THEN tbc.total_outstanding ELSE 0 END             "Current",
-       CASE WHEN tbc.max_age = 1 THEN tbc.total_outstanding ELSE 0 END             "1-21 days",
-       CASE WHEN tbc.max_age = 2 THEN tbc.total_outstanding ELSE 0 END             "22-35 days",
-       CASE WHEN tbc.max_age = 3 THEN tbc.total_outstanding ELSE 0 END             "36-65 days",
-       CASE WHEN tbc.max_age = 4 THEN tbc.total_outstanding ELSE 0 END             "66-90 days",
-       CASE WHEN tbc.max_age = 5 THEN tbc.total_outstanding ELSE 0 END             "91-120 days",
-       CASE WHEN tbc.max_age = 6 THEN tbc.total_outstanding ELSE 0 END             "121-365 days",
-       CASE WHEN tbc.max_age BETWEEN 1 AND 6 THEN tbc.total_outstanding ELSE 0 END "0-1 years",
-       CASE WHEN tbc.max_age = 7 THEN tbc.total_outstanding ELSE 0 END             "1-2 years",
-       CASE WHEN tbc.max_age = 8 THEN tbc.total_outstanding ELSE 0 END             "2-3 years",
-       CASE WHEN tbc.max_age = 9 THEN tbc.total_outstanding ELSE 0 END             "3-5 years",
-       CASE WHEN tbc.max_age = 10 THEN tbc.total_outstanding ELSE 0 END            "5+ years"
+       CASE WHEN tbc.max_age = 0 THEN tbc.total_outstanding ELSE '0' END             "Current",
+       CASE WHEN tbc.max_age = 1 THEN tbc.total_outstanding ELSE '0' END             "1-21 days",
+       CASE WHEN tbc.max_age = 2 THEN tbc.total_outstanding ELSE '0' END             "22-35 days",
+       CASE WHEN tbc.max_age = 3 THEN tbc.total_outstanding ELSE '0' END             "36-65 days",
+       CASE WHEN tbc.max_age = 4 THEN tbc.total_outstanding ELSE '0' END             "66-90 days",
+       CASE WHEN tbc.max_age = 5 THEN tbc.total_outstanding ELSE '0' END             "91-120 days",
+       CASE WHEN tbc.max_age = 6 THEN tbc.total_outstanding ELSE '0' END             "121-365 days",
+       CASE WHEN tbc.max_age BETWEEN 1 AND 6 THEN tbc.total_outstanding ELSE '0' END "0-1 years",
+       CASE WHEN tbc.max_age = 7 THEN tbc.total_outstanding ELSE '0' END             "1-2 years",
+       CASE WHEN tbc.max_age = 8 THEN tbc.total_outstanding ELSE '0' END             "2-3 years",
+       CASE WHEN tbc.max_age = 9 THEN tbc.total_outstanding ELSE '0' END             "3-5 years",
+       CASE WHEN tbc.max_age = 10 THEN tbc.total_outstanding ELSE '0' END            "5+ years"
 FROM supervision_finance.finance_client fc
          JOIN total_by_client tbc ON fc.id = tbc.finance_client_id
          JOIN public.persons p ON fc.client_id = p.id
