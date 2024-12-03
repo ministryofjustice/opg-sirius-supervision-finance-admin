@@ -32,11 +32,13 @@ func (s *Server) requestReport(w http.ResponseWriter, r *http.Request) error {
 		}
 	}
 
+	ctx := r.Context()
+	logger := telemetry.LoggerFromContext(ctx)
+
 	go func() {
-		ctx := context.Background()
 		err := s.generateAndUploadReport(ctx, reportRequest, time.Now())
 		if err != nil {
-			telemetry.LoggerFromContext(ctx).Error(err.Error())
+			logger.Error(err.Error())
 		}
 	}()
 
