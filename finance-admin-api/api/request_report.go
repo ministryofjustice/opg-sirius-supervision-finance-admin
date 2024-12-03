@@ -8,6 +8,7 @@ import (
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/apierror"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin-api/db"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/shared"
+	"log/slog"
 	"net/http"
 	"os"
 	"time"
@@ -32,13 +33,12 @@ func (s *Server) requestReport(w http.ResponseWriter, r *http.Request) error {
 		}
 	}
 
-	go func() {
-		ctx := context.Background()
-		err := s.generateAndUploadReport(ctx, reportRequest, time.Now())
+	go func(logger *slog.Logger) {
+		err := s.generateAndUploadReport(context.Background(), reportRequest, time.Now())
 		if err != nil {
-			telemetry.LoggerFromContext(ctx).Error(err.Error())
+			logger.Error(err.Error())
 		}
-	}()
+	}(telemetry.LoggerFromContext(r.Context()))
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
@@ -61,7 +61,13 @@ func (s *Server) generateAndUploadReport(ctx context.Context, reportRequest shar
 				FromDate: reportRequest.FromDateField,
 				ToDate:   reportRequest.ToDateField,
 			}
+		case shared.ReportAccountTypeAgedDebtByCustomer:
+			query = &db.AgedDebtByCustomer{}
 		}
+	}
+
+	if query == nil {
+		return fmt.Errorf("Unknown query")
 	}
 
 	file, err := s.reports.Generate(ctx, filename, query)
