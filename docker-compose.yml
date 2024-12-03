@@ -54,7 +54,7 @@ services:
         condition: service_healthy
 
   sirius-db:
-    image: postgres:13-alpine
+    image: postgres:17-alpine
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
