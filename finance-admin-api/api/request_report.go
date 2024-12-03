@@ -66,6 +66,10 @@ func (s *Server) generateAndUploadReport(ctx context.Context, reportRequest shar
 		}
 	}
 
+	if query == nil {
+		return fmt.Errorf("Unknown query")
+	}
+
 	file, err := s.reports.Generate(ctx, filename, query)
 	if err != nil {
 		return err

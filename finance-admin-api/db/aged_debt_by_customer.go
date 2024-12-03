@@ -24,7 +24,7 @@ const AgedDebtByCustomerQuery = `WITH outstanding_invoices AS (SELECT i.id      
                               GROUP BY i.id, i.amount
                               HAVING i.amount > COALESCE(SUM(la.amount), 0)),
      total_by_client AS (SELECT oi.finance_client_id,
-                                (SUM(oi.outstanding) / 100.0)::NUMERIC(10, 2) AS total_outstanding,
+                                (SUM(oi.outstanding) / 100.0)::NUMERIC(10, 2)::varchar(255) AS total_outstanding,
                                 MAX(oi.overdue_banding)                       AS max_age
                          FROM outstanding_invoices oi
                          GROUP BY oi.finance_client_id)
