@@ -8,6 +8,7 @@ import (
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/apierror"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin-api/db"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/shared"
+	"log/slog"
 	"net/http"
 	"os"
 	"time"
@@ -32,15 +33,12 @@ func (s *Server) requestReport(w http.ResponseWriter, r *http.Request) error {
 		}
 	}
 
-	ctx := r.Context()
-	logger := telemetry.LoggerFromContext(ctx)
-
-	go func() {
-		err := s.generateAndUploadReport(ctx, reportRequest, time.Now())
+	go func(logger *slog.Logger) {
+		err := s.generateAndUploadReport(context.Background(), reportRequest, time.Now())
 		if err != nil {
 			logger.Error(err.Error())
 		}
-	}()
+	}(telemetry.LoggerFromContext(r.Context()))
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
