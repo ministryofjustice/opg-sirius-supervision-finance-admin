@@ -32,11 +32,13 @@ func (s *Server) requestReport(w http.ResponseWriter, r *http.Request) error {
 		}
 	}
 
+	ctx := r.Context()
+	logger := telemetry.LoggerFromContext(ctx)
+
 	go func() {
-		ctx := context.Background()
 		err := s.generateAndUploadReport(ctx, reportRequest, time.Now())
 		if err != nil {
-			telemetry.LoggerFromContext(ctx).Error(err.Error())
+			logger.Error(err.Error())
 		}
 	}()
 
@@ -61,7 +63,13 @@ func (s *Server) generateAndUploadReport(ctx context.Context, reportRequest shar
 				FromDate: reportRequest.FromDateField,
 				ToDate:   reportRequest.ToDateField,
 			}
+		case shared.ReportAccountTypeAgedDebtByCustomer:
+			query = &db.AgedDebtByCustomer{}
 		}
+	}
+
+	if query == nil {
+		return fmt.Errorf("Unknown query")
 	}
 
 	file, err := s.reports.Generate(ctx, filename, query)
