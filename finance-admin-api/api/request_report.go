@@ -61,7 +61,13 @@ func (s *Server) generateAndUploadReport(ctx context.Context, reportRequest shar
 				FromDate: reportRequest.FromDateField,
 				ToDate:   reportRequest.ToDateField,
 			}
+		case shared.ReportAccountTypeAgedDebtByCustomer:
+			query = &db.AgedDebtByCustomer{}
 		}
+	}
+
+	if query == nil {
+		return fmt.Errorf("Unknown query")
 	}
 
 	file, err := s.reports.Generate(ctx, filename, query)
