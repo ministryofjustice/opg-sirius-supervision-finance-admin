@@ -4,6 +4,7 @@ import "encoding/json"
 
 var ReportAccountTypes = []ReportAccountType{
 	ReportAccountTypeAgedDebt,
+	ReportAccountTypeAgedDebtByCustomer,
 	ReportAccountTypeUnappliedReceipts,
 	ReportAccountTypeCustomerAgeingBuckets,
 	ReportAccountTypeARPaidInvoiceReport,
@@ -15,6 +16,7 @@ var ReportAccountTypes = []ReportAccountType{
 
 var reportAccountTypeMap = map[string]ReportAccountType{
 	"AgedDebt":                    ReportAccountTypeAgedDebt,
+	"AgedDebtByCustomer":          ReportAccountTypeAgedDebtByCustomer,
 	"UnappliedReceipts":           ReportAccountTypeUnappliedReceipts,
 	"CustomerAgeingBuckets":       ReportAccountTypeCustomerAgeingBuckets,
 	"ARPaidInvoiceReport":         ReportAccountTypeARPaidInvoiceReport,
@@ -29,6 +31,7 @@ type ReportAccountType int
 const (
 	ReportAccountTypeUnknown ReportAccountType = iota
 	ReportAccountTypeAgedDebt
+	ReportAccountTypeAgedDebtByCustomer
 	ReportAccountTypeUnappliedReceipts
 	ReportAccountTypeCustomerAgeingBuckets
 	ReportAccountTypeARPaidInvoiceReport
@@ -46,6 +49,8 @@ func (i ReportAccountType) Translation() string {
 	switch i {
 	case ReportAccountTypeAgedDebt:
 		return "Aged Debt"
+	case ReportAccountTypeAgedDebtByCustomer:
+		return "Aged Debt By Customer"
 	case ReportAccountTypeUnappliedReceipts:
 		return "Unapplied Receipts"
 	case ReportAccountTypeCustomerAgeingBuckets:
@@ -69,6 +74,8 @@ func (i ReportAccountType) Key() string {
 	switch i {
 	case ReportAccountTypeAgedDebt:
 		return "AgedDebt"
+	case ReportAccountTypeAgedDebtByCustomer:
+		return "AgedDebtByCustomer"
 	case ReportAccountTypeUnappliedReceipts:
 		return "UnappliedReceipts"
 	case ReportAccountTypeCustomerAgeingBuckets:
