@@ -115,6 +115,19 @@ func TestGenerateAndUploadReport(t *testing.T) {
 			expectedQuery: &db.AgedDebtByCustomer{},
 		},
 		{
+			name: "Bad Debt Write Off",
+			reportRequest: shared.ReportRequest{
+				ReportType:        "AccountsReceivable",
+				ReportAccountType: "BadDebtWriteOffReport",
+				ToDateField:       &toDate,
+				FromDateField:     &fromDate,
+			},
+			expectedQuery: &db.BadDebtWriteOff{
+				FromDate: &fromDate,
+				ToDate:   &toDate,
+			},
+		},
+		{
 			name: "Unknown",
 			reportRequest: shared.ReportRequest{
 				ReportType:        "AccountsReceivable",
@@ -145,7 +158,7 @@ func TestGenerateAndUploadReport(t *testing.T) {
 			err := server.generateAndUploadReport(ctx, tt.reportRequest, timeNow)
 
 			assert.Equal(t, tt.expectedErr, err)
-			assert.Equal(t, &tt.expectedQuery, &mockReports.query)
+			assert.Equal(t, tt.expectedQuery, mockReports.query)
 		})
 	}
 }
