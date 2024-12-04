@@ -8,12 +8,37 @@ import (
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/apierror"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin-api/db"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/shared"
+	"log/slog"
 	"net/http"
 	"os"
 	"time"
 )
 
 const reportRequestedTemplateId = "bade69e4-0eb1-4896-a709-bd8f8371a629"
+
+func validateReportRequest(reportRequest shared.ReportRequest) error {
+	errors := apierror.ValidationErrors{}
+	if reportRequest.Email == "" {
+		errors["Email"] = map[string]string{"required": "This field Email needs to be looked at required"}
+	}
+
+	switch reportRequest.ReportAccountType {
+	case shared.ReportAccountTypeBadDebtWriteOffReport:
+		if reportRequest.FromDateField != nil {
+			liveDate := shared.NewDate(os.Getenv("FINANCE_HUB_LIVE_DATE"))
+
+			if reportRequest.FromDateField.Before(liveDate) {
+				errors["FromDate"] = map[string]string{"date-after-live": "Date from cannot be before finance hub live date"}
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return apierror.ValidationError{Errors: errors}
+	}
+
+	return nil
+}
 
 func (s *Server) requestReport(w http.ResponseWriter, r *http.Request) error {
 	var reportRequest shared.ReportRequest
@@ -23,22 +48,16 @@ func (s *Server) requestReport(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	if reportRequest.Email == "" {
-		return apierror.ValidationError{Errors: apierror.ValidationErrors{
-			"Email": {
-				"required": "This field Email needs to be looked at required",
-			},
-		},
-		}
+	if err := validateReportRequest(reportRequest); err != nil {
+		return err
 	}
 
-	go func() {
-		ctx := context.Background()
-		err := s.generateAndUploadReport(ctx, reportRequest, time.Now())
+	go func(logger *slog.Logger) {
+		err := s.generateAndUploadReport(context.Background(), reportRequest, time.Now())
 		if err != nil {
-			telemetry.LoggerFromContext(ctx).Error(err.Error())
+			logger.Error(err.Error())
 		}
-	}()
+	}(telemetry.LoggerFromContext(r.Context()))
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
@@ -48,20 +67,33 @@ func (s *Server) requestReport(w http.ResponseWriter, r *http.Request) error {
 
 func (s *Server) generateAndUploadReport(ctx context.Context, reportRequest shared.ReportRequest, requestedDate time.Time) error {
 	var query db.ReportQuery
+	var filename string
+	var reportName string
 	var err error
 
-	accountType := shared.ParseReportAccountType(reportRequest.ReportAccountType)
-	filename := fmt.Sprintf("%s_%s.csv", accountType.Key(), requestedDate.Format("02:01:2006"))
-
 	switch reportRequest.ReportType {
-	case "AccountsReceivable":
-		switch accountType {
+	case shared.ReportsTypeAccountsReceivable:
+		filename = fmt.Sprintf("%s_%s.csv", reportRequest.ReportAccountType.Key(), requestedDate.Format("02:01:2006"))
+		reportName = reportRequest.ReportAccountType.Translation()
+
+		switch reportRequest.ReportAccountType {
 		case shared.ReportAccountTypeAgedDebt:
 			query = &db.AgedDebt{
 				FromDate: reportRequest.FromDateField,
 				ToDate:   reportRequest.ToDateField,
 			}
+		case shared.ReportAccountTypeAgedDebtByCustomer:
+			query = &db.AgedDebtByCustomer{}
+		case shared.ReportAccountTypeBadDebtWriteOffReport:
+			query = &db.BadDebtWriteOff{
+				FromDate: reportRequest.FromDateField,
+				ToDate:   reportRequest.ToDateField,
+			}
 		}
+	}
+
+	if query == nil {
+		return fmt.Errorf("Unknown query")
 	}
 
 	file, err := s.reports.Generate(ctx, filename, query)
@@ -82,7 +114,7 @@ func (s *Server) generateAndUploadReport(ctx context.Context, reportRequest shar
 		return err
 	}
 
-	payload, err := createDownloadNotifyPayload(reportRequest.Email, filename, versionId, requestedDate, accountType.Translation())
+	payload, err := createDownloadNotifyPayload(reportRequest.Email, filename, versionId, requestedDate, reportName)
 	if err != nil {
 		return err
 	}
