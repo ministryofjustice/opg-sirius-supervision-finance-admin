@@ -8,6 +8,7 @@ import (
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/apierror"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin-api/db"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/shared"
+	"log/slog"
 	"net/http"
 	"os"
 	"time"
@@ -32,13 +33,12 @@ func (s *Server) requestReport(w http.ResponseWriter, r *http.Request) error {
 		}
 	}
 
-	go func() {
-		ctx := context.Background()
-		err := s.generateAndUploadReport(ctx, reportRequest, time.Now())
+	go func(logger *slog.Logger) {
+		err := s.generateAndUploadReport(context.Background(), reportRequest, time.Now())
 		if err != nil {
-			telemetry.LoggerFromContext(ctx).Error(err.Error())
+			logger.Error(err.Error())
 		}
-	}()
+	}(telemetry.LoggerFromContext(r.Context()))
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
@@ -48,20 +48,36 @@ func (s *Server) requestReport(w http.ResponseWriter, r *http.Request) error {
 
 func (s *Server) generateAndUploadReport(ctx context.Context, reportRequest shared.ReportRequest, requestedDate time.Time) error {
 	var query db.ReportQuery
+	var filename string
+	var reportName string
 	var err error
 
-	accountType := shared.ParseReportAccountType(reportRequest.ReportAccountType)
-	filename := fmt.Sprintf("%s_%s.csv", accountType.Key(), requestedDate.Format("02:01:2006"))
+	reportType := shared.ParseReportsType(reportRequest.ReportType)
 
-	switch reportRequest.ReportType {
-	case "AccountsReceivable":
+	switch reportType {
+	case shared.ReportsTypeAccountsReceivable:
+		accountType := shared.ParseReportAccountType(reportRequest.ReportAccountType)
+		filename = fmt.Sprintf("%s_%s.csv", accountType.Key(), requestedDate.Format("02:01:2006"))
+		reportName = accountType.Translation()
+
 		switch accountType {
 		case shared.ReportAccountTypeAgedDebt:
 			query = &db.AgedDebt{
 				FromDate: reportRequest.FromDateField,
 				ToDate:   reportRequest.ToDateField,
 			}
+		case shared.ReportAccountTypeAgedDebtByCustomer:
+			query = &db.AgedDebtByCustomer{}
+		case shared.ReportAccountTypeBadDebtWriteOffReport:
+			query = &db.BadDebtWriteOff{
+				FromDate: reportRequest.FromDateField,
+				ToDate:   reportRequest.ToDateField,
+			}
 		}
+	}
+
+	if query == nil {
+		return fmt.Errorf("Unknown query")
 	}
 
 	file, err := s.reports.Generate(ctx, filename, query)
@@ -82,7 +98,7 @@ func (s *Server) generateAndUploadReport(ctx context.Context, reportRequest shar
 		return err
 	}
 
-	payload, err := createDownloadNotifyPayload(reportRequest.Email, filename, versionId, requestedDate, accountType.Translation())
+	payload, err := createDownloadNotifyPayload(reportRequest.Email, filename, versionId, requestedDate, reportName)
 	if err != nil {
 		return err
 	}
