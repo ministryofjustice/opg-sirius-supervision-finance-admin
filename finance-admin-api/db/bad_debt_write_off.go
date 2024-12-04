@@ -17,7 +17,7 @@ const BadDebtWriteOffQuery = `SELECT CONCAT(p.firstname, ' ', p.surname)        
        cc.code                                 AS "Cost centre",
        a.code                                  AS "Account code",
        a.account_code_description              AS "Account code description",
-       (la.amount / 100.0)::NUMERIC(10, 2)     AS "Adjustment amount",
+       ((la.amount / 100.0)::NUMERIC(10, 2))::varchar(255)       AS "Adjustment amount",
        l.datetime                              AS "Adjustment date",
        CASE
            WHEN l.type = 'CREDIT WRITE OFF' THEN CONCAT('WO', i.reference)
