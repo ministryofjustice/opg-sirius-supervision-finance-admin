@@ -2,6 +2,7 @@ package db
 
 import (
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/shared"
+	"os"
 	"time"
 )
 
@@ -67,8 +68,7 @@ func (b *BadDebtWriteOff) GetQuery() string {
 
 func (b *BadDebtWriteOff) GetParams() []any {
 	if b.FromDate == nil {
-		// Get go-live date
-		from := shared.NewDate("")
+		from := shared.NewDate(os.Getenv("FINANCE_HUB_LIVE_DATE"))
 		b.FromDate = &from
 	}
 
