@@ -24,8 +24,8 @@ func TestRequestReport(t *testing.T) {
 	ctx := telemetry.ContextWithLogger(context.Background(), telemetry.NewLogger("test"))
 
 	downloadForm := &shared.ReportRequest{
-		ReportType:        "AccountsReceivable",
-		ReportAccountType: "AgedDebt",
+		ReportType:        shared.ReportsTypeAccountsReceivable,
+		ReportAccountType: shared.ReportAccountTypeAgedDebt,
 		Email:             "joseph@test.com",
 	}
 
@@ -40,13 +40,14 @@ func TestRequestReport(t *testing.T) {
 	mockReports := MockReports{}
 
 	server := Server{&mockHttpClient, &mockReports, &mockDispatch, &mockFileStorage}
-	_ = server.requestReport(w, r)
+	err := server.requestReport(w, r)
 
 	res := w.Result()
 	defer res.Body.Close()
 
 	expected := ""
 
+	assert.Nil(t, err)
 	assert.Equal(t, expected, w.Body.String())
 	assert.Equal(t, http.StatusCreated, w.Code)
 }
@@ -57,8 +58,8 @@ func TestRequestReportNoEmail(t *testing.T) {
 	ctx := telemetry.ContextWithLogger(context.Background(), telemetry.NewLogger("test"))
 
 	downloadForm := shared.ReportRequest{
-		ReportType:        "AccountsReceivable",
-		ReportAccountType: "AgedDebt",
+		ReportType:        shared.ReportsTypeAccountsReceivable,
+		ReportAccountType: shared.ReportAccountTypeAgedDebt,
 		Email:             "",
 	}
 
@@ -87,39 +88,80 @@ func TestRequestReportNoEmail(t *testing.T) {
 }
 
 func TestGenerateAndUploadReport(t *testing.T) {
-	mockHttpClient := MockHttpClient{}
-	mockDispatch := MockDispatch{}
-	mockFileStorage := MockFileStorage{}
-	mockReports := MockReports{}
-
-	mockFileStorage.versionId = "123"
-
-	server := Server{&mockHttpClient, &mockReports, &mockDispatch, &mockFileStorage}
-
-	ctx := context.Background()
-	timeNow, _ := time.Parse("2006-01-02", "2024-01-01")
 	toDate := shared.NewDate("2024-01-01")
 	fromDate := shared.NewDate("2024-10-01")
-	download := shared.ReportRequest{
-		ReportType:        "AccountsReceivable",
-		ReportAccountType: "AgedDebt",
-		ToDateField:       &toDate,
-		FromDateField:     &fromDate,
+
+	tests := []struct {
+		name          string
+		reportRequest shared.ReportRequest
+		expectedQuery db.ReportQuery
+		expectedErr   error
+	}{
+		{
+			name: "Aged Debt",
+			reportRequest: shared.ReportRequest{
+				ReportType:        shared.ReportsTypeAccountsReceivable,
+				ReportAccountType: shared.ReportAccountTypeAgedDebt,
+				ToDateField:       &toDate,
+				FromDateField:     &fromDate,
+			},
+			expectedQuery: &db.AgedDebt{FromDate: &fromDate, ToDate: &toDate},
+		},
+		{
+			name: "Aged Debt By Customer",
+			reportRequest: shared.ReportRequest{
+				ReportType:        shared.ReportsTypeAccountsReceivable,
+				ReportAccountType: shared.ReportAccountTypeAgedDebtByCustomer,
+			},
+			expectedQuery: &db.AgedDebtByCustomer{},
+		},
+		{
+			name: "Bad Debt Write Off",
+			reportRequest: shared.ReportRequest{
+				ReportType:        shared.ReportsTypeAccountsReceivable,
+				ReportAccountType: shared.ReportAccountTypeBadDebtWriteOffReport,
+				ToDateField:       &toDate,
+				FromDateField:     &fromDate,
+			},
+			expectedQuery: &db.BadDebtWriteOff{
+				FromDate: &fromDate,
+				ToDate:   &toDate,
+			},
+		},
+		{
+			name: "Unknown",
+			reportRequest: shared.ReportRequest{
+				ReportType:        shared.ReportsTypeAccountsReceivable,
+				ReportAccountType: shared.ReportAccountTypeUnknown,
+			},
+			expectedErr: fmt.Errorf("Unknown query"),
+		},
 	}
 
-	GetDoFunc = func(*http.Request) (*http.Response, error) {
-		return &http.Response{
-			StatusCode: http.StatusCreated,
-			Body:       io.NopCloser(bytes.NewReader([]byte{})),
-		}, nil
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mockReports := MockReports{}
+			mockFileStorage := MockFileStorage{}
+			mockHttpClient := MockHttpClient{}
+
+			server := Server{&mockHttpClient, &mockReports, nil, &mockFileStorage}
+
+			ctx := context.Background()
+			timeNow, _ := time.Parse("2006-01-02", "2024-01-01")
+
+			GetDoFunc = func(*http.Request) (*http.Response, error) {
+				return &http.Response{
+					StatusCode: http.StatusCreated,
+					Body:       io.NopCloser(bytes.NewReader([]byte{})),
+				}, nil
+			}
+
+			err := server.generateAndUploadReport(ctx, tt.reportRequest, timeNow)
+
+			assert.Equal(t, tt.expectedErr, err)
+			assert.Equal(t, tt.expectedQuery, mockReports.query)
+		})
 	}
-
-	err := server.generateAndUploadReport(ctx, download, timeNow)
-
-	expectedQuery := db.AgedDebt{FromDate: &fromDate, ToDate: &toDate}
-
-	assert.Equal(t, &expectedQuery, mockReports.query)
-	assert.Equal(t, nil, err)
 }
 
 func TestCreateDownloadNotifyPayload(t *testing.T) {
