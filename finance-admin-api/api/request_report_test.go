@@ -24,8 +24,8 @@ func TestRequestReport(t *testing.T) {
 	ctx := telemetry.ContextWithLogger(context.Background(), telemetry.NewLogger("test"))
 
 	downloadForm := &shared.ReportRequest{
-		ReportType:        "AccountsReceivable",
-		ReportAccountType: "AgedDebt",
+		ReportType:        shared.ReportsTypeAccountsReceivable,
+		ReportAccountType: shared.ReportAccountTypeAgedDebt,
 		Email:             "joseph@test.com",
 	}
 
@@ -40,13 +40,14 @@ func TestRequestReport(t *testing.T) {
 	mockReports := MockReports{}
 
 	server := Server{&mockHttpClient, &mockReports, &mockDispatch, &mockFileStorage}
-	_ = server.requestReport(w, r)
+	err := server.requestReport(w, r)
 
 	res := w.Result()
 	defer res.Body.Close()
 
 	expected := ""
 
+	assert.Nil(t, err)
 	assert.Equal(t, expected, w.Body.String())
 	assert.Equal(t, http.StatusCreated, w.Code)
 }
@@ -57,8 +58,8 @@ func TestRequestReportNoEmail(t *testing.T) {
 	ctx := telemetry.ContextWithLogger(context.Background(), telemetry.NewLogger("test"))
 
 	downloadForm := shared.ReportRequest{
-		ReportType:        "AccountsReceivable",
-		ReportAccountType: "AgedDebt",
+		ReportType:        shared.ReportsTypeAccountsReceivable,
+		ReportAccountType: shared.ReportAccountTypeAgedDebt,
 		Email:             "",
 	}
 
@@ -99,8 +100,8 @@ func TestGenerateAndUploadReport(t *testing.T) {
 		{
 			name: "Aged Debt",
 			reportRequest: shared.ReportRequest{
-				ReportType:        "AccountsReceivable",
-				ReportAccountType: "AgedDebt",
+				ReportType:        shared.ReportsTypeAccountsReceivable,
+				ReportAccountType: shared.ReportAccountTypeAgedDebt,
 				ToDateField:       &toDate,
 				FromDateField:     &fromDate,
 			},
@@ -109,16 +110,16 @@ func TestGenerateAndUploadReport(t *testing.T) {
 		{
 			name: "Aged Debt By Customer",
 			reportRequest: shared.ReportRequest{
-				ReportType:        "AccountsReceivable",
-				ReportAccountType: "AgedDebtByCustomer",
+				ReportType:        shared.ReportsTypeAccountsReceivable,
+				ReportAccountType: shared.ReportAccountTypeAgedDebtByCustomer,
 			},
 			expectedQuery: &db.AgedDebtByCustomer{},
 		},
 		{
 			name: "Bad Debt Write Off",
 			reportRequest: shared.ReportRequest{
-				ReportType:        "AccountsReceivable",
-				ReportAccountType: "BadDebtWriteOffReport",
+				ReportType:        shared.ReportsTypeAccountsReceivable,
+				ReportAccountType: shared.ReportAccountTypeBadDebtWriteOffReport,
 				ToDateField:       &toDate,
 				FromDateField:     &fromDate,
 			},
@@ -130,8 +131,8 @@ func TestGenerateAndUploadReport(t *testing.T) {
 		{
 			name: "Unknown",
 			reportRequest: shared.ReportRequest{
-				ReportType:        "AccountsReceivable",
-				ReportAccountType: "Garbleglarg",
+				ReportType:        shared.ReportsTypeAccountsReceivable,
+				ReportAccountType: shared.ReportAccountTypeUnknown,
 			},
 			expectedErr: fmt.Errorf("Unknown query"),
 		},
