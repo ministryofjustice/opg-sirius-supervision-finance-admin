@@ -16,8 +16,8 @@ const BadDebtWriteOffQuery = `SELECT CONCAT(p.firstname, ' ', p.surname)        
        fc.sop_number                              "SOP number",
        '="0470"'                                  AS "Entity",
        cc.code                                 AS "Cost centre",
-       a.code                                  AS "Account code",
-       a.account_code_description              AS "Account code description",
+       ac.code                                  AS "Account code",
+       ac.account_code_description              AS "Account code description",
        ((la.amount / 100.0)::NUMERIC(10, 2))::varchar(255)       AS "Adjustment amount",
        l.datetime                              AS "Adjustment date",
        CASE
@@ -41,8 +41,8 @@ FROM supervision_finance.finance_client fc
          JOIN supervision_finance.transaction_type tt
               ON CASE WHEN l.type = 'CREDIT WRITE OFF' THEN 'WO' ELSE 'WOR' END = tt.fee_type AND
                  sl.supervision_level = tt.supervision_level
-         JOIN supervision_finance.account a ON tt.account_code = a.code
-         JOIN supervision_finance.cost_centre cc ON cc.code = a.cost_centre
+         JOIN supervision_finance.account ac ON tt.account_code = ac.code
+         JOIN supervision_finance.cost_centre cc ON cc.code = ac.cost_centre
 WHERE l.type IN ('CREDIT WRITE OFF', 'WRITE OFF REVERSAL')
   AND l.datetime BETWEEN $1 AND $2;`
 
