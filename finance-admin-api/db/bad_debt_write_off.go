@@ -30,7 +30,7 @@ FROM supervision_finance.finance_client fc
          JOIN supervision_finance.ledger_allocation la
               ON l.id = la.ledger_id AND la.status = 'ALLOCATED' -- to not include unapply/reapply
          JOIN supervision_finance.invoice i ON la.invoice_id = i.id
-         JOIN public.assignees a ON l.created_by = a.id
+         LEFT JOIN public.assignees a ON l.created_by = a.id
          LEFT JOIN LATERAL (
     SELECT ifr.supervisionlevel AS supervision_level
     FROM supervision_finance.invoice_fee_range ifr
