@@ -77,5 +77,7 @@ func (b *BadDebtWriteOff) GetParams() []any {
 		b.ToDate = &to
 	}
 
-	return []any{b.FromDate.Time.Format("2006-01-02"), b.ToDate.Time.Format("2006-01-02")}
+	b.ToDate.Time = b.ToDate.Time.Truncate(24 * time.Hour).Add(24 * time.Hour)
+
+	return []any{b.FromDate.Time.Format("2006-01-02 15:04:05"), b.ToDate.Time.Format("2006-01-02 15:04:05")}
 }
