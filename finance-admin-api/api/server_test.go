@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"fmt"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/ministryofjustice/opg-go-common/telemetry"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin-api/db"
@@ -16,13 +17,18 @@ import (
 
 type IntegrationSuite struct {
 	suite.Suite
+	cm     *testhelpers.ContainerManager
 	seeder *testhelpers.Seeder
 	ctx    context.Context
 }
 
-func (suite *IntegrationSuite) SetupTest() {
-	suite.seeder = testhelpers.NewSeeder()
+func (suite *IntegrationSuite) SetupSuite() {
 	suite.ctx = telemetry.ContextWithLogger(context.Background(), telemetry.NewLogger("finance-api-test"))
+	suite.cm = testhelpers.NewContainerManager(suite.ctx)
+}
+
+func (suite *IntegrationSuite) SetupTest() {
+	suite.seeder = testhelpers.NewSeeder(suite.ctx)
 }
 
 func TestSuite(t *testing.T) {
@@ -30,11 +36,14 @@ func TestSuite(t *testing.T) {
 }
 
 func (suite *IntegrationSuite) TearDownSuite() {
-	suite.seeder.TearDown()
+	suite.cm.TearDown(suite.ctx)
 }
 
 func (suite *IntegrationSuite) AfterTest(suiteName, testName string) {
-	suite.seeder.Restore()
+	err := suite.cm.Restore(suite.ctx)
+	if err != nil {
+		suite.T().Error(fmt.Sprintf("Failed to restore snapshot after test %s", testName))
+	}
 }
 
 type MockDispatch struct {
