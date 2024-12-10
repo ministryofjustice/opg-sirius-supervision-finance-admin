@@ -1,45 +1,24 @@
 package db
 
 import (
-	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin-api/db/testhelpers"
 	fh "github.com/ministryofjustice/opg-sirius-supervision-finance-hub/shared"
 	"github.com/stretchr/testify/assert"
 )
 
 func (suite *IntegrationSuite) Test_aged_debt() {
 	ctx := suite.ctx
-	fc := suite.seeder.CreateClient(ctx, &testhelpers.FinanceClient{
-		CourtRef: "12345678",
-		Person: testhelpers.Person{
-			FirstName: "Ian",
-			Surname:   "Test",
-		},
-	})
-	inv := fh.AddManualInvoice{
-		InvoiceType: fh.InvoiceTypeAD,
-		Amount: fh.Nillable[int]{
-			Value: 10000,
-			Valid: true,
-		},
-		RaisedDate: fh.Nillable[fh.Date]{
-			Value: fh.NewDate("2024-01-01"),
-			Valid: true,
-		},
-		StartDate: fh.Nillable[fh.Date]{
-			Value: fh.NewDate("2024-01-01"),
-			Valid: true,
-		},
-		EndDate: fh.Nillable[fh.Date]{
-			Value: fh.NewDate("2024-01-01"),
-			Valid: true,
-		},
-	}
-	_ = suite.seeder.CreateInvoice(ctx, fc.Id, inv)
+	client1ID := suite.seeder.CreateClient(ctx, "Ian", "Test", "12345678")
+	suite.seeder.CreateDeputy(ctx, client1ID, "Suzie", "Deputy", "LAY")
+	suite.seeder.CreateInvoice(ctx, client1ID, fh.InvoiceTypeAD, "100.00", "2024-01-01", "2024-01-01", "2024-01-01", "")
+	paidInvoiceID := suite.seeder.CreateInvoice(ctx, client1ID, fh.InvoiceTypeAD, "100.00", "2024-01-01", "", "", "")
+	writeOffID := suite.seeder.CreateAdjustment(ctx, client1ID, paidInvoiceID, fh.AdjustmentTypeWriteOff, 100.00, "Written off")
+	suite.seeder.ApproveAdjustment(ctx, client1ID, paidInvoiceID, writeOffID)
 
 	c := Client{suite.seeder.Conn}
 
 	rows, err := c.Run(ctx, &AgedDebt{})
 	assert.NoError(suite.T(), err)
+	assert.Equal(suite.T(), 2, len(rows))
 
 	results := mapByHeader(rows)
 	assert.NotEmpty(suite.T(), results)

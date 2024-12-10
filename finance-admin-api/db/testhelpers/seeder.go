@@ -58,14 +58,14 @@ func (s *Seeder) SeedData(data ...string) {
 	}
 }
 
-func (s *Seeder) SendDataToAPI(ctx context.Context, endpoint string, data interface{}) (*http.Response, error) {
+func (s *Seeder) SendDataToAPI(ctx context.Context, method string, endpoint string, data interface{}) (*http.Response, error) {
 	url := fmt.Sprintf("%s/%s", baseURL, endpoint)
 	jsonData, err := json.Marshal(data)
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal data: %w", err)
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewBuffer(jsonData))
+	req, err := http.NewRequestWithContext(ctx, method, url, bytes.NewBuffer(jsonData))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
