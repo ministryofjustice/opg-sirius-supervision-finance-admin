@@ -99,7 +99,7 @@ func TestGenerateAndUploadReport(t *testing.T) {
 	}{
 		{
 			name: "Aged Debt",
-			reportRequest: shared.ReportRequest
+			reportRequest: shared.ReportRequest{
 				ReportType:        shared.ReportsTypeAccountsReceivable,
 				ReportAccountType: shared.ReportAccountTypeAgedDebt,
 				ToDateField:       &toDate,
