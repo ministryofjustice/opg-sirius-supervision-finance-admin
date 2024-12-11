@@ -26,9 +26,9 @@ services:
     build:
       dockerfile: docker/finance-admin-api/Dockerfile
     ports:
-      - "8181:8080"
+      - "8182:8080"
     environment:
-      POSTGRES_CONN: sirius-db:5432
+      POSTGRES_CONN: sirius-db:5430
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
       POSTGRES_DB: finance
@@ -117,7 +117,7 @@ services:
   finance-hub-api:
     image: 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-api:latest
     ports:
-      - "8181:8080"
+      - "8282:8080"
     environment:
       POSTGRES_CONN: sirius-db:5432
       POSTGRES_USER: user
@@ -140,7 +140,7 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: finance
     ports:
-      - "5431:5432"
+      - "5430:5432"
     volumes:
       - ./data/baseline.sql:/docker-entrypoint-initdb.d/baseline.sql
     healthcheck:

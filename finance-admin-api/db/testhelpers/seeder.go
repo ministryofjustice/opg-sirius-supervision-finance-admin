@@ -12,7 +12,7 @@ import (
 	"net/http"
 )
 
-var baseURL = "http://localhost:8181"
+var baseURL = "http://localhost:8282"
 
 // Seeder contains a test database connection pool and HTTP server for API calls
 type Seeder struct {
@@ -22,7 +22,7 @@ type Seeder struct {
 
 // NewSeeder creates a new Seeder instance
 func NewSeeder(ctx context.Context) *Seeder {
-	conn, err := pgxpool.New(ctx, fmt.Sprintf("host=localhost port=5431 user=%s password=%s dbname=%s sslmode=disable", user, password, dbname))
+	conn, err := pgxpool.New(ctx, fmt.Sprintf("host=localhost port=5430 user=%s password=%s dbname=%s sslmode=disable", user, password, dbname))
 	if err != nil {
 		log.Fatal(err)
 	}
