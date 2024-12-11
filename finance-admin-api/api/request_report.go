@@ -23,7 +23,7 @@ func validateReportRequest(reportRequest shared.ReportRequest) error {
 	}
 
 	switch reportRequest.ReportAccountType {
-	case shared.ReportAccountTypeBadDebtWriteOffReport:
+	case shared.ReportAccountTypeBadDebtWriteOffReport, shared.ReportAccountTypePaidInvoiceReport:
 		if reportRequest.FromDateField != nil {
 			liveDate := shared.NewDate(os.Getenv("FINANCE_HUB_LIVE_DATE"))
 
@@ -86,6 +86,11 @@ func (s *Server) generateAndUploadReport(ctx context.Context, reportRequest shar
 			query = &db.AgedDebtByCustomer{}
 		case shared.ReportAccountTypeBadDebtWriteOffReport:
 			query = &db.BadDebtWriteOff{
+				FromDate: reportRequest.FromDateField,
+				ToDate:   reportRequest.ToDateField,
+			}
+		case shared.ReportAccountTypePaidInvoiceReport:
+			query = &db.PaidInvoices{
 				FromDate: reportRequest.FromDateField,
 				ToDate:   reportRequest.ToDateField,
 			}
