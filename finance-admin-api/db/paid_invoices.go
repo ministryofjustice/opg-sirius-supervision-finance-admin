@@ -56,7 +56,7 @@ SELECT CONCAT(p.firstname, ' ', p.surname)                                      
        CASE
            WHEN l.type IN ('DEBIT MEMO', 'UNKNOWN DEBIT') THEN (la.amount / 100.0)::NUMERIC(10, 2)::varchar(255)
            ELSE '0' END                                                                                          AS "Adjustment amount",
-       COALESCE(ia.notes, fr.notes)                                                                            AS "Memo line description"
+       COALESCE(ia.notes, fr.notes, '')                                                                            AS "Memo line description"
 FROM paid_invoices pa
          JOIN supervision_finance.invoice i ON pa.id = i.id
          JOIN supervision_finance.ledger_allocation la ON pa.id = la.invoice_id
