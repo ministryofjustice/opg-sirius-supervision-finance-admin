@@ -89,11 +89,9 @@ func (s *Server) generateAndUploadReport(ctx context.Context, reportRequest shar
 				FromDate: reportRequest.FromDateField,
 				ToDate:   reportRequest.ToDateField,
 			}
+		default:
+			return fmt.Errorf("Unknown query")
 		}
-	}
-
-	if query == nil {
-		return fmt.Errorf("Unknown query")
 	}
 
 	file, err := s.reports.Generate(ctx, filename, query)
