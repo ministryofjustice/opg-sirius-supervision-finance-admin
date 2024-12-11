@@ -54,12 +54,13 @@ SELECT CONCAT(p.firstname, ' ', p.surname)                 AS "Customer Name",
        oi.feetype                                          AS "Invoice type",
        oi.reference                                        AS "Trx number",
        tt.description                                      AS "Transaction Description",
-       oi.raiseddate                                       AS "Invoice date",
-       oi.due_date                                         AS "Due date",
+       TO_CHAR(oi.raiseddate, 'YYYY-MM-DD')                AS "Invoice date",
+       TO_CHAR(oi.due_date, 'YYYY-MM-DD')                  AS "Due date",
        CASE
-           WHEN EXTRACT(MONTH FROM oi.raiseddate) >= 4 THEN EXTRACT(YEAR FROM oi.raiseddate)
-           ELSE EXTRACT(YEAR FROM oi.raiseddate) - 1
-           END                                             AS "Financial year",
+       WHEN oi.raiseddate >= DATE_TRUNC('year', oi.raiseddate) + INTERVAL '3 months'
+           THEN CONCAT(EXTRACT(YEAR FROM oi.raiseddate), '/', TO_CHAR(oi.raiseddate + INTERVAL '1 year', 'YY'))
+       ELSE CONCAT(EXTRACT(YEAR FROM oi.raiseddate - INTERVAL '1 year'), '/', TO_CHAR(oi.raiseddate, 'YY'))
+	   END                                                 AS "Financial year",
        '30 NET'                                            AS "Payment terms",
        oi.amount                             AS "Original amount",
        oi.outstanding                        AS "Outstanding amount",

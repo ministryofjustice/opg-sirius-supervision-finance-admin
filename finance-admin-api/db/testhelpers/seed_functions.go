@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	fh "github.com/ministryofjustice/opg-sirius-supervision-finance-hub/shared"
+	"io"
 	"log"
 	"net/http"
 	"strconv"
@@ -45,25 +46,24 @@ func (s *Seeder) CreateDeputy(ctx context.Context, clientId int, firstName strin
 	return deputyId
 }
 
-func (s *Seeder) CreateInvoice(ctx context.Context, clientID int, invoiceType fh.InvoiceType, amount string, raisedDate string, startDate string, endDate string, supervisionLevel string) int {
+func (s *Seeder) CreateInvoice(ctx context.Context, clientID int, invoiceType fh.InvoiceType, amount *string, raisedDate *string, startDate *string, endDate *string, supervisionLevel *string) int {
 	invoice := fh.AddManualInvoice{
 		InvoiceType:      invoiceType,
-		Amount:           fh.TransformNillableInt(&amount),
-		RaisedDate:       fh.TransformNillableDate(&raisedDate),
-		StartDate:        fh.TransformNillableDate(&startDate),
-		EndDate:          fh.TransformNillableDate(&endDate),
-		SupervisionLevel: fh.TransformNillableString(&supervisionLevel),
+		Amount:           fh.TransformNillableInt(amount),
+		RaisedDate:       fh.TransformNillableDate(raisedDate),
+		StartDate:        fh.TransformNillableDate(startDate),
+		EndDate:          fh.TransformNillableDate(endDate),
+		SupervisionLevel: fh.TransformNillableString(supervisionLevel),
 	}
 
-	res, err := s.SendDataToAPI(ctx, http.MethodPost, "clients/"+strconv.Itoa(clientID)+"/invoices", invoice)
-	if err != nil {
-		log.Fatalf("failed to add invoice: %v", err)
-	}
+	res, _ := s.SendDataToAPI(ctx, http.MethodPost, "clients/"+strconv.Itoa(clientID)+"/invoices", invoice)
 	var id int
 	if res.StatusCode != 201 {
-		log.Fatalf("failed to add invoice: status %v", res.Status)
+		body, _ := io.ReadAll(res.Body)
+		log.Fatalf("failed to add invoice: status %v, body: %v", res.Status, string(body))
+
 	}
-	err = s.Conn.QueryRow(ctx, "SELECT id FROM supervision_finance.invoice ORDER BY id DESC LIMIT 1").Scan(&id)
+	err := s.Conn.QueryRow(ctx, "SELECT id FROM supervision_finance.invoice ORDER BY id DESC LIMIT 1").Scan(&id)
 	if err != nil {
 		log.Fatalf("failed find created invoice: %v", err)
 	}
@@ -76,30 +76,24 @@ func (s *Seeder) CreateAdjustment(ctx context.Context, clientID int, invoiceId i
 		AdjustmentNotes: notes,
 		Amount:          amount,
 	}
-	res, err := s.SendDataToAPI(ctx, http.MethodPost, fmt.Sprintf("/clients/%d/invoices/%d/invoice-adjustments", clientID, invoiceId), adjustment)
-	if err != nil {
-		log.Fatalf("failed to add adjustment: %v", err)
-	}
+	res, _ := s.SendDataToAPI(ctx, http.MethodPost, fmt.Sprintf("clients/%d/invoices/%d/invoice-adjustments", clientID, invoiceId), adjustment)
 	var id int
 	if res.StatusCode != 201 {
 		log.Fatalf("failed to add adjustment: status %v", res.Status)
 	}
-	err = s.Conn.QueryRow(ctx, "SELECT id FROM supervision_finance.invoice_adjustment ORDER BY id DESC LIMIT 1").Scan(&id)
+	err := s.Conn.QueryRow(ctx, "SELECT id FROM supervision_finance.invoice_adjustment ORDER BY id DESC LIMIT 1").Scan(&id)
 	if err != nil {
 		log.Fatalf("failed find created adjustment: %v", err)
 	}
 	return id
 }
 
-func (s *Seeder) ApproveAdjustment(ctx context.Context, clientID int, invoiceId int, adjustmentId int) {
+func (s *Seeder) ApproveAdjustment(ctx context.Context, clientID int, adjustmentId int) {
 	decision := fh.UpdateInvoiceAdjustment{
 		Status: fh.AdjustmentStatusApproved,
 	}
-	res, err := s.SendDataToAPI(ctx, http.MethodPut, fmt.Sprintf("/clients/%d/invoices/%d/invoice-adjustments/%d", clientID, invoiceId, adjustmentId), decision)
-	if err != nil {
-		log.Fatalf("failed to approve adjustment: %v", err)
-	}
-	if res.StatusCode != 200 {
+	res, _ := s.SendDataToAPI(ctx, http.MethodPut, fmt.Sprintf("clients/%d/invoice-adjustments/%d", clientID, adjustmentId), decision)
+	if res.StatusCode != 204 {
 		log.Fatalf("failed to approve adjustment: status %v", res.Status)
 	}
 }
