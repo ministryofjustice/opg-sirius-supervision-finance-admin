@@ -7,10 +7,10 @@ import (
 )
 
 type GetDownloadsVars struct {
-	ReportsTypes        []model.ReportsType
 	ReportJournalTypes  []model.ReportJournalType
 	ReportScheduleTypes []model.ReportScheduleType
 	ReportDebtTypes     []model.ReportDebtType
+	ReportsTypes        []shared.ReportsType
 	ReportAccountTypes  []shared.ReportAccountType
 	AppVars
 }
@@ -21,10 +21,10 @@ type DownloadsTabHandler struct {
 
 func (h *DownloadsTabHandler) render(v AppVars, w http.ResponseWriter, r *http.Request) error {
 	data := GetDownloadsVars{
-		model.ReportsTypes,
 		model.ReportJournalTypes,
 		model.ReportScheduleTypes,
 		model.ReportDebtTypes,
+		shared.ReportsTypes,
 		shared.ReportAccountTypes,
 		v}
 	data.selectTab("downloads")
