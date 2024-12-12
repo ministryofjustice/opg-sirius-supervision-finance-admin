@@ -12,34 +12,28 @@ import (
 
 func (s *Seeder) CreateClient(ctx context.Context, firstName string, surname string, courtRef string, sopNumber string) int {
 	var (
-		clientId        int
-		financeClientId int
+		clientId int
 	)
 	err := s.Conn.QueryRow(ctx, "INSERT INTO public.persons VALUES (NEXTVAL('public.persons_id_seq'), $1, $2, $3) RETURNING id", firstName, surname, courtRef).Scan(&clientId)
 	if err != nil {
 		log.Fatalf("failed to add FinanceClient: %v", err)
 	}
-	err = s.Conn.QueryRow(ctx, "INSERT INTO supervision_finance.finance_client VALUES (NEXTVAL('supervision_finance.finance_client_id_seq'), $1, $2, 'DEMANDED') RETURNING id", clientId, sopNumber).Scan(&financeClientId)
+	_, err = s.Conn.Exec(ctx, "INSERT INTO supervision_finance.finance_client VALUES (NEXTVAL('supervision_finance.finance_client_id_seq'), $1, $2, 'DEMANDED') RETURNING id", clientId, sopNumber)
 	if err != nil {
 		log.Fatalf("failed to add finance_client: %v", err)
 	}
-	return financeClientId
+	return clientId
 }
 
 func (s *Seeder) CreateDeputy(ctx context.Context, clientId int, firstName string, surname string, deputyType string) int {
 	var (
-		personId int
 		deputyId int
 	)
-	err := s.Conn.QueryRow(ctx, "SELECT client_id FROM supervision_finance.finance_client WHERE id = $1", clientId).Scan(&personId)
-	if err != nil {
-		log.Fatalf("failed find client record: %v", err)
-	}
-	err = s.Conn.QueryRow(ctx, "INSERT INTO public.persons VALUES (NEXTVAL('public.persons_id_seq'), $1, $2, NULL, $3, $4) RETURNING id", firstName, surname, personId, deputyType).Scan(&deputyId)
+	err := s.Conn.QueryRow(ctx, "INSERT INTO public.persons VALUES (NEXTVAL('public.persons_id_seq'), $1, $2, NULL, $3, $4) RETURNING id", firstName, surname, clientId, deputyType).Scan(&deputyId)
 	if err != nil {
 		log.Fatalf("failed to add Deputy: %v", err)
 	}
-	_, err = s.Conn.Exec(ctx, "UPDATE public.persons SET feepayer_id = $1 WHERE id = $2", deputyId, personId)
+	_, err = s.Conn.Exec(ctx, "UPDATE public.persons SET feepayer_id = $1 WHERE id = $2", deputyId, clientId)
 	if err != nil {
 		log.Fatalf("failed to add Deputy to FinanceClient: %v", err)
 	}
@@ -47,14 +41,7 @@ func (s *Seeder) CreateDeputy(ctx context.Context, clientId int, firstName strin
 }
 
 func (s *Seeder) CreateOrder(ctx context.Context, clientId int, status string) {
-	var (
-		personId int
-	)
-	err := s.Conn.QueryRow(ctx, "SELECT client_id FROM supervision_finance.finance_client WHERE id = $1", clientId).Scan(&personId)
-	if err != nil {
-		log.Fatalf("failed find client record: %v", err)
-	}
-	_, err = s.Conn.Exec(ctx, "INSERT INTO public.cases VALUES (NEXTVAL('public.cases_id_seq'), $1, $2)", personId, status)
+	_, err := s.Conn.Exec(ctx, "INSERT INTO public.cases VALUES (NEXTVAL('public.cases_id_seq'), $1, $2)", clientId, status)
 	if err != nil {
 		log.Fatalf("failed to add order: %v", err)
 	}
@@ -112,5 +99,20 @@ func (s *Seeder) ApproveAdjustment(ctx context.Context, clientID int, adjustment
 	res, _ := s.SendDataToAPI(ctx, http.MethodPut, fmt.Sprintf("clients/%d/invoice-adjustments/%d", clientID, adjustmentId), decision)
 	if res.StatusCode != 204 {
 		log.Fatalf("failed to approve adjustment: status %v", res.Status)
+	}
+}
+
+func (s *Seeder) CreateFeeReduction(ctx context.Context, clientId int, feeType fh.FeeReductionType, startYear string, length int, notes string) {
+	received := fh.NewDate(startYear + "-01-01")
+	reduction := fh.AddFeeReduction{
+		FeeType:       feeType,
+		StartYear:     startYear,
+		LengthOfAward: length,
+		DateReceived:  &received,
+		Notes:         notes,
+	}
+	res, _ := s.SendDataToAPI(ctx, http.MethodPost, fmt.Sprintf("clients/%d/fee-reductions", clientId), reduction)
+	if res.StatusCode != 201 {
+		log.Fatalf("failed to create fee reduction: status %v", res.Status)
 	}
 }
