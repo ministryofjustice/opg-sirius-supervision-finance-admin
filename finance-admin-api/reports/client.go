@@ -3,30 +3,26 @@ package reports
 import (
 	"context"
 	"encoding/csv"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin-api/db"
 	"os"
 )
 
 type DbClient interface {
 	Run(ctx context.Context, query db.ReportQuery) ([][]string, error)
-	Close(ctx context.Context) error
+	Close()
 }
 
 type Client struct {
 	db DbClient
 }
 
-func (c *Client) Close(ctx context.Context) error {
-	return c.db.Close(ctx)
+func (c *Client) Close() {
+	c.db.Close()
 }
 
-func NewClient(ctx context.Context) (*Client, error) {
-	dbClient, err := db.NewClient(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	return &Client{db: dbClient}, nil
+func NewClient(ctx context.Context, dbPool *pgxpool.Pool) *Client {
+	return &Client{db: db.NewClient(dbPool)}
 }
 
 func (c *Client) Generate(ctx context.Context, filename string, query db.ReportQuery) (*os.File, error) {
