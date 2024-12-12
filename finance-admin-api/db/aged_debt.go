@@ -19,8 +19,8 @@ const AgedDebtQuery = `WITH outstanding_invoices AS (SELECT i.id,
                                      i.raiseddate + '30 days'::INTERVAL                                  AS due_date,
                                      ((i.amount / 100.0)::NUMERIC(10, 2))::varchar(255)                                  AS amount,
                                      (((i.amount - SUM(COALESCE(la.amount, 0))) / 100.00)::NUMERIC(10, 2))::varchar(255) AS outstanding,
-                                     EXTRACT(YEAR FROM
-                                             AGE(NOW(), (i.raiseddate + '30 days'::INTERVAL)))::INT         age
+									 DATE_PART('year', AGE(NOW(), (i.raiseddate + '30 days'::INTERVAL))) + 
+									 DATE_PART('month', AGE(NOW(), (i.raiseddate + '30 days'::INTERVAL))) / 12.0         AS age
                               FROM supervision_finance.invoice i
                                        LEFT JOIN supervision_finance.ledger_allocation la ON i.id = la.invoice_id
                                   AND la.status = 'ALLOCATED'
@@ -54,12 +54,13 @@ SELECT CONCAT(p.firstname, ' ', p.surname)                 AS "Customer Name",
        oi.feetype                                          AS "Invoice type",
        oi.reference                                        AS "Trx number",
        tt.description                                      AS "Transaction Description",
-       oi.raiseddate                                       AS "Invoice date",
-       oi.due_date                                         AS "Due date",
+       TO_CHAR(oi.raiseddate, 'YYYY-MM-DD')                AS "Invoice date",
+       TO_CHAR(oi.due_date, 'YYYY-MM-DD')                  AS "Due date",
        CASE
-           WHEN EXTRACT(MONTH FROM oi.raiseddate) >= 4 THEN EXTRACT(YEAR FROM oi.raiseddate)
-           ELSE EXTRACT(YEAR FROM oi.raiseddate) - 1
-           END                                             AS "Financial year",
+       WHEN oi.raiseddate >= DATE_TRUNC('year', oi.raiseddate) + INTERVAL '3 months'
+           THEN CONCAT(EXTRACT(YEAR FROM oi.raiseddate), '/', TO_CHAR(oi.raiseddate + INTERVAL '1 year', 'YY'))
+       ELSE CONCAT(EXTRACT(YEAR FROM oi.raiseddate - INTERVAL '1 year'), '/', TO_CHAR(oi.raiseddate, 'YY'))
+	   END                                                 AS "Financial year",
        '30 NET'                                            AS "Payment terms",
        oi.amount                             AS "Original amount",
        oi.outstanding                        AS "Outstanding amount",
@@ -69,15 +70,15 @@ SELECT CONCAT(p.firstname, ' ', p.surname)                 AS "Customer Name",
        CASE
            WHEN NOW() > oi.due_date AND oi.age < 2 THEN oi.outstanding
            ELSE '0' END                                      AS "0-1 years",
-       CASE WHEN oi.age = 2 THEN oi.outstanding ELSE '0' END AS "1-2 years",
-       CASE WHEN oi.age = 3 THEN oi.outstanding ELSE '0' END AS "2-3 years",
-       CASE WHEN oi.age = 4 THEN oi.outstanding ELSE '0' END AS "3-5 years",
-       CASE WHEN oi.age > 4 THEN oi.outstanding ELSE '0' END AS "5+ years",
+       CASE WHEN oi.age BETWEEN 1 AND 2 THEN oi.outstanding ELSE '0' END AS "1-2 years",
+       CASE WHEN oi.age BETWEEN 2 AND 3 THEN oi.outstanding ELSE '0' END AS "2-3 years",
+       CASE WHEN oi.age BETWEEN 3 AND 5 THEN oi.outstanding ELSE '0' END AS "3-5 years",
+       CASE WHEN oi.age > 5 THEN oi.outstanding ELSE '0' END AS "5+ years",
        CASE
            WHEN apc.age < 2 THEN '="0-1"'
-           WHEN apc.age = 2 THEN '="1-2"'
-           WHEN apc.age = 3 THEN '="2-3"'
-           WHEN apc.age = 4 THEN '="3-5"'
+           WHEN apc.age BETWEEN 1 AND 2 THEN '="1-2"'
+           WHEN apc.age BETWEEN 2 AND 3 THEN '="2-3"'
+           WHEN apc.age BETWEEN 3 AND 5 THEN '="3-5"'
            ELSE '="5+"' END                                   AS "Debt impairment years"
 FROM supervision_finance.finance_client fc
          JOIN outstanding_invoices oi ON fc.id = oi.finance_client_id

@@ -3,6 +3,7 @@ package-lock.json
 test-results
 tmp/
 finance-admin/web/static/
+data/db_snapshot.sql
 
 # Cypress cli run artifact folders
 cypress/logs
