@@ -344,6 +344,8 @@ github.com/ministryofjustice/opg-go-common v1.41.0 h1:IUNeuENR76VrW9x4+bWY+KzuJm
 github.com/ministryofjustice/opg-go-common v1.41.0/go.mod h1:ChMNWq0LXn5CexlllRmuMxiWlCcIB0+msrPNJ8mXktQ=
 github.com/ministryofjustice/opg-sirius-supervision-finance-hub v1.104.0 h1:QLIM54qvWwQjPtOqytD2CHdMsrjAvpEVSVqBsxAp33o=
 github.com/ministryofjustice/opg-sirius-supervision-finance-hub v1.104.0/go.mod h1:/QaXuw0G1MxuRV05bgGL/Q5X+wBTsdRC8FGraag44ig=
+github.com/ministryofjustice/opg-sirius-supervision-finance-hub v1.105.0 h1:JrwjOPmwAas+Mf/yHZkGV3FXKd55FDQoni36qtvGCjk=
+github.com/ministryofjustice/opg-sirius-supervision-finance-hub v1.105.0/go.mod h1:/QaXuw0G1MxuRV05bgGL/Q5X+wBTsdRC8FGraag44ig=
 github.com/mitchellh/hashstructure/v2 v2.0.2 h1:vGKWl0YJqUNxE8d+h8f6NJLcCJrgbhC4NcD46KavDd4=
 github.com/mitchellh/hashstructure/v2 v2.0.2/go.mod h1:MG3aRVU/N29oo/V/IhBX8GR/zz4kQkprJgF2EVszyDE=
 github.com/mitchellh/mapstructure v0.0.0-20150613213606-2caf8efc9366/go.mod h1:FVVH3fgwuzCH5S8UJGiWEs2h04kUh9fWfEaFds41c1Y=

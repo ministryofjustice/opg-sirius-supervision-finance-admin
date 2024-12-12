@@ -15,7 +15,7 @@ require (
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/jackc/pgx/v5 v5.7.1
 	github.com/ministryofjustice/opg-go-common v1.41.0
-	github.com/ministryofjustice/opg-sirius-supervision-finance-hub v1.104.0
+	github.com/ministryofjustice/opg-sirius-supervision-finance-hub v1.105.0
 	github.com/stretchr/testify v1.10.0
 	github.com/testcontainers/testcontainers-go v0.34.0
 	github.com/testcontainers/testcontainers-go/modules/compose v0.34.0
