@@ -103,13 +103,13 @@ func (i ReportUploadType) Filename(date string) (string, error) {
 
 	switch i {
 	case ReportTypeUploadPaymentsMOTOCard:
-		return fmt.Sprintf("feemoto_%snormal.csv", parsedDate.Format("02:01:2006")), nil
+		return fmt.Sprintf("feemoto_%snormal.csv", parsedDate.Format("02012006")), nil
 	case ReportTypeUploadPaymentsOnlineCard:
-		return fmt.Sprintf("feemoto_%smlpayments.csv", parsedDate.Format("02:01:2006")), nil
+		return fmt.Sprintf("feemoto_%smlpayments.csv", parsedDate.Format("02012006")), nil
 	case ReportTypeUploadPaymentsSupervisionBACS:
-		return fmt.Sprintf("feebacs_%s_new_acc.csv", parsedDate.Format("02:01:2006")), nil
+		return fmt.Sprintf("feebacs_%s_new_acc.csv", parsedDate.Format("02012006")), nil
 	case ReportTypeUploadPaymentsOPGBACS:
-		return fmt.Sprintf("feebacs_%s.csv", parsedDate.Format("02:01:2006")), nil
+		return fmt.Sprintf("feebacs_%s.csv", parsedDate.Format("02012006")), nil
 	default:
 		return "", nil
 	}
