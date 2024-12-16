@@ -110,7 +110,7 @@ htmx.onLoad(content => {
                     htmx.addClass(htmx.find("#date-from-field-input"), "hide")
                     htmx.removeClass(htmx.find("#date-field-input"), "hide")
                     break;
-                case "ARPaidInvoiceReport":
+                case "PaidInvoiceReport":
                 case "PaidInvoiceTransactionLines":
                 case "TotalReceiptsReport":
                 case "BadDebtWriteOffReport":
