@@ -20,10 +20,10 @@ func TestRequestReport(t *testing.T) {
 	dateFrom := shared.NewDate("2022-07-21")
 
 	data := shared.ReportRequest{
-		ReportType:         "reportType",
+		ReportType:         shared.ReportsTypeAccountsReceivable,
 		ReportJournalType:  "reportJournalType",
 		ReportScheduleType: "reportScheduleType",
-		ReportAccountType:  "reportAccountType",
+		ReportAccountType:  shared.ReportAccountTypeAgedDebt,
 		ReportDebtType:     "reportDebtType",
 		DateOfTransaction:  &dateOfTransaction,
 		ToDateField:        &dateTo,
@@ -47,10 +47,10 @@ func TestRequestReportUnauthorised(t *testing.T) {
 	client, _ := NewClient(mockClient, "http://localhost:3000", "")
 
 	data := shared.ReportRequest{
-		ReportType:         "reportType",
+		ReportType:         shared.ReportsTypeAccountsReceivable,
 		ReportJournalType:  "reportJournalType",
 		ReportScheduleType: "reportScheduleType",
-		ReportAccountType:  "reportAccountType",
+		ReportAccountType:  shared.ReportAccountTypeAgedDebt,
 		ReportDebtType:     "reportDebtType",
 		DateOfTransaction:  nil,
 		ToDateField:        nil,
@@ -75,10 +75,10 @@ func TestRequestReportReturnsBadRequestError(t *testing.T) {
 	client, _ := NewClient(mockClient, "http://localhost:3000", "")
 
 	data := shared.ReportRequest{
-		ReportType:         "reportType",
+		ReportType:         shared.ReportsTypeAccountsReceivable,
 		ReportJournalType:  "reportJournalType",
 		ReportScheduleType: "reportScheduleType",
-		ReportAccountType:  "reportAccountType",
+		ReportAccountType:  shared.ReportAccountTypeAgedDebt,
 		ReportDebtType:     "reportDebtType",
 		DateOfTransaction:  nil,
 		ToDateField:        nil,
@@ -105,10 +105,10 @@ func TestRequestReportReturnsBadRequestError(t *testing.T) {
 
 func TestRequestReportReturnsValidationError(t *testing.T) {
 	data := shared.ReportRequest{
-		ReportType:         "",
+		ReportType:         shared.ReportsTypeAccountsReceivable,
 		ReportJournalType:  "reportJournalType",
 		ReportScheduleType: "reportScheduleType",
-		ReportAccountType:  "reportAccountType",
+		ReportAccountType:  shared.ReportAccountTypeAgedDebt,
 		ReportDebtType:     "reportDebtType",
 		DateOfTransaction:  nil,
 		ToDateField:        nil,
