@@ -9,6 +9,25 @@ import (
 	"testing"
 )
 
+func mapByHeader(rows [][]string) []map[string]string {
+	if len(rows) == 0 {
+		return nil
+	}
+
+	headers := rows[0]
+	var result []map[string]string
+
+	for _, row := range rows[1:] {
+		rowMap := make(map[string]string)
+		for i, value := range row {
+			rowMap[headers[i]] = value
+		}
+		result = append(result, rowMap)
+	}
+
+	return result
+}
+
 type mockRow struct {
 	values       [][]any
 	err          error
@@ -41,7 +60,7 @@ type mockDbClient struct {
 	err    error
 }
 
-func (m mockDbClient) Close(ctx context.Context) error { return nil }
+func (m mockDbClient) Close() {}
 
 func (m mockDbClient) Query(ctx context.Context, sql string, args ...any) (pgx.Rows, error) {
 	rows := mockRow{values: m.values}
