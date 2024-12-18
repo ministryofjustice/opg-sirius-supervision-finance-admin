@@ -63,6 +63,11 @@ func (s *Server) generateAndUploadReport(ctx context.Context, reportRequest shar
 			}
 		case shared.ReportAccountTypeAgedDebtByCustomer:
 			query = &db.AgedDebtByCustomer{}
+		case shared.ReportAccountTypeInvoiceAdjustments:
+			query = &db.InvoiceAdjustments{
+				FromDate: reportRequest.FromDateField,
+				ToDate:   reportRequest.ToDateField,
+			}
 		default:
 			return fmt.Errorf("Unknown query")
 		}

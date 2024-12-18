@@ -91,6 +91,7 @@ htmx.onLoad(content => {
 
             switch (this.value) {
                 case "AgedDebt":
+                case "InvoiceAdjustments":
                     document.querySelector('#email-field').removeAttribute("disabled");
                     document.querySelector('#date-to-field').removeAttribute("disabled");
                     document.querySelector('#date-from-field').removeAttribute("disabled");
