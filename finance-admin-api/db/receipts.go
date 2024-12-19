@@ -37,15 +37,8 @@ FROM supervision_finance.ledger_allocation la
          JOIN public.persons p ON fc.client_id = p.id
          LEFT JOIN supervision_finance.invoice_adjustment ia ON i.id = ia.invoice_id
          LEFT JOIN supervision_finance.fee_reduction fr ON fr.id = l.fee_reduction_id
-         LEFT JOIN LATERAL (
-    SELECT ifr.supervisionlevel AS supervision_level
-    FROM supervision_finance.invoice_fee_range ifr
-    WHERE ifr.invoice_id = i.id
-    ORDER BY id
-    LIMIT 1
-    ) sl ON TRUE
          JOIN supervision_finance.transaction_type tt
-              ON l.type = tt.ledger_type AND sl.supervision_level = tt.supervision_level
+              ON l.type = tt.ledger_type
          JOIN supervision_finance.account a ON tt.account_code = a.code
          JOIN supervision_finance.cost_centre cc ON cc.code = a.cost_centre
 WHERE (la.status IN ('UNAPPLIED', 'REAPPLIED') OR
