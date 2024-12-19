@@ -68,7 +68,7 @@ SELECT CONCAT(p.firstname, ' ', p.surname)                 AS "Customer Name",
            WHEN NOW() < (oi.due_date + '1 day'::INTERVAL) THEN oi.outstanding
            ELSE '0' END                                      AS "Current",
        CASE
-           WHEN NOW() > oi.due_date AND oi.age < 2 THEN oi.outstanding
+           WHEN NOW() > oi.due_date AND oi.age < 1 THEN oi.outstanding
            ELSE '0' END                                      AS "0-1 years",
        CASE WHEN oi.age BETWEEN 1 AND 2 THEN oi.outstanding ELSE '0' END AS "1-2 years",
        CASE WHEN oi.age BETWEEN 2 AND 3 THEN oi.outstanding ELSE '0' END AS "2-3 years",
