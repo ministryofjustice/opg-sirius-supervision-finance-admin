@@ -24,8 +24,8 @@ const InvoiceAdjustmentsQuery = `SELECT CONCAT(p.firstname, ' ', p.surname)     
        CONCAT(EXTRACT(YEAR FROM AGE(fr.enddate, fr.startdate)), ' year') AS "Remission/Exemption award term",
        CASE
            WHEN la.datetime >= DATE_TRUNC('year', la.datetime) + INTERVAL '3 months'
-               THEN CONCAT(EXTRACT(YEAR FROM la.datetime), '/', TO_CHAR(EXTRACT(YEAR FROM la.datetime) + 1, 'YY'))
-           ELSE CONCAT(EXTRACT(YEAR FROM la.datetime) - 1, '/', TO_CHAR(EXTRACT(YEAR FROM la.datetime), 'YY'))
+               THEN CONCAT(TO_CHAR(la.datetime, 'YY'), '/', TO_CHAR((la.datetime + INTERVAL '1 YEAR'), 'YY'))
+           ELSE CONCAT(TO_CHAR((la.datetime - INTERVAL '1 YEAR'), 'YY'), '/', TO_CHAR(la.datetime, 'YY'))
            END                                                           AS "Financial Year",
        la.datetime                                                       AS "Approved date",
        (la.amount / 100.0)::NUMERIC(10, 2)::VARCHAR(255)                               AS "Adjustment amount",
