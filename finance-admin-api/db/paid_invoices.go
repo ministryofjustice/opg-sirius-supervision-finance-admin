@@ -18,7 +18,7 @@ const PaidInvoicesQuery = `WITH paid_invoices AS (SELECT i.id
                                 LEFT JOIN supervision_finance.invoice_adjustment ia ON i.id = ia.invoice_id
                        WHERE la.status IN ('ALLOCATED', 'REAPPLIED')
                          AND l.type NOT IN ('CREDIT WRITE OFF', 'WRITE OFF REVERSAL')
-                         AND l.datetime BETWEEN $1 AND $2
+                         -- AND l.datetime BETWEEN $1 AND $2
                        GROUP BY i.id, i.amount
                        HAVING i.amount <= COALESCE(SUM(la.amount), 0))
 SELECT CONCAT(p.firstname, ' ', p.surname)                                                                     AS "Customer Name",
@@ -40,7 +40,7 @@ SELECT CONCAT(p.firstname, ' ', p.surname)                                      
        l.datetime                                                                                              AS "Sirius upload date",
        CASE
            WHEN l.type IN (
-                           'BACS TRANSFER', 'CARD PAYMENT', 'UNKNOWN DEBIT',
+                           'BACS TRANSFER', 'CARD PAYMENT',
                            'DIRECT DEBIT PAYMENT', 'ONLINE CARD PAYMENT', 'MOTO CARD PAYMENT',
                            'SUPERVISION BACS PAYMENT', 'OPG BACS PAYMENT', 'CHEQUE PAYMENT'
                )
@@ -82,7 +82,9 @@ FROM paid_invoices pa
          LEFT JOIN supervision_finance.account a ON tt.account_code = a.code
          LEFT JOIN supervision_finance.cost_centre cc ON cc.code = a.cost_centre
 WHERE la.status IN ('ALLOCATED', 'REAPPLIED')
-  AND l.type NOT IN ('CREDIT WRITE OFF', 'WRITE OFF REVERSAL');`
+  AND l.type NOT IN ('CREDIT WRITE OFF', 'WRITE OFF REVERSAL')
+AND l.type = 'UNKNOWN DEBIT'
+LIMIT 1;`
 
 func (p *PaidInvoices) GetHeaders() []string {
 	return []string{
