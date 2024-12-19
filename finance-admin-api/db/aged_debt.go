@@ -13,14 +13,17 @@ type AgedDebt struct {
 const AgedDebtQuery = `WITH outstanding_invoices AS (SELECT i.id,
                                      i.finance_client_id,
                                      i.feetype,
-                                     COALESCE(sl.supervision_level, i.feetype)                           AS supervision_level,
+                                     CASE 
+                                         WHEN i.feetype = 'AD' THEN 'AD'
+                                    	 ELSE sl.supervision_level    
+									 END AS supervision_level,
                                      i.reference,
                                      i.raiseddate,
-                                     i.raiseddate + '30 days'::INTERVAL                                  AS due_date,
-                                     ((i.amount / 100.0)::NUMERIC(10, 2))::varchar(255)                                  AS amount,
-                                     (((i.amount - SUM(COALESCE(la.amount, 0))) / 100.00)::NUMERIC(10, 2))::varchar(255) AS outstanding,
+                                     i.raiseddate + '30 days'::INTERVAL AS due_date,
+                                     ((i.amount / 100.0)::NUMERIC(10, 2))::VARCHAR(255) AS amount,
+                                     (((i.amount - SUM(COALESCE(la.amount, 0))) / 100.00)::NUMERIC(10, 2))::VARCHAR(255) AS outstanding,
 									 DATE_PART('year', AGE(NOW(), (i.raiseddate + '30 days'::INTERVAL))) + 
-									 DATE_PART('month', AGE(NOW(), (i.raiseddate + '30 days'::INTERVAL))) / 12.0         AS age
+									 DATE_PART('month', AGE(NOW(), (i.raiseddate + '30 days'::INTERVAL))) / 12.0 AS age
                               FROM supervision_finance.invoice i
                                        LEFT JOIN supervision_finance.ledger_allocation la ON i.id = la.invoice_id
                                   AND la.status = 'ALLOCATED'
