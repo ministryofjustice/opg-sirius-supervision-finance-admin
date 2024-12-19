@@ -28,7 +28,7 @@ const InvoiceAdjustmentsQuery = `SELECT CONCAT(p.firstname, ' ', p.surname)     
            ELSE CONCAT(EXTRACT(YEAR FROM la.datetime) - 1, '/', TO_CHAR(EXTRACT(YEAR FROM la.datetime), 'YY'))
            END                                                           AS "Financial Year",
        la.datetime                                                       AS "Approved date",
-       (la.amount / 100.0)::NUMERIC(10, 2)                               AS "Adjustment amount",
+       (la.amount / 100.0)::NUMERIC(10, 2)::VARCHAR(255)                               AS "Adjustment amount",
        COALESCE(ia.notes, fr.notes)                                      AS "Reason for adjustment"
 FROM supervision_finance.ledger_allocation la
          JOIN supervision_finance.ledger l on l.id = la.ledger_id
@@ -61,6 +61,7 @@ func (i *InvoiceAdjustments) GetHeaders() []string {
 		"Entity",
 		"Revenue cost centre",
 		"Revenue cost centre description",
+		"Revenue account code",
 		"Revenue account descriptions",
 		"Txn number and type",
 		"Txn description",
