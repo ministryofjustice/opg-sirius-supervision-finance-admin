@@ -7,7 +7,7 @@ var ReportAccountTypes = []ReportAccountType{
 	ReportAccountTypeAgedDebtByCustomer,
 	ReportAccountTypeUnappliedReceipts,
 	ReportAccountTypeCustomerAgeingBuckets,
-	ReportAccountTypeARPaidInvoiceReport,
+	ReportAccountTypePaidInvoiceReport,
 	ReportAccountTypePaidInvoiceTransactionLines,
 	ReportAccountTypeTotalReceiptsReport,
 	ReportAccountTypeBadDebtWriteOffReport,
@@ -19,7 +19,7 @@ var reportAccountTypeMap = map[string]ReportAccountType{
 	"AgedDebtByCustomer":          ReportAccountTypeAgedDebtByCustomer,
 	"UnappliedReceipts":           ReportAccountTypeUnappliedReceipts,
 	"CustomerAgeingBuckets":       ReportAccountTypeCustomerAgeingBuckets,
-	"ARPaidInvoiceReport":         ReportAccountTypeARPaidInvoiceReport,
+	"PaidInvoiceReport":           ReportAccountTypePaidInvoiceReport,
 	"PaidInvoiceTransactionLines": ReportAccountTypePaidInvoiceTransactionLines,
 	"TotalReceiptsReport":         ReportAccountTypeTotalReceiptsReport,
 	"BadDebtWriteOffReport":       ReportAccountTypeBadDebtWriteOffReport,
@@ -34,7 +34,7 @@ const (
 	ReportAccountTypeAgedDebtByCustomer
 	ReportAccountTypeUnappliedReceipts
 	ReportAccountTypeCustomerAgeingBuckets
-	ReportAccountTypeARPaidInvoiceReport
+	ReportAccountTypePaidInvoiceReport
 	ReportAccountTypePaidInvoiceTransactionLines
 	ReportAccountTypeTotalReceiptsReport
 	ReportAccountTypeBadDebtWriteOffReport
@@ -55,14 +55,14 @@ func (i ReportAccountType) Translation() string {
 		return "Unapplied Receipts"
 	case ReportAccountTypeCustomerAgeingBuckets:
 		return "Customer Ageing Buckets"
-	case ReportAccountTypeARPaidInvoiceReport:
-		return "AR Paid Invoice Report"
+	case ReportAccountTypePaidInvoiceReport:
+		return "Paid Invoices"
 	case ReportAccountTypePaidInvoiceTransactionLines:
 		return "Paid Invoice Transaction Lines"
 	case ReportAccountTypeTotalReceiptsReport:
 		return "Total Receipts Report"
 	case ReportAccountTypeBadDebtWriteOffReport:
-		return "Bad Debt Write-off Report"
+		return "Bad Debt Write-off"
 	case ReportAccountTypeFeeAccrual:
 		return "Fee Accrual"
 	default:
@@ -80,8 +80,8 @@ func (i ReportAccountType) Key() string {
 		return "UnappliedReceipts"
 	case ReportAccountTypeCustomerAgeingBuckets:
 		return "CustomerAgeingBuckets"
-	case ReportAccountTypeARPaidInvoiceReport:
-		return "ARPaidInvoiceReport"
+	case ReportAccountTypePaidInvoiceReport:
+		return "PaidInvoiceReport"
 	case ReportAccountTypePaidInvoiceTransactionLines:
 		return "PaidInvoiceTransactionLines"
 	case ReportAccountTypeTotalReceiptsReport:
