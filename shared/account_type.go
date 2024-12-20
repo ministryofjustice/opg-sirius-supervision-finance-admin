@@ -9,6 +9,7 @@ var ReportAccountTypes = []ReportAccountType{
 	ReportAccountTypeCustomerAgeingBuckets,
 	ReportAccountTypeARPaidInvoiceReport,
 	ReportAccountTypePaidInvoiceTransactionLines,
+	ReportAccountTypeInvoiceAdjustments,
 	ReportAccountTypeTotalReceiptsReport,
 	ReportAccountTypeBadDebtWriteOffReport,
 	ReportAccountTypeFeeAccrual,
@@ -21,6 +22,7 @@ var reportAccountTypeMap = map[string]ReportAccountType{
 	"CustomerAgeingBuckets":       ReportAccountTypeCustomerAgeingBuckets,
 	"ARPaidInvoiceReport":         ReportAccountTypeARPaidInvoiceReport,
 	"PaidInvoiceTransactionLines": ReportAccountTypePaidInvoiceTransactionLines,
+	"InvoiceAdjustments":          ReportAccountTypeInvoiceAdjustments,
 	"TotalReceiptsReport":         ReportAccountTypeTotalReceiptsReport,
 	"BadDebtWriteOffReport":       ReportAccountTypeBadDebtWriteOffReport,
 	"FeeAccrual":                  ReportAccountTypeFeeAccrual,
@@ -36,6 +38,7 @@ const (
 	ReportAccountTypeCustomerAgeingBuckets
 	ReportAccountTypeARPaidInvoiceReport
 	ReportAccountTypePaidInvoiceTransactionLines
+	ReportAccountTypeInvoiceAdjustments
 	ReportAccountTypeTotalReceiptsReport
 	ReportAccountTypeBadDebtWriteOffReport
 	ReportAccountTypeFeeAccrual
@@ -59,6 +62,8 @@ func (i ReportAccountType) Translation() string {
 		return "AR Paid Invoice Report"
 	case ReportAccountTypePaidInvoiceTransactionLines:
 		return "Paid Invoice Transaction Lines"
+	case ReportAccountTypeInvoiceAdjustments:
+		return "Invoice Adjustments"
 	case ReportAccountTypeTotalReceiptsReport:
 		return "Total Receipts Report"
 	case ReportAccountTypeBadDebtWriteOffReport:
@@ -84,6 +89,8 @@ func (i ReportAccountType) Key() string {
 		return "ARPaidInvoiceReport"
 	case ReportAccountTypePaidInvoiceTransactionLines:
 		return "PaidInvoiceTransactionLines"
+	case ReportAccountTypeInvoiceAdjustments:
+		return "InvoiceAdjustments"
 	case ReportAccountTypeTotalReceiptsReport:
 		return "TotalReceiptsReport"
 	case ReportAccountTypeBadDebtWriteOffReport:
