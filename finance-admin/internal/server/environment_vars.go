@@ -10,6 +10,7 @@ type EnvironmentVars struct {
 	SiriusURL       string
 	SiriusPublicURL string
 	BackendURL      string
+	HubURL          string
 	Prefix          string
 }
 
@@ -21,6 +22,7 @@ func NewEnvironmentVars() EnvironmentVars {
 		SiriusPublicURL: getEnv("SIRIUS_PUBLIC_URL", ""),
 		Prefix:          getEnv("PREFIX", ""),
 		BackendURL:      getEnv("BACKEND_URL", ""),
+		HubURL:          getEnv("HUB_URL", ""),
 	}
 }
 
