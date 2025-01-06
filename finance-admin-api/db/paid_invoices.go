@@ -66,7 +66,7 @@ FROM paid_invoices pa
          LEFT JOIN supervision_finance.invoice_adjustment ia ON i.id = ia.invoice_id
          LEFT JOIN supervision_finance.fee_reduction fr ON fr.id = l.fee_reduction_id
          LEFT JOIN LATERAL (
-    SELECT ifr.supervisionlevel AS supervision_level
+    SELECT CASE WHEN i.feetype = 'AD' THEN 'AD' ELSE COALESCE(ifr.supervisionlevel, '') END AS supervision_level
     FROM supervision_finance.invoice_fee_range ifr
     WHERE ifr.invoice_id = i.id
     ORDER BY id
@@ -78,7 +78,7 @@ FROM paid_invoices pa
             CASE WHEN l.bankaccount = 'BACS' THEN 'SUPERVISION BACS PAYMENT' ELSE 'OPG BACS PAYMENT' END
         ELSE l.type
         END = tt.ledger_type
-        AND CASE WHEN i.feetype = 'AD' THEN 'AD' ELSE sl.supervision_level END = tt.supervision_level
+        AND sl.supervision_level = tt.supervision_level
          LEFT JOIN supervision_finance.account a ON tt.account_code = a.code
          LEFT JOIN supervision_finance.cost_centre cc ON cc.code = a.cost_centre
 WHERE la.status IN ('ALLOCATED', 'REAPPLIED')
