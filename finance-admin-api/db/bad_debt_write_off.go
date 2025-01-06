@@ -32,7 +32,7 @@ FROM supervision_finance.finance_client fc
          JOIN supervision_finance.invoice i ON la.invoice_id = i.id
          LEFT JOIN public.assignees a ON l.created_by = a.id
          LEFT JOIN LATERAL (
-    SELECT ifr.supervisionlevel AS supervision_level
+    SELECT CASE WHEN i.feetype = 'AD' THEN 'AD' ELSE COALESCE(ifr.supervisionlevel, '') END AS supervision_level
     FROM supervision_finance.invoice_fee_range ifr
     WHERE ifr.invoice_id = i.id
     ORDER BY id
