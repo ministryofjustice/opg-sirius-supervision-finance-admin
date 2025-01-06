@@ -32,15 +32,15 @@ FROM supervision_finance.finance_client fc
          JOIN supervision_finance.invoice i ON la.invoice_id = i.id
          LEFT JOIN public.assignees a ON l.created_by = a.id
          LEFT JOIN LATERAL (
-    SELECT ifr.supervisionlevel AS supervision_level
+    SELECT CASE WHEN i.feetype = 'AD' THEN 'AD' ELSE COALESCE(ifr.supervisionlevel, '') END AS supervision_level
     FROM supervision_finance.invoice_fee_range ifr
     WHERE ifr.invoice_id = i.id
     ORDER BY id
     LIMIT 1
     ) sl ON TRUE
          JOIN supervision_finance.transaction_type tt
-              ON CASE WHEN l.type = 'CREDIT WRITE OFF' THEN 'WO' ELSE 'WOR' END = tt.fee_type AND
-                 sl.supervision_level = tt.supervision_level
+              ON CASE WHEN l.type = 'CREDIT WRITE OFF' THEN 'WO' ELSE 'WOR' END = tt.fee_type
+			  AND CASE WHEN i.feetype = 'AD' THEN 'AD' ELSE sl.supervision_level END = tt.supervision_level
          JOIN supervision_finance.account ac ON tt.account_code = ac.code
          JOIN supervision_finance.cost_centre cc ON cc.code = ac.cost_centre
 WHERE l.type IN ('CREDIT WRITE OFF', 'WRITE OFF REVERSAL')
