@@ -62,7 +62,7 @@ func (i ReportAccountType) Translation() string {
 	case ReportAccountTypeTotalReceiptsReport:
 		return "Total Receipts Report"
 	case ReportAccountTypeBadDebtWriteOffReport:
-		return "Bad Debt Write-off Report"
+		return "Bad Debt Write-off"
 	case ReportAccountTypeFeeAccrual:
 		return "Fee Accrual"
 	default:

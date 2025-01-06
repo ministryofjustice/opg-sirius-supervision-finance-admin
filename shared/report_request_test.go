@@ -31,10 +31,10 @@ func TestNewReportRequest(t *testing.T) {
 		{
 			name: "Returns all fields",
 			args: args{
-				reportType:         "reportType",
+				reportType:         "AccountsReceivable",
 				reportJournalType:  "reportJournalType",
 				reportScheduleType: "reportScheduleType",
-				reportAccountType:  "reportAccountType",
+				reportAccountType:  "AgedDebt",
 				reportDebtType:     "reportDebtType",
 				dateOfTransaction:  "11/05/2024",
 				dateTo:             "15/06/2025",
@@ -42,10 +42,10 @@ func TestNewReportRequest(t *testing.T) {
 				email:              "Something@example.com",
 			},
 			want: ReportRequest{
-				ReportType:         "reportType",
+				ReportType:         ReportsTypeAccountsReceivable,
 				ReportJournalType:  "reportJournalType",
 				ReportScheduleType: "reportScheduleType",
-				ReportAccountType:  "reportAccountType",
+				ReportAccountType:  ReportAccountTypeAgedDebt,
 				ReportDebtType:     "reportDebtType",
 				DateOfTransaction:  &Date{Time: dateOfTransaction},
 				ToDateField:        &Date{Time: dateTo},
@@ -56,10 +56,10 @@ func TestNewReportRequest(t *testing.T) {
 		{
 			name: "Returns with missing optional fields",
 			args: args{
-				reportType:         "reportType",
+				reportType:         "AccountsReceivable",
 				reportJournalType:  "reportJournalType",
 				reportScheduleType: "reportScheduleType",
-				reportAccountType:  "reportAccountType",
+				reportAccountType:  "AgedDebt",
 				reportDebtType:     "reportDebtType",
 				dateOfTransaction:  "",
 				dateTo:             "",
@@ -67,10 +67,10 @@ func TestNewReportRequest(t *testing.T) {
 				email:              "Something@example.com",
 			},
 			want: ReportRequest{
-				ReportType:         "reportType",
+				ReportType:         ReportsTypeAccountsReceivable,
 				ReportJournalType:  "reportJournalType",
 				ReportScheduleType: "reportScheduleType",
-				ReportAccountType:  "reportAccountType",
+				ReportAccountType:  ReportAccountTypeAgedDebt,
 				ReportDebtType:     "reportDebtType",
 				DateOfTransaction:  nil,
 				ToDateField:        nil,
