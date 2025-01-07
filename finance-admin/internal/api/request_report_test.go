@@ -131,7 +131,7 @@ func TestRequestReportReturnsValidationError(t *testing.T) {
 	}))
 	defer svr.Close()
 
-	client, _ := NewClient(http.DefaultClient, svr.URL, svr.URL, "")
+	client, _ := NewClient(http.DefaultClient, svr.URL, svr.URL, svr.URL)
 
 	err := client.RequestReport(getContext(nil), data)
 	expectedError := model.ValidationError{Message: "", Errors: model.ValidationErrors{"ReportType": map[string]string{"required": "Please select a report type"}}}
