@@ -36,7 +36,7 @@ func TestClient_CheckUserSession(t *testing.T) {
 			}))
 			defer svr.Close()
 
-			client, _ := NewClient(http.DefaultClient, svr.URL, "")
+			client, _ := NewClient(http.DefaultClient, svr.URL, "", "")
 
 			got, _ := client.CheckUserSession(getContext(nil))
 			assert.Equalf(t, tt.want, got, "CheckUserSession()")
