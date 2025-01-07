@@ -38,7 +38,7 @@ FROM supervision_finance.ledger_allocation la
          LEFT JOIN supervision_finance.invoice_adjustment ia on i.id = ia.invoice_id
          LEFT JOIN supervision_finance.fee_reduction fr ON fr.id = l.fee_reduction_id
          LEFT JOIN LATERAL (
-    SELECT ifr.supervisionlevel AS supervision_level
+    SELECT CASE WHEN i.feetype = 'AD' THEN 'AD' ELSE COALESCE(ifr.supervisionlevel, '') END AS supervision_level
     FROM supervision_finance.invoice_fee_range ifr
     WHERE ifr.invoice_id = i.id
     ORDER BY id
