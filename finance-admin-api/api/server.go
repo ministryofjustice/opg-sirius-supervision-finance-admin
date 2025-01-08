@@ -3,7 +3,6 @@ package api
 import (
 	"context"
 	"fmt"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/ministryofjustice/opg-go-common/securityheaders"
 	"github.com/ministryofjustice/opg-go-common/telemetry"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin-api/db"
@@ -24,9 +23,7 @@ type Dispatch interface {
 }
 
 type FileStorage interface {
-	GetFile(ctx context.Context, bucketName string, filename string, versionID string) (*s3.GetObjectOutput, error)
 	PutFile(ctx context.Context, bucketName string, fileName string, file io.Reader) (*string, error)
-	FileExists(ctx context.Context, bucketName string, filename string, versionID string) bool
 }
 
 type Reports interface {
@@ -56,9 +53,6 @@ func (s *Server) SetupRoutes(logger *slog.Logger) http.Handler {
 		handler := otelhttp.WithRouteTag(pattern, h)
 		mux.Handle(pattern, handler)
 	}
-
-	handleFunc("GET /download", s.download)
-	handleFunc("HEAD /download", s.checkDownload)
 
 	handleFunc("POST /downloads", s.requestReport)
 	handleFunc("POST /uploads", s.upload)
