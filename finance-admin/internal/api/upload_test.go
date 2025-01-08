@@ -14,7 +14,7 @@ import (
 
 func TestUploadUrlSwitching(t *testing.T) {
 	mockClient := &MockClient{}
-	client, _ := NewClient(mockClient, "http://localhost:3000", "")
+	client, _ := NewClient(mockClient, "http://localhost:3000", "", "")
 
 	data := shared.Upload{
 		ReportUploadType: shared.ParseReportUploadType("reportUploadType"),
@@ -40,7 +40,7 @@ func TestSubmitUploadUnauthorised(t *testing.T) {
 	}))
 	defer svr.Close()
 
-	client, _ := NewClient(http.DefaultClient, svr.URL, svr.URL)
+	client, _ := NewClient(http.DefaultClient, svr.URL, svr.URL, "")
 
 	err := client.Upload(getContext(nil), shared.Upload{})
 
@@ -53,7 +53,7 @@ func TestSubmitUploadReturns500Error(t *testing.T) {
 	}))
 	defer svr.Close()
 
-	client, _ := NewClient(http.DefaultClient, svr.URL, svr.URL)
+	client, _ := NewClient(http.DefaultClient, svr.URL, svr.URL, "")
 
 	err := client.Upload(getContext(nil), shared.Upload{})
 
@@ -66,7 +66,7 @@ func TestSubmitUploadReturns500Error(t *testing.T) {
 
 func TestSubmitUploadReturnsBadRequestError(t *testing.T) {
 	mockClient := &MockClient{}
-	client, _ := NewClient(mockClient, "http://localhost:3000", "")
+	client, _ := NewClient(mockClient, "http://localhost:3000", "", "")
 
 	json := `
 		{"reasons":["StartDate","EndDate"]}
@@ -103,7 +103,7 @@ func TestSubmitUploadReturnsValidationError(t *testing.T) {
 	}))
 	defer svr.Close()
 
-	client, _ := NewClient(http.DefaultClient, svr.URL, svr.URL)
+	client, _ := NewClient(http.DefaultClient, svr.URL, svr.URL, "")
 
 	err := client.Upload(getContext(nil), shared.Upload{})
 	expectedError := model.ValidationError{Message: "", Errors: model.ValidationErrors{"ReportUploadType": map[string]string{"required": "Please select a report type"}}}

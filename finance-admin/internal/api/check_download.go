@@ -7,7 +7,7 @@ import (
 )
 
 func (c *Client) CheckDownload(ctx Context, uid string) error {
-	req, err := c.newBackendRequest(ctx, http.MethodHead, fmt.Sprintf("/download?uid=%s", uid), nil)
+	req, err := c.newHubRequest(ctx, http.MethodHead, fmt.Sprintf("/download?uid=%s", uid), nil)
 
 	if err != nil {
 		return err

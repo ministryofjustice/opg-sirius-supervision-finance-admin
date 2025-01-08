@@ -31,7 +31,7 @@ clean:
 	docker compose run --rm yarn
 
 up: clean compile-assets build-dev
-	docker compose -f docker-compose.yml -f docker/docker-compose.dev.yml up finance-admin finance-admin-api finance-migration yarn
+	docker compose -f docker-compose.yml -f docker/docker-compose.dev.yml up finance-admin finance-admin-api finance-hub-api finance-migration yarn
 
 down:
 	docker compose down
