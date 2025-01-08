@@ -21,6 +21,7 @@ services:
     depends_on:
       - json-server
       - finance-admin-api
+      - finance-hub-api
 
   finance-admin-api:
     image: 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-admin-api:latest
@@ -124,6 +125,12 @@ services:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
       POSTGRES_DB: finance
+      AWS_REGION: eu-west-1
+      AWS_BASE_URL: http://localstack:4566
+      AWS_ACCESS_KEY_ID: localstack
+      AWS_SECRET_ACCESS_KEY: localstack
+      EVENT_BUS_NAME: local-main
+      S3_ENCRYPTION_KEY: alias/aws/s3
     healthcheck:
       test: wget -O /dev/null -S 'http://localhost:8080/health-check' 2>&1 | grep 'HTTP/1.1 200 OK' || exit 1
       interval: 15s
