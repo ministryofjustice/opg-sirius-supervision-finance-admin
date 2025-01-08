@@ -14,7 +14,7 @@ import (
 
 func TestRequestReport(t *testing.T) {
 	mockClient := &MockClient{}
-	client, _ := NewClient(mockClient, "http://localhost:3000", "")
+	client, _ := NewClient(mockClient, "http://localhost:3000", "", "")
 	dateOfTransaction := shared.NewDate("2024-05-11")
 	dateTo := shared.NewDate("2025-06-15")
 	dateFrom := shared.NewDate("2022-07-21")
@@ -44,7 +44,7 @@ func TestRequestReport(t *testing.T) {
 
 func TestRequestReportUnauthorised(t *testing.T) {
 	mockClient := &MockClient{}
-	client, _ := NewClient(mockClient, "http://localhost:3000", "")
+	client, _ := NewClient(mockClient, "http://localhost:3000", "", "")
 
 	data := shared.ReportRequest{
 		ReportType:         "reportType",
@@ -72,7 +72,7 @@ func TestRequestReportUnauthorised(t *testing.T) {
 
 func TestRequestReportReturnsBadRequestError(t *testing.T) {
 	mockClient := &MockClient{}
-	client, _ := NewClient(mockClient, "http://localhost:3000", "")
+	client, _ := NewClient(mockClient, "http://localhost:3000", "", "")
 
 	data := shared.ReportRequest{
 		ReportType:         "reportType",
@@ -131,7 +131,7 @@ func TestRequestReportReturnsValidationError(t *testing.T) {
 	}))
 	defer svr.Close()
 
-	client, _ := NewClient(http.DefaultClient, svr.URL, svr.URL)
+	client, _ := NewClient(http.DefaultClient, svr.URL, svr.URL, svr.URL)
 
 	err := client.RequestReport(getContext(nil), data)
 	expectedError := model.ValidationError{Message: "", Errors: model.ValidationErrors{"ReportType": map[string]string{"required": "Please select a report type"}}}
