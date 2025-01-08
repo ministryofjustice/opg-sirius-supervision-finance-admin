@@ -2,11 +2,9 @@ package api
 
 import (
 	"context"
-	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin-api/db"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin-api/event"
 	"io"
 	"net/http"
-	"os"
 )
 
 type MockDispatch struct {
@@ -32,15 +30,6 @@ func (m *MockFileStorage) PutFile(ctx context.Context, bucketName string, fileNa
 	m.file = file
 
 	return &m.versionId, m.err
-}
-
-type MockReports struct {
-	query db.ReportQuery
-}
-
-func (m *MockReports) Generate(ctx context.Context, filename string, query db.ReportQuery) (*os.File, error) {
-	m.query = query
-	return nil, nil
 }
 
 type MockHttpClient struct {
