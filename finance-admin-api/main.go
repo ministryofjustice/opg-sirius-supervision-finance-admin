@@ -2,19 +2,15 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/ministryofjustice/opg-go-common/env"
 	"github.com/ministryofjustice/opg-go-common/telemetry"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin-api/api"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin-api/event"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin-api/filestorage"
-	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin-api/reports"
 	"log/slog"
 	"net/http"
-	"net/url"
 	"os"
 	"os/signal"
 	"syscall"
@@ -48,11 +44,7 @@ func run(ctx context.Context, logger *slog.Logger) error {
 
 	eventClient := setupEventClient(ctx, logger)
 
-	db := setupDbPool(ctx, logger)
-	reportsClient := reports.NewClient(ctx, db)
-	defer reportsClient.Close()
-
-	server := api.NewServer(http.DefaultClient, reportsClient, eventClient, filestorageclient)
+	server := api.NewServer(http.DefaultClient, eventClient, filestorageclient)
 
 	s := &http.Server{
 		Addr:    ":8080",
@@ -91,18 +83,4 @@ func setupEventClient(ctx context.Context, logger *slog.Logger) *event.Client {
 	}
 
 	return event.NewClient(cfg, os.Getenv("EVENT_BUS_NAME"))
-}
-
-func setupDbPool(ctx context.Context, logger *slog.Logger) *pgxpool.Pool {
-	dbConn := os.Getenv("POSTGRES_CONN")
-	dbUser := os.Getenv("POSTGRES_USER")
-	dbPassword := os.Getenv("POSTGRES_PASSWORD")
-	pgDb := os.Getenv("POSTGRES_DB")
-
-	dbpool, err := pgxpool.New(ctx, fmt.Sprintf("postgresql://%s:%s@%s/%s", dbUser, url.QueryEscape(dbPassword), dbConn, pgDb))
-	if err != nil {
-		logger.Error("Unable to create connection pool", "error", err)
-		os.Exit(1)
-	}
-	return dbpool
 }
