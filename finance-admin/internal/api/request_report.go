@@ -16,7 +16,7 @@ func (c *Client) RequestReport(ctx Context, data shared.ReportRequest) error {
 		return err
 	}
 
-	req, err := c.newBackendRequest(ctx, http.MethodPost, "/downloads", &body)
+	req, err := c.newHubRequest(ctx, http.MethodPost, "/reports", &body)
 
 	if err != nil {
 		return err

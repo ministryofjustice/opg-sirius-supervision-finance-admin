@@ -21,11 +21,12 @@ func (e ClientError) Error() string {
 	return string(e)
 }
 
-func NewClient(httpClient HTTPClient, siriusURL string, backendURL string) (*Client, error) {
+func NewClient(httpClient HTTPClient, siriusURL string, backendURL string, hubURL string) (*Client, error) {
 	return &Client{
 		http:       httpClient,
 		SiriusURL:  siriusURL,
 		BackendURL: backendURL,
+		HubURL:     hubURL,
 	}, nil
 }
 
@@ -37,6 +38,7 @@ type Client struct {
 	http       HTTPClient
 	SiriusURL  string
 	BackendURL string
+	HubURL     string
 }
 
 type StatusError struct {
@@ -53,8 +55,24 @@ func (e StatusError) Data() interface{} {
 	return e
 }
 
+// Deprecated: newBackendRequest will be removed once backend is migrated to the Hub
 func (c *Client) newBackendRequest(ctx Context, method, path string, body io.Reader) (*http.Request, error) {
 	req, err := http.NewRequestWithContext(ctx.Context, method, c.BackendURL+path, body)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, c := range ctx.Cookies {
+		req.AddCookie(c)
+	}
+
+	req.Header.Add("X-XSRF-TOKEN", ctx.XSRFToken)
+
+	return req, err
+}
+
+func (c *Client) newHubRequest(ctx Context, method, path string, body io.Reader) (*http.Request, error) {
+	req, err := http.NewRequestWithContext(ctx.Context, method, c.HubURL+path, body)
 	if err != nil {
 		return nil, err
 	}
