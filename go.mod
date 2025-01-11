@@ -9,13 +9,13 @@ require (
 	github.com/aws/aws-sdk-go-v2/config v1.28.7
 	github.com/aws/aws-sdk-go-v2/credentials v1.17.48
 	github.com/aws/aws-sdk-go-v2/service/eventbridge v1.36.1
-	github.com/aws/aws-sdk-go-v2/service/s3 v1.71.1
+	github.com/aws/aws-sdk-go-v2/service/s3 v1.72.0
 	github.com/aws/aws-sdk-go-v2/service/sts v1.33.3
 	github.com/aws/smithy-go v1.22.1
 	github.com/golang-jwt/jwt/v5 v5.2.1
-	github.com/jackc/pgx/v5 v5.7.1
-	github.com/ministryofjustice/opg-go-common v1.60.0
-	github.com/ministryofjustice/opg-sirius-supervision-finance-hub v1.115.0
+	github.com/jackc/pgx/v5 v5.7.2
+	github.com/ministryofjustice/opg-go-common v1.62.0
+	github.com/ministryofjustice/opg-sirius-supervision-finance-hub v1.120.0
 	github.com/stretchr/testify v1.10.0
 	github.com/testcontainers/testcontainers-go v0.34.0
 	github.com/testcontainers/testcontainers-go/modules/compose v0.34.0
