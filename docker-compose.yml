@@ -132,3 +132,32 @@ services:
       timeout: 10s
       retries: 3
       start_period: 30s
+    depends_on:
+      sirius-db:
+        condition: service_healthy
+
+  sirius-db:
+    image: postgres:13-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: finance
+    ports:
+      - "5430:5432"
+    volumes:
+      - ./data/baseline.sql:/docker-entrypoint-initdb.d/baseline.sql
+    healthcheck:
+      test: pg_isready --username=user --dbname=finance
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  finance-migration:
+    image: 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-migration:latest
+    environment:
+      DB_USER: user
+      DB_PASSWORD: password
+      DB_CONNECTION: sirius-db:5432
+      DB_NAME: finance
+      DB_SCHEMA: supervision_finance
+    command: "up"

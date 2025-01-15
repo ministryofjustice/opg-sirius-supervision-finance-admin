@@ -6,7 +6,7 @@ var ReportAccountTypes = []ReportAccountType{
 	ReportAccountTypeAgedDebt,
 	ReportAccountTypeAgedDebtByCustomer,
 	ReportAccountTypeUnappliedReceipts,
-	ReportAccountTypeCustomerAgeingBuckets,
+	ReportAccountTypeCustomerCredit,
 	ReportAccountTypeARPaidInvoiceReport,
 	ReportAccountTypePaidInvoiceTransactionLines,
 	ReportAccountTypeTotalReceiptsReport,
@@ -18,7 +18,7 @@ var reportAccountTypeMap = map[string]ReportAccountType{
 	"AgedDebt":                    ReportAccountTypeAgedDebt,
 	"AgedDebtByCustomer":          ReportAccountTypeAgedDebtByCustomer,
 	"UnappliedReceipts":           ReportAccountTypeUnappliedReceipts,
-	"CustomerAgeingBuckets":       ReportAccountTypeCustomerAgeingBuckets,
+	"CustomerCredit":              ReportAccountTypeCustomerCredit,
 	"ARPaidInvoiceReport":         ReportAccountTypeARPaidInvoiceReport,
 	"PaidInvoiceTransactionLines": ReportAccountTypePaidInvoiceTransactionLines,
 	"TotalReceiptsReport":         ReportAccountTypeTotalReceiptsReport,
@@ -33,7 +33,7 @@ const (
 	ReportAccountTypeAgedDebt
 	ReportAccountTypeAgedDebtByCustomer
 	ReportAccountTypeUnappliedReceipts
-	ReportAccountTypeCustomerAgeingBuckets
+	ReportAccountTypeCustomerCredit
 	ReportAccountTypeARPaidInvoiceReport
 	ReportAccountTypePaidInvoiceTransactionLines
 	ReportAccountTypeTotalReceiptsReport
@@ -53,8 +53,8 @@ func (i ReportAccountType) Translation() string {
 		return "Aged Debt By Customer"
 	case ReportAccountTypeUnappliedReceipts:
 		return "Unapplied Receipts"
-	case ReportAccountTypeCustomerAgeingBuckets:
-		return "Customer Ageing Buckets"
+	case ReportAccountTypeCustomerCredit:
+		return "Customer Credit"
 	case ReportAccountTypeARPaidInvoiceReport:
 		return "AR Paid Invoice Report"
 	case ReportAccountTypePaidInvoiceTransactionLines:
@@ -78,8 +78,8 @@ func (i ReportAccountType) Key() string {
 		return "AgedDebtByCustomer"
 	case ReportAccountTypeUnappliedReceipts:
 		return "UnappliedReceipts"
-	case ReportAccountTypeCustomerAgeingBuckets:
-		return "CustomerAgeingBuckets"
+	case ReportAccountTypeCustomerCredit:
+		return "CustomerCredit"
 	case ReportAccountTypeARPaidInvoiceReport:
 		return "ARPaidInvoiceReport"
 	case ReportAccountTypePaidInvoiceTransactionLines:
