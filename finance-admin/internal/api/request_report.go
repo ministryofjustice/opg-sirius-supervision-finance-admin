@@ -3,6 +3,7 @@ package api
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/model"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/shared"
 	"net/http"
@@ -10,7 +11,8 @@ import (
 
 func (c *Client) RequestReport(ctx Context, data shared.ReportRequest) error {
 	var body bytes.Buffer
-
+	fmt.Println("Requesting report:")
+	fmt.Println(data)
 	err := json.NewEncoder(&body).Encode(data)
 	if err != nil {
 		return err

@@ -72,6 +72,7 @@ func (c *Client) newBackendRequest(ctx Context, method, path string, body io.Rea
 }
 
 func (c *Client) newHubRequest(ctx Context, method, path string, body io.Reader) (*http.Request, error) {
+	fmt.Println("Making hub request: " + c.HubURL + path)
 	req, err := http.NewRequestWithContext(ctx.Context, method, c.HubURL+path, body)
 	if err != nil {
 		return nil, err
