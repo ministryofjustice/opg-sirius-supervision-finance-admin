@@ -11,7 +11,7 @@ services:
       SIRIUS_PUBLIC_URL: http://host.docker.internal:3000
       SIRIUS_URL: http://json-server:3000
       BACKEND_URL: http://finance-admin-api:8080
-      HUB_URL: ''
+      HUB_URL: http://finance-hub-api:8080
     healthcheck:
       test: wget -O /dev/null -S 'http://localhost:8888/finance-admin/health-check' 2>&1 | grep 'HTTP/1.1 200 OK' || exit 1
       interval: 15s
@@ -21,6 +21,7 @@ services:
     depends_on:
       - json-server
       - finance-admin-api
+      - finance-hub-api
 
   finance-admin-api:
     image: 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-admin-api:latest
@@ -107,3 +108,56 @@ services:
       dockerfile: docker/json-server/Dockerfile
     ports:
       - '3000:3000'
+
+  finance-hub-api:
+    image: 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-api:latest
+    ports:
+      - "8282:8080"
+    environment:
+      POSTGRES_CONN: sirius-db:5432
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: finance
+      AWS_REGION: eu-west-1
+      AWS_S3_ENDPOINT: http://localstack:4566
+      AWS_BASE_URL: http://localstack:4566
+      AWS_ACCESS_KEY_ID: localstack
+      AWS_SECRET_ACCESS_KEY: localstack
+      EVENT_BUS_NAME: local-main
+      REPORTS_S3_BUCKET: opg-backoffice-finance-reports-local
+      S3_ENCRYPTION_KEY: alias/aws/s3
+    healthcheck:
+      test: wget -O /dev/null -S 'http://localhost:8080/health-check' 2>&1 | grep 'HTTP/1.1 200 OK' || exit 1
+      interval: 15s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    depends_on:
+      sirius-db:
+        condition: service_healthy
+
+  sirius-db:
+    image: postgres:13-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: finance
+    ports:
+      - "5430:5432"
+    volumes:
+      - ./data/baseline.sql:/docker-entrypoint-initdb.d/baseline.sql
+    healthcheck:
+      test: pg_isready --username=user --dbname=finance
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  finance-migration:
+    image: 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-migration:latest
+    environment:
+      DB_USER: user
+      DB_PASSWORD: password
+      DB_CONNECTION: sirius-db:5432
+      DB_NAME: finance
+      DB_SCHEMA: supervision_finance
+    command: "up"
