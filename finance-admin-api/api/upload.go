@@ -23,6 +23,10 @@ func validateCSVHeaders(file []byte, reportUploadType shared.ReportUploadType) e
 	csvReader := csv.NewReader(fileReader)
 	expectedHeaders := reportUploadType.CSVHeaders()
 
+	for i, header := range expectedHeaders {
+		expectedHeaders[i] = strings.ToLower(cleanString(header))
+	}
+
 	readHeaders, err := csvReader.Read()
 	if err != nil {
 		return apierror.ValidationError{Errors: apierror.ValidationErrors{
@@ -34,7 +38,7 @@ func validateCSVHeaders(file []byte, reportUploadType shared.ReportUploadType) e
 	}
 
 	for i, header := range readHeaders {
-		readHeaders[i] = cleanString(header)
+		readHeaders[i] = strings.ToLower(cleanString(header))
 	}
 
 	// Compare the extracted headers with the expected headers
