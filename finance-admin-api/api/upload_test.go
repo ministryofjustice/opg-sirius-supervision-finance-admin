@@ -18,7 +18,7 @@ func Test_upload(t *testing.T) {
 		ReportUploadType: shared.ParseReportUploadType("DEBT_CHASE"),
 		Email:            "joseph@test.com",
 		Filename:         "file.txt",
-		File:             []byte("Client_no,Deputy_name,Total_debt"),
+		File:             []byte("client_no,deputy_name,Total_debt"),
 	}
 
 	_ = json.NewEncoder(&b).Encode(uploadForm)

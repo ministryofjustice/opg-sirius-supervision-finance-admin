@@ -13,6 +13,14 @@ describe("Uploading Files", () => {
             cy.get('.moj-banner').contains('File successfully uploaded');
         });
 
+        it("Validates missing upload date", () => {
+            cy.get('[data-cy=\"report-upload-type\"]').select('PAYMENTS_MOTO_CARD');
+            cy.get('#file-upload').selectFile('cypress/fixtures/feemoto_01102024normal.csv');
+            cy.get('.govuk-button').contains('Upload report').click();
+            cy.get('#f-UploadDate').contains('Please enter a date');
+            cy.get('#f-UploadDate').should('have.class', 'govuk-form-group--error');
+        });
+
         it("Validates missing file", () => {
             cy.get('[data-cy=\"report-upload-type\"]').select('PAYMENTS_MOTO_CARD');
             cy.get('.govuk-button').contains('Upload report').click();
@@ -22,8 +30,9 @@ describe("Uploading Files", () => {
         });
 
         it("Validates empty headers", () => {
-            cy.get('[data-cy=\"report-upload-type\"]').select('DEBT_CHASE');
-            cy.get('#file-upload').selectFile('cypress/fixtures/empty_report.csv');
+            cy.get('[data-cy=\"report-upload-type\"]').select('PAYMENTS_MOTO_CARD');
+            cy.get('#file-upload').selectFile('cypress/fixtures/feemoto_01122024normal.csv');
+            cy.get('#upload-date').type("2024-12-01");
             cy.get('.govuk-button').contains('Upload report').click();
             cy.get('.govuk-error-summary').contains('Failed to read CSV headers');
             cy.get('#f-FileUpload').contains('Failed to read CSV headers');
