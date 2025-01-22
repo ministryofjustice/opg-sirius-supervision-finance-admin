@@ -128,6 +128,12 @@ htmx.onLoad(content => {
                     htmx.addClass(htmx.find("#email-field-input"), "hide")
                     htmx.addClass(htmx.find("#date-from-field-input"), "hide")
                     break;
+                case "InvoiceAdjustments":
+                    htmx.addClass(htmx.find("#date-field-input"), "hide")
+                    htmx.addClass(htmx.find("#date-to-field-input"), "hide")
+                    htmx.removeClass(htmx.find("#email-field-input"), "hide")
+                    htmx.addClass(htmx.find("#date-from-field-input"), "hide")
+                    document.querySelector('#email-field').removeAttribute("disabled");
                 default:
                     break;
             }
