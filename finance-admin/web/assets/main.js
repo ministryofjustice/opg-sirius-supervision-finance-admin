@@ -99,19 +99,18 @@ htmx.onLoad(content => {
                     htmx.removeClass(htmx.find("#date-from-field-input"), "hide")
                     break;
                 case "AgedDebtByCustomer":
-                case "CustomerCredit":
                     document.querySelector('#email-field').removeAttribute("disabled");
                     htmx.removeClass(htmx.find("#email-field-input"), "hide")
                     break;
                 case "UnappliedReceipts":
                     document.querySelector('#date-field').removeAttribute("disabled");
+                    document.querySelector('#email-field').removeAttribute("disabled");
+                    htmx.removeClass(htmx.find("#email-field-input"), "hide")
                     htmx.addClass(htmx.find("#date-to-field-input"), "hide")
-                    htmx.addClass(htmx.find("#email-field-input"), "hide")
                     htmx.addClass(htmx.find("#date-from-field-input"), "hide")
                     htmx.removeClass(htmx.find("#date-field-input"), "hide")
                     break;
                 case "ARPaidInvoiceReport":
-                case "PaidInvoiceTransactionLines":
                 case "TotalReceiptsReport":
                 case "BadDebtWriteOffReport":
                     document.querySelector('#date-to-field').removeAttribute("disabled");
