@@ -99,11 +99,11 @@ htmx.onLoad(content => {
                     htmx.removeClass(htmx.find("#date-from-field-input"), "hide")
                     break;
                 case "AgedDebtByCustomer":
+                case "CustomerCredit":
                     document.querySelector('#email-field').removeAttribute("disabled");
                     htmx.removeClass(htmx.find("#email-field-input"), "hide")
                     break;
                 case "UnappliedReceipts":
-                case "CustomerAgeingBuckets":
                     document.querySelector('#date-field').removeAttribute("disabled");
                     htmx.addClass(htmx.find("#date-to-field-input"), "hide")
                     htmx.addClass(htmx.find("#email-field-input"), "hide")
