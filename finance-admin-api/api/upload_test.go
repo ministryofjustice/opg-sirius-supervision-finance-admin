@@ -137,11 +137,12 @@ func TestCleanString(t *testing.T) {
 		input    string
 		expected string
 	}{
-		{"Removes white space from start and end", "  Hello, World!  ", "Hello, World!"},
-		{"Removes new lines and tabs", "\n\tHello, World!\n\t", "Hello, World!"},
-		{"Removes nil character", "Hello,\x00World!", "Hello,World!"},
+		{"Removes white space from start and end", "  Hello, World!  ", "hello, world!"},
+		{"Removes new lines and tabs", "\n\tHello, World!\n\t", "hello, world!"},
+		{"Removes nil character", "Hello,\x00World!", "hello,world!"},
 		{"Nothing is removed", "", ""}, // empty string should return empty string
 		{"Remove only whitespace and control characters", "  \t\n  \x0B\x0C   ", ""},
+		{"Double space is replaced with single space", "Hello,  World!", "hello, world!"},
 	}
 
 	for _, tt := range tests {

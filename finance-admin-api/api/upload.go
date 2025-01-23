@@ -24,7 +24,7 @@ func validateCSVHeaders(file []byte, reportUploadType shared.ReportUploadType) e
 	expectedHeaders := reportUploadType.CSVHeaders()
 
 	for i, header := range expectedHeaders {
-		expectedHeaders[i] = strings.ToLower(cleanString(header))
+		expectedHeaders[i] = cleanString(header)
 	}
 
 	readHeaders, err := csvReader.Read()
@@ -38,7 +38,7 @@ func validateCSVHeaders(file []byte, reportUploadType shared.ReportUploadType) e
 	}
 
 	for i, header := range readHeaders {
-		readHeaders[i] = strings.ToLower(cleanString(header))
+		readHeaders[i] = cleanString(header)
 	}
 
 	// Compare the extracted headers with the expected headers
@@ -74,6 +74,13 @@ func reportHeadersByType(reportType string) []string {
 func cleanString(s string) string {
 	// Trim leading and trailing spaces
 	s = strings.TrimSpace(s)
+
+	// Replace double-spaces in headers with single spaces (BACS uploads have double spaces)
+	s = strings.Replace(s, "  ", " ", -1)
+
+	// Convert to lowercase for case-insensitive comparison
+	s = strings.ToLower(s)
+
 	// Remove non-printable characters
 	return strings.Map(func(r rune) rune {
 		if unicode.IsPrint(r) {
