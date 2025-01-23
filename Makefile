@@ -42,7 +42,3 @@ compile-assets:
 cypress: setup-directories
 	docker compose up -d localstack
 	docker compose run --build cypress
-
-start-and-seed:
-	docker compose up -d --wait sirius-db
-	docker compose run --rm --build
