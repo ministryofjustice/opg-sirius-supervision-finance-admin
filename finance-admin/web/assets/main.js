@@ -113,6 +113,7 @@ htmx.onLoad(content => {
                 case "ARPaidInvoiceReport":
                 case "TotalReceiptsReport":
                 case "BadDebtWriteOffReport":
+                case "InvoiceAdjustments":
                     document.querySelector('#date-to-field').removeAttribute("disabled");
                     document.querySelector('#email-field').removeAttribute("disabled");
                     document.querySelector('#date-from-field').removeAttribute("disabled");
