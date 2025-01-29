@@ -81,13 +81,13 @@ htmx.onLoad(content => {
             const form = document.querySelector('form');
             const reportTypeSelect = document.getElementById('reports-type');
             const reportTypeSelectValue = reportTypeSelect.value
-            const reportAccountTypeSelectValue = this.value
+            const ReportAccountsReceivableTypeSelectValue = this.value
             disableDownloadFormInputs();
             document.querySelector('#report-account-type').removeAttribute("disabled");
 
             form.reset();
             reportTypeSelect.value =  reportTypeSelectValue
-            this.value = reportAccountTypeSelectValue
+            this.value = ReportAccountsReceivableTypeSelectValue
 
             switch (this.value) {
                 case "AgedDebt":
@@ -110,9 +110,9 @@ htmx.onLoad(content => {
                     htmx.addClass(htmx.find("#date-from-field-input"), "hide")
                     htmx.removeClass(htmx.find("#date-field-input"), "hide")
                     break;
-                case "ARPaidInvoiceReport":
-                case "TotalReceiptsReport":
-                case "BadDebtWriteOffReport":
+                case "ARPaidInvoice":
+                case "TotalReceipts":
+                case "BadDebtWriteOff":
                 case "InvoiceAdjustments":
                     document.querySelector('#date-to-field').removeAttribute("disabled");
                     document.querySelector('#email-field').removeAttribute("disabled");

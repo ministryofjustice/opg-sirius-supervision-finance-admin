@@ -13,15 +13,15 @@ import (
 
 func TestRequestReportHandlerSuccess(t *testing.T) {
 	form := url.Values{
-		"reportType":         {"AccountsReceivable"},
-		"reportJournalType":  {""},
-		"reportScheduleType": {""},
-		"reportAccountType":  {"BadDebtWriteOffReport"},
-		"reportDebtType":     {""},
-		"dateOfTransaction":  {"11/05/2024"},
-		"dateFrom":           {"01/04/2024"},
-		"dateTo":             {"31/03/2025"},
-		"email":              {"SomeSortOfEmail@example.com"},
+		"reportType":             {"AccountsReceivable"},
+		"reportJournalType":      {""},
+		"reportScheduleType":     {""},
+		"AccountsReceivableType": {"BadDebtWriteOff"},
+		"reportDebtType":         {""},
+		"dateOfTransaction":      {"11/05/2024"},
+		"dateFrom":               {"01/04/2024"},
+		"dateTo":                 {"31/03/2025"},
+		"email":                  {"SomeSortOfEmail@example.com"},
 	}
 
 	client := mockApiClient{}
