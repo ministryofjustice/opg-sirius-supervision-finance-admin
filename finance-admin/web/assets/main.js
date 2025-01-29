@@ -54,8 +54,10 @@ htmx.onLoad(content => {
                     case "Journal":
                         document.querySelector('#report-journal-type').removeAttribute("disabled");
                         document.querySelector('#date-field').removeAttribute("disabled");
+                        document.querySelector('#email-field').removeAttribute("disabled");
                         htmx.removeClass(htmx.find("#journal-types-field-input"), "hide")
                         htmx.removeClass(htmx.find("#date-field-input"), "hide")
+                        htmx.removeClass(htmx.find("#email-field-input"), "hide")
                         break;
                     case "Schedule":
                         document.querySelector('#report-schedule-type').removeAttribute("disabled");
