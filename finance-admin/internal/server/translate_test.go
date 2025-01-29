@@ -13,7 +13,7 @@ func TestRenameErrors(t *testing.T) {
 	}
 	expected := model.ValidationErrors{
 		"ReportType": map[string]string{"required": "Please select a report type"},
-		"Date":       map[string]string{"Date": "Please select the report date"},
+		"Date":       map[string]string{"required": "Please select the report date"},
 	}
 
 	assert.Equal(t, expected, RenameErrors(siriusErrors))
