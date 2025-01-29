@@ -20,15 +20,15 @@ func TestRequestReport(t *testing.T) {
 	dateFrom := shared.NewDate("2022-07-21")
 
 	data := shared.ReportRequest{
-		ReportType:         "reportType",
-		ReportJournalType:  "reportJournalType",
-		ReportScheduleType: "reportScheduleType",
-		ReportAccountType:  "reportAccountType",
-		ReportDebtType:     "reportDebtType",
-		DateOfTransaction:  &dateOfTransaction,
-		ToDateField:        &dateTo,
-		FromDateField:      &dateFrom,
-		Email:              "Something@example.com",
+		ReportType:             "reportType",
+		JournalType:            "reportJournalType",
+		ScheduleType:           "reportScheduleType",
+		AccountsReceivableType: "AccountsReceivableType",
+		DebtType:               "reportDebtType",
+		TransactionDate:        &dateOfTransaction,
+		ToDate:                 &dateTo,
+		FromDate:               &dateFrom,
+		Email:                  "Something@example.com",
 	}
 
 	GetDoFunc = func(*http.Request) (*http.Response, error) {
@@ -47,15 +47,15 @@ func TestRequestReportUnauthorised(t *testing.T) {
 	client, _ := NewClient(mockClient, "http://localhost:3000", "", "")
 
 	data := shared.ReportRequest{
-		ReportType:         "reportType",
-		ReportJournalType:  "reportJournalType",
-		ReportScheduleType: "reportScheduleType",
-		ReportAccountType:  "reportAccountType",
-		ReportDebtType:     "reportDebtType",
-		DateOfTransaction:  nil,
-		ToDateField:        nil,
-		FromDateField:      nil,
-		Email:              "Something@example.com",
+		ReportType:             "reportType",
+		JournalType:            "reportJournalType",
+		ScheduleType:           "reportScheduleType",
+		AccountsReceivableType: "AccountsReceivableType",
+		DebtType:               "reportDebtType",
+		TransactionDate:        nil,
+		ToDate:                 nil,
+		FromDate:               nil,
+		Email:                  "Something@example.com",
 	}
 
 	GetDoFunc = func(*http.Request) (*http.Response, error) {
@@ -75,15 +75,15 @@ func TestRequestReportReturnsBadRequestError(t *testing.T) {
 	client, _ := NewClient(mockClient, "http://localhost:3000", "", "")
 
 	data := shared.ReportRequest{
-		ReportType:         "reportType",
-		ReportJournalType:  "reportJournalType",
-		ReportScheduleType: "reportScheduleType",
-		ReportAccountType:  "reportAccountType",
-		ReportDebtType:     "reportDebtType",
-		DateOfTransaction:  nil,
-		ToDateField:        nil,
-		FromDateField:      nil,
-		Email:              "Something@example.com",
+		ReportType:             "reportType",
+		JournalType:            "reportJournalType",
+		ScheduleType:           "reportScheduleType",
+		AccountsReceivableType: "AccountsReceivableType",
+		DebtType:               "reportDebtType",
+		TransactionDate:        nil,
+		ToDate:                 nil,
+		FromDate:               nil,
+		Email:                  "Something@example.com",
 	}
 
 	json := `{"reasons":["StartDate","EndDate"]}`
@@ -105,15 +105,15 @@ func TestRequestReportReturnsBadRequestError(t *testing.T) {
 
 func TestRequestReportReturnsValidationError(t *testing.T) {
 	data := shared.ReportRequest{
-		ReportType:         "",
-		ReportJournalType:  "reportJournalType",
-		ReportScheduleType: "reportScheduleType",
-		ReportAccountType:  "reportAccountType",
-		ReportDebtType:     "reportDebtType",
-		DateOfTransaction:  nil,
-		ToDateField:        nil,
-		FromDateField:      nil,
-		Email:              "Something@example.com",
+		ReportType:             "",
+		JournalType:            "reportJournalType",
+		ScheduleType:           "reportScheduleType",
+		AccountsReceivableType: "AccountsReceivableType",
+		DebtType:               "reportDebtType",
+		TransactionDate:        nil,
+		ToDate:                 nil,
+		FromDate:               nil,
+		Email:                  "Something@example.com",
 	}
 
 	validationErrors := model.ValidationError{

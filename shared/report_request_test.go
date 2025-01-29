@@ -8,15 +8,15 @@ import (
 
 func TestNewReportRequest(t *testing.T) {
 	type args struct {
-		reportType         string
-		reportJournalType  string
-		reportScheduleType string
-		reportAccountType  string
-		reportDebtType     string
-		dateOfTransaction  string
-		dateTo             string
-		dateFrom           string
-		email              string
+		reportType                   string
+		reportJournalType            string
+		reportScheduleType           string
+		ReportAccountsReceivableType string
+		reportDebtType               string
+		dateOfTransaction            string
+		dateTo                       string
+		dateFrom                     string
+		email                        string
 	}
 
 	dateOfTransaction, _ := time.Parse("02/01/2006", "11/05/2024")
@@ -31,51 +31,51 @@ func TestNewReportRequest(t *testing.T) {
 		{
 			name: "Returns all fields",
 			args: args{
-				reportType:         "reportType",
-				reportJournalType:  "reportJournalType",
-				reportScheduleType: "reportScheduleType",
-				reportAccountType:  "reportAccountType",
-				reportDebtType:     "reportDebtType",
-				dateOfTransaction:  "11/05/2024",
-				dateTo:             "15/06/2025",
-				dateFrom:           "21/07/2022",
-				email:              "Something@example.com",
+				reportType:                   "reportType",
+				reportJournalType:            "reportJournalType",
+				reportScheduleType:           "reportScheduleType",
+				ReportAccountsReceivableType: "AccountsReceivableType",
+				reportDebtType:               "reportDebtType",
+				dateOfTransaction:            "11/05/2024",
+				dateTo:                       "15/06/2025",
+				dateFrom:                     "21/07/2022",
+				email:                        "Something@example.com",
 			},
 			want: ReportRequest{
-				ReportType:         "reportType",
-				ReportJournalType:  "reportJournalType",
-				ReportScheduleType: "reportScheduleType",
-				ReportAccountType:  "reportAccountType",
-				ReportDebtType:     "reportDebtType",
-				DateOfTransaction:  &Date{Time: dateOfTransaction},
-				ToDateField:        &Date{Time: dateTo},
-				FromDateField:      &Date{Time: dateFrom},
-				Email:              "Something@example.com",
+				ReportType:             "reportType",
+				JournalType:            "reportJournalType",
+				ScheduleType:           "reportScheduleType",
+				AccountsReceivableType: "AccountsReceivableType",
+				DebtType:               "reportDebtType",
+				TransactionDate:        &Date{Time: dateOfTransaction},
+				ToDate:                 &Date{Time: dateTo},
+				FromDate:               &Date{Time: dateFrom},
+				Email:                  "Something@example.com",
 			},
 		},
 		{
 			name: "Returns with missing optional fields",
 			args: args{
-				reportType:         "reportType",
-				reportJournalType:  "reportJournalType",
-				reportScheduleType: "reportScheduleType",
-				reportAccountType:  "reportAccountType",
-				reportDebtType:     "reportDebtType",
-				dateOfTransaction:  "",
-				dateTo:             "",
-				dateFrom:           "",
-				email:              "Something@example.com",
+				reportType:                   "reportType",
+				reportJournalType:            "reportJournalType",
+				reportScheduleType:           "reportScheduleType",
+				ReportAccountsReceivableType: "AccountsReceivableType",
+				reportDebtType:               "reportDebtType",
+				dateOfTransaction:            "",
+				dateTo:                       "",
+				dateFrom:                     "",
+				email:                        "Something@example.com",
 			},
 			want: ReportRequest{
-				ReportType:         "reportType",
-				ReportJournalType:  "reportJournalType",
-				ReportScheduleType: "reportScheduleType",
-				ReportAccountType:  "reportAccountType",
-				ReportDebtType:     "reportDebtType",
-				DateOfTransaction:  nil,
-				ToDateField:        nil,
-				FromDateField:      nil,
-				Email:              "Something@example.com",
+				ReportType:             "reportType",
+				JournalType:            "reportJournalType",
+				ScheduleType:           "reportScheduleType",
+				AccountsReceivableType: "AccountsReceivableType",
+				DebtType:               "reportDebtType",
+				TransactionDate:        nil,
+				ToDate:                 nil,
+				FromDate:               nil,
+				Email:                  "Something@example.com",
 			},
 		},
 	}
@@ -86,7 +86,7 @@ func TestNewReportRequest(t *testing.T) {
 				tt.args.reportType,
 				tt.args.reportJournalType,
 				tt.args.reportScheduleType,
-				tt.args.reportAccountType,
+				tt.args.ReportAccountsReceivableType,
 				tt.args.reportDebtType,
 				tt.args.dateOfTransaction,
 				tt.args.dateTo,

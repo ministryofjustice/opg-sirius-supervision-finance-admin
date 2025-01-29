@@ -1,4 +1,4 @@
-package model
+package shared
 
 import "encoding/json"
 
@@ -66,7 +66,7 @@ const (
 )
 
 var reportScheduleTypeMap = map[string]ReportScheduleType{
-	"Accounts Receivable":      ReportTypeMOTOCardPayments,
+	"MOTOCardPayments":         ReportTypeMOTOCardPayments,
 	"OnlineCardPayments":       ReportTypeOnlineCardPayments,
 	"OPGBACSTransfer":          ReportOPGBACSTransfer,
 	"SupervisionBACSTransfer":  ReportSupervisionBACSTransfer,
@@ -76,7 +76,7 @@ var reportScheduleTypeMap = map[string]ReportScheduleType{
 	"S3FeeInvoices":            ReportS3FeeInvoices,
 	"B2FeeInvoices":            ReportB2FeeInvoices,
 	"B3FeeInvoices":            ReportB3FeeInvoices,
-	"SFFeeInvoicesGeneral ":    ReportSFFeeInvoicesGeneral,
+	"SFFeeInvoicesGeneral":     ReportSFFeeInvoicesGeneral,
 	"SFFeeInvoicesMinimal":     ReportSFFeeInvoicesMinimal,
 	"SEFeeInvoicesGeneral":     ReportSEFeeInvoicesGeneral,
 	"SEFeeInvoicesMinimal":     ReportSEFeeInvoicesMinimal,
@@ -102,7 +102,7 @@ func (i ReportScheduleType) String() string {
 func (i ReportScheduleType) Translation() string {
 	switch i {
 	case ReportTypeMOTOCardPayments:
-		return "Accounts Receivable"
+		return "MOTO Card Payments"
 	case ReportTypeOnlineCardPayments:
 		return "Online Card Payments"
 	case ReportOPGBACSTransfer:
@@ -163,7 +163,7 @@ func (i ReportScheduleType) Translation() string {
 func (i ReportScheduleType) Key() string {
 	switch i {
 	case ReportTypeMOTOCardPayments:
-		return "Accounts Receivable"
+		return "MOTOCardPayments"
 	case ReportTypeOnlineCardPayments:
 		return "OnlineCardPayments"
 	case ReportOPGBACSTransfer:
