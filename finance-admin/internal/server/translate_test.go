@@ -9,7 +9,7 @@ import (
 func TestRenameErrors(t *testing.T) {
 	siriusErrors := model.ValidationErrors{
 		"ReportType": map[string]string{"required": ""},
-		"Date":       map[string]string{"Date": ""},
+		"Date":       map[string]string{"required": ""},
 	}
 	expected := model.ValidationErrors{
 		"ReportType": map[string]string{"required": "Please select a report type"},
