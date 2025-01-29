@@ -20,11 +20,11 @@ func TestRequestReport(t *testing.T) {
 	dateFrom := shared.NewDate("2022-07-21")
 
 	data := shared.ReportRequest{
-		ReportType:             "reportType",
-		JournalType:            "reportJournalType",
-		ScheduleType:           "reportScheduleType",
-		AccountsReceivableType: "AccountsReceivableType",
-		DebtType:               "reportDebtType",
+		ReportType:             shared.ReportsTypeAccountsReceivable,
+		JournalType:            nil,
+		ScheduleType:           shared.ParseScheduleType("MOTOCardPayments"),
+		AccountsReceivableType: nil,
+		DebtType:               nil,
 		TransactionDate:        &dateOfTransaction,
 		ToDate:                 &dateTo,
 		FromDate:               &dateFrom,
@@ -46,18 +46,6 @@ func TestRequestReportUnauthorised(t *testing.T) {
 	mockClient := &MockClient{}
 	client, _ := NewClient(mockClient, "http://localhost:3000", "", "")
 
-	data := shared.ReportRequest{
-		ReportType:             "reportType",
-		JournalType:            "reportJournalType",
-		ScheduleType:           "reportScheduleType",
-		AccountsReceivableType: "AccountsReceivableType",
-		DebtType:               "reportDebtType",
-		TransactionDate:        nil,
-		ToDate:                 nil,
-		FromDate:               nil,
-		Email:                  "Something@example.com",
-	}
-
 	GetDoFunc = func(*http.Request) (*http.Response, error) {
 		return &http.Response{
 			StatusCode: http.StatusUnauthorized,
@@ -65,7 +53,7 @@ func TestRequestReportUnauthorised(t *testing.T) {
 		}, nil
 	}
 
-	err := client.RequestReport(getContext(nil), data)
+	err := client.RequestReport(getContext(nil), shared.ReportRequest{})
 
 	assert.Equal(t, ErrUnauthorized.Error(), err.Error())
 }
@@ -73,18 +61,6 @@ func TestRequestReportUnauthorised(t *testing.T) {
 func TestRequestReportReturnsBadRequestError(t *testing.T) {
 	mockClient := &MockClient{}
 	client, _ := NewClient(mockClient, "http://localhost:3000", "", "")
-
-	data := shared.ReportRequest{
-		ReportType:             "reportType",
-		JournalType:            "reportJournalType",
-		ScheduleType:           "reportScheduleType",
-		AccountsReceivableType: "AccountsReceivableType",
-		DebtType:               "reportDebtType",
-		TransactionDate:        nil,
-		ToDate:                 nil,
-		FromDate:               nil,
-		Email:                  "Something@example.com",
-	}
 
 	json := `{"reasons":["StartDate","EndDate"]}`
 
@@ -97,25 +73,13 @@ func TestRequestReportReturnsBadRequestError(t *testing.T) {
 		}, nil
 	}
 
-	err := client.RequestReport(getContext(nil), data)
+	err := client.RequestReport(getContext(nil), shared.ReportRequest{})
 
 	expectedError := model.ValidationError{Message: "", Errors: model.ValidationErrors{"EndDate": map[string]string{"EndDate": "EndDate"}, "StartDate": map[string]string{"StartDate": "StartDate"}}}
 	assert.Equal(t, expectedError, err)
 }
 
 func TestRequestReportReturnsValidationError(t *testing.T) {
-	data := shared.ReportRequest{
-		ReportType:             "",
-		JournalType:            "reportJournalType",
-		ScheduleType:           "reportScheduleType",
-		AccountsReceivableType: "AccountsReceivableType",
-		DebtType:               "reportDebtType",
-		TransactionDate:        nil,
-		ToDate:                 nil,
-		FromDate:               nil,
-		Email:                  "Something@example.com",
-	}
-
 	validationErrors := model.ValidationError{
 		Message: "Validation failed",
 		Errors: map[string]map[string]string{
@@ -133,7 +97,7 @@ func TestRequestReportReturnsValidationError(t *testing.T) {
 
 	client, _ := NewClient(http.DefaultClient, svr.URL, svr.URL, svr.URL)
 
-	err := client.RequestReport(getContext(nil), data)
+	err := client.RequestReport(getContext(nil), shared.ReportRequest{})
 	expectedError := model.ValidationError{Message: "", Errors: model.ValidationErrors{"ReportType": map[string]string{"required": "Please select a report type"}}}
 	assert.Equal(t, expectedError, err.(model.ValidationError))
 }

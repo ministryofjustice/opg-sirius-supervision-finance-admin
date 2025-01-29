@@ -31,22 +31,22 @@ func TestNewReportRequest(t *testing.T) {
 		{
 			name: "Returns all fields",
 			args: args{
-				reportType:                   "reportType",
-				reportJournalType:            "reportJournalType",
-				reportScheduleType:           "reportScheduleType",
-				ReportAccountsReceivableType: "AccountsReceivableType",
-				reportDebtType:               "reportDebtType",
+				reportType:                   ReportsTypeSchedule.String(),
+				reportJournalType:            JournalTypeReceiptTransactions.String(),
+				reportScheduleType:           ScheduleTypeOnlineCardPayments.String(),
+				ReportAccountsReceivableType: AccountsReceivableTypeAgedDebt.String(),
+				reportDebtType:               DebtTypeFeeChase.String(),
 				dateOfTransaction:            "11/05/2024",
 				dateTo:                       "15/06/2025",
 				dateFrom:                     "21/07/2022",
 				email:                        "Something@example.com",
 			},
 			want: ReportRequest{
-				ReportType:             "reportType",
-				JournalType:            "reportJournalType",
-				ScheduleType:           "reportScheduleType",
-				AccountsReceivableType: "AccountsReceivableType",
-				DebtType:               "reportDebtType",
+				ReportType:             ReportsTypeSchedule,
+				JournalType:            toPtr(JournalTypeReceiptTransactions),
+				ScheduleType:           toPtr(ScheduleTypeOnlineCardPayments),
+				AccountsReceivableType: toPtr(AccountsReceivableTypeAgedDebt),
+				DebtType:               toPtr(DebtTypeFeeChase),
 				TransactionDate:        &Date{Time: dateOfTransaction},
 				ToDate:                 &Date{Time: dateTo},
 				FromDate:               &Date{Time: dateFrom},
@@ -56,22 +56,22 @@ func TestNewReportRequest(t *testing.T) {
 		{
 			name: "Returns with missing optional fields",
 			args: args{
-				reportType:                   "reportType",
-				reportJournalType:            "reportJournalType",
-				reportScheduleType:           "reportScheduleType",
-				ReportAccountsReceivableType: "AccountsReceivableType",
-				reportDebtType:               "reportDebtType",
+				reportType:                   ReportsTypeSchedule.String(),
+				reportJournalType:            "",
+				reportScheduleType:           "",
+				ReportAccountsReceivableType: "",
+				reportDebtType:               "",
 				dateOfTransaction:            "",
 				dateTo:                       "",
 				dateFrom:                     "",
 				email:                        "Something@example.com",
 			},
 			want: ReportRequest{
-				ReportType:             "reportType",
-				JournalType:            "reportJournalType",
-				ScheduleType:           "reportScheduleType",
-				AccountsReceivableType: "AccountsReceivableType",
-				DebtType:               "reportDebtType",
+				ReportType:             ReportsTypeSchedule,
+				JournalType:            nil,
+				ScheduleType:           nil,
+				AccountsReceivableType: nil,
+				DebtType:               nil,
 				TransactionDate:        nil,
 				ToDate:                 nil,
 				FromDate:               nil,
@@ -96,4 +96,8 @@ func TestNewReportRequest(t *testing.T) {
 			assert.Equal(t, tt.want, got)
 		})
 	}
+}
+
+func toPtr[T any](val T) *T {
+	return &val
 }
