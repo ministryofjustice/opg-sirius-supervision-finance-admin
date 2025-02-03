@@ -16,7 +16,7 @@ func TestRequestReportHandlerSuccess(t *testing.T) {
 		"reportType":             {"AccountsReceivable"},
 		"reportJournalType":      {""},
 		"reportScheduleType":     {""},
-		"AccountsReceivableType": {"BadDebtWriteOff"},
+		"accountsReceivableType": {"BadDebtWriteOff"},
 		"reportDebtType":         {""},
 		"dateOfTransaction":      {"11/05/2024"},
 		"dateFrom":               {"01/04/2024"},

@@ -42,7 +42,7 @@ func (r route) getSuccess(req *http.Request) string {
 	case "download":
 		return "Your file has been successfully downloaded"
 	case "request_report":
-		return fmt.Sprintf("Your %s report is being prepared. You will be notified by email when it’s ready for download.", req.URL.Query().Get("AccountsReceivableType"))
+		return fmt.Sprintf("Your %s report is being prepared. You will be notified by email when it’s ready for download.", req.URL.Query().Get("report_type"))
 	}
 	return ""
 }

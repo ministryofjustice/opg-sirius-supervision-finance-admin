@@ -21,7 +21,7 @@ func (h *RequestReportHandler) render(v AppVars, w http.ResponseWriter, r *http.
 		reportType             = params.Get("reportType")
 		journalType            = params.Get("journalType")
 		scheduleType           = params.Get("scheduleType")
-		accountsReceivableType = params.Get("AccountsReceivableType")
+		accountsReceivableType = params.Get("accountsReceivableType")
 		debtType               = params.Get("debtType")
 		transactionDate        = params.Get("transactionDate")
 		dateFrom               = params.Get("dateFrom")
