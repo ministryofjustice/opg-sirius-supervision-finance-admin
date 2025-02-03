@@ -16,6 +16,7 @@ type RequestReportHandler struct {
 func (h *RequestReportHandler) render(v AppVars, w http.ResponseWriter, r *http.Request) error {
 	ctx := getContext(r)
 	params := r.Form
+	var reportFriendlyName string
 
 	var (
 		reportType         = params.Get("reportType")
@@ -29,7 +30,12 @@ func (h *RequestReportHandler) render(v AppVars, w http.ResponseWriter, r *http.
 		email              = params.Get("email")
 	)
 
-	parsedReportAccountType := shared.ParseReportAccountType(reportAccountType)
+	switch reportType {
+	case model.ReportsTypeAccountsReceivable.Key():
+		reportFriendlyName = shared.ParseReportAccountType(reportAccountType).Translation()
+	case model.ReportsTypeJournal.Key():
+		reportFriendlyName = model.ParseReportJournalType(reportJournalType).Translation()
+	}
 
 	data := shared.NewReportRequest(reportType, reportJournalType, reportScheduleType, reportAccountType, reportDebtType, dateOfTransaction, dateTo, dateFrom, email)
 	err := h.Client().RequestReport(ctx, data)
@@ -50,7 +56,7 @@ func (h *RequestReportHandler) render(v AppVars, w http.ResponseWriter, r *http.
 		}
 	}
 
-	w.Header().Add("HX-Redirect", fmt.Sprintf("%s/downloads?success=request_report&reportAccountType=%s", v.EnvironmentVars.Prefix, parsedReportAccountType.Translation()))
+	w.Header().Add("HX-Redirect", fmt.Sprintf("%s/downloads?success=request_report&reportFriendlyName=%s", v.EnvironmentVars.Prefix, reportFriendlyName))
 
 	return err
 }
