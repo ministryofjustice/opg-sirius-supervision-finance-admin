@@ -36,7 +36,7 @@
                                         Select a report
                                         <span id="error-message__ReportSubType"></span>
                                     </label>
-                                    <select disabled data-cy="report-journal-type" class="govuk-select" id="report-journal-type" name="reportJournalType">
+                                    <select disabled data-cy="report-journal-type" class="govuk-select" id="report-journal-type" name="journalType">
                                         <option value=""></option>
                                         {{ range .ReportJournalTypes }}
                                             <option value="{{ .Key }}" id="{{.Key}}">{{.Translation}}</option>
@@ -51,7 +51,7 @@
                                         Select a report
                                         <span id="error-message__ReportSubType"></span>
                                     </label>
-                                    <select disabled data-cy="report-schedule-type" class="govuk-select" id="report-schedule-type" name="reportScheduleType">
+                                    <select disabled data-cy="report-schedule-type" class="govuk-select" id="report-schedule-type" name="scheduleType">
                                         <option value=""></option>
                                         {{ range .ReportScheduleTypes }}
                                             <option value="{{ .Key }}" id="{{.Key}}">{{.Translation}}</option>
@@ -66,9 +66,9 @@
                                         Select a report
                                         <span id="error-message__ReportSubType"></span>
                                     </label>
-                                    <select disabled class="govuk-select" id="report-account-type" name="reportAccountType">
+                                    <select disabled class="govuk-select" id="report-account-type" name="accountsReceivableType">
                                         <option value=""></option>
-                                        {{ range .ReportAccountTypes }}
+                                        {{ range .ReportAccountsReceivableTypes }}
                                             <option value="{{ .Key }}" id="{{.Key}}">{{.Translation}}</option>
                                         {{end}}
                                     </select>
@@ -81,7 +81,7 @@
                                         Select a report
                                         <span id="error-message__ReportSubType"></span>
                                     </label>
-                                    <select disabled class="govuk-select" id="report-debt-type" name="reportDebtType">
+                                    <select disabled class="govuk-select" id="report-debt-type" name="debtType">
                                         <option value=""></option>
                                         {{ range .ReportDebtTypes }}
                                             <option value="{{ .Key }}" id="{{.Key}}">{{.Translation}}</option>
@@ -96,7 +96,7 @@
                                         Date
                                         <span id="error-message__Date"></span>
                                     </label>
-                                    <input disabled class="govuk-input govuk-input--width-10" id="date-field" name="dateOfTransaction" type="date">
+                                    <input disabled class="govuk-input govuk-input--width-10" id="date-field" name="transactionDate" type="date">
                                 </div>
                             </div>
 
