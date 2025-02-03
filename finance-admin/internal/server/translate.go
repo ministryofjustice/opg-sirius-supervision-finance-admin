@@ -15,7 +15,7 @@ var validationMappings = map[string]map[string]pair{
 		"required": pair{"ReportSubType", "Please select a report to download"},
 	},
 	"Date": {
-		"Date":             pair{"Date", "Please select the report date"},
+		"required":         pair{"Date", "Please select the report date"},
 		"date-in-the-past": pair{"Date", "The report date must be today or in the past"},
 	},
 	"FromDate": {
