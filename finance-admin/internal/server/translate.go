@@ -16,7 +16,8 @@ var validationMappings = map[string]map[string]pair{
 	},
 	"Date": {
 		"Date":             pair{"Date", "Please select the report date"},
-		"date-in-the-past": pair{"Date", "The report date must be today or in the past"},
+		"date-in-the-past": pair{"Date", "The report date in the past"},
+		"min-go-live":      pair{"Date", "The report date on or after 1st April 2025"},
 	},
 	"FromDate": {
 		"FromDate": pair{"FromDate", "Date From must be before Date To"},
