@@ -22,6 +22,7 @@ function disableDownloadFormInputs() {
 }
 
 function disableUploadFormInputs() {
+    document.querySelector('#pis-number').setAttribute("disabled", "true")
     document.querySelector('#upload-date').setAttribute("disabled", "true")
     document.querySelector('#file-upload').setAttribute("disabled", "true")
     document.querySelector('#email-field').setAttribute("disabled", "true")
@@ -150,6 +151,9 @@ htmx.onLoad(content => {
                 reportUploadTypeSelect.value =  reportUploadTypeSelectValue
 
                 switch (reportUploadTypeSelect.value) {
+                    case "PAYMENTS_SUPERVISION_CHEQUE":
+                        document.querySelector('#pis-number').removeAttribute("disabled")
+                        htmx.removeClass(htmx.find("#pis-number-input"), "hide")
                     case "PAYMENTS_MOTO_CARD":
                     case "PAYMENTS_ONLINE_CARD":
                     case "PAYMENTS_OPG_BACS":
@@ -165,6 +169,7 @@ htmx.onLoad(content => {
                     case "DEPUTY_SCHEDULE":
                         document.querySelector('#file-upload').removeAttribute("disabled")
                         htmx.addClass(htmx.find("#upload-date-input"), "hide")
+                        htmx.addClass(htmx.find("#pis-number-input"), "hide")
                         htmx.addClass(htmx.find("#email-field-input"), "hide")
                         htmx.removeClass(htmx.find("#file-upload-input"), "hide")
                         break;
