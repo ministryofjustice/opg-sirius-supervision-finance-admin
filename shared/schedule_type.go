@@ -23,16 +23,35 @@ var ScheduleTypes = []ScheduleType{
 	ScheduleTypeGSFeeInvoices,
 	ScheduleTypeGTFeeInvoices,
 	ScheduleTypeADFeeReductions,
+	ScheduleTypeGeneralFeeReductions,
+	ScheduleTypeMinimalFeeReductions,
+	ScheduleTypeGAFeeReductions,
+	ScheduleTypeGSFeeReductions,
+	ScheduleTypeGTFeeReductions,
+	ScheduleTypeADManualCredits,
 	ScheduleTypeGeneralManualCredits,
 	ScheduleTypeMinimalManualCredits,
+	ScheduleTypeGAManualCredits,
+	ScheduleTypeGSManualCredits,
+	ScheduleTypeGTManualCredits,
+	ScheduleTypeADManualDebits,
 	ScheduleTypeGeneralManualDebits,
 	ScheduleTypeMinimalManualDebits,
+	ScheduleTypeGAManualDebits,
+	ScheduleTypeGSManualDebits,
+	ScheduleTypeGTManualDebits,
 	ScheduleTypeADWriteOffs,
 	ScheduleTypeGeneralWriteOffs,
 	ScheduleTypeMinimalWriteOffs,
+	ScheduleTypeGAWriteOffs,
+	ScheduleTypeGSWriteOffs,
+	ScheduleTypeGTWriteOffs,
 	ScheduleTypeADWriteOffReversals,
 	ScheduleTypeGeneralWriteOffReversals,
 	ScheduleTypeMinimalWriteOffReversals,
+	ScheduleTypeGAWriteOffReversals,
+	ScheduleTypeGSWriteOffReversals,
+	ScheduleTypeGTWriteOffReversals,
 }
 
 type ScheduleType int
@@ -59,16 +78,35 @@ const (
 	ScheduleTypeGSFeeInvoices
 	ScheduleTypeGTFeeInvoices
 	ScheduleTypeADFeeReductions
+	ScheduleTypeGeneralFeeReductions
+	ScheduleTypeMinimalFeeReductions
+	ScheduleTypeGAFeeReductions
+	ScheduleTypeGSFeeReductions
+	ScheduleTypeGTFeeReductions
+	ScheduleTypeADManualCredits
 	ScheduleTypeGeneralManualCredits
 	ScheduleTypeMinimalManualCredits
+	ScheduleTypeGAManualCredits
+	ScheduleTypeGSManualCredits
+	ScheduleTypeGTManualCredits
+	ScheduleTypeADManualDebits
 	ScheduleTypeGeneralManualDebits
 	ScheduleTypeMinimalManualDebits
+	ScheduleTypeGAManualDebits
+	ScheduleTypeGSManualDebits
+	ScheduleTypeGTManualDebits
 	ScheduleTypeADWriteOffs
 	ScheduleTypeGeneralWriteOffs
 	ScheduleTypeMinimalWriteOffs
+	ScheduleTypeGAWriteOffs
+	ScheduleTypeGSWriteOffs
+	ScheduleTypeGTWriteOffs
 	ScheduleTypeADWriteOffReversals
 	ScheduleTypeGeneralWriteOffReversals
 	ScheduleTypeMinimalWriteOffReversals
+	ScheduleTypeGAWriteOffReversals
+	ScheduleTypeGSWriteOffReversals
+	ScheduleTypeGTWriteOffReversals
 )
 
 var scheduleTypeMap = map[string]ScheduleType{
@@ -92,16 +130,35 @@ var scheduleTypeMap = map[string]ScheduleType{
 	"ScheduleTypeGSFeeInvoices": ScheduleTypeGSFeeInvoices,
 	"ScheduleTypeGTFeeInvoices": ScheduleTypeGTFeeInvoices,
 	"ADFeeReductions":           ScheduleTypeADFeeReductions,
+	"GeneralFeeReductions":      ScheduleTypeGeneralFeeReductions,
+	"MinimalFeeReductions":      ScheduleTypeMinimalFeeReductions,
+	"GAFeeReductions":           ScheduleTypeGAFeeReductions,
+	"GSFeeReductions":           ScheduleTypeGSFeeReductions,
+	"GTFeeReductions":           ScheduleTypeGTFeeReductions,
+	"ADManualCredits":           ScheduleTypeADManualCredits,
 	"GeneralManualCredits":      ScheduleTypeGeneralManualCredits,
 	"MinimalManualCredits":      ScheduleTypeMinimalManualCredits,
+	"GAManualCredits":           ScheduleTypeGAManualCredits,
+	"GSManualCredits":           ScheduleTypeGSManualCredits,
+	"GTManualCredits":           ScheduleTypeGTManualCredits,
+	"ADManualDebits":            ScheduleTypeADManualDebits,
 	"GeneralManualDebits":       ScheduleTypeGeneralManualDebits,
 	"MinimalManualDebits":       ScheduleTypeMinimalManualDebits,
-	"ADWrite-offs":              ScheduleTypeADWriteOffs,
-	"GeneralWrite-offs":         ScheduleTypeGeneralWriteOffs,
+	"GAManualDebits":            ScheduleTypeGAManualDebits,
+	"GSManualDebits":            ScheduleTypeGSManualDebits,
+	"GTManualDebits":            ScheduleTypeGTManualDebits,
+	"ADWriteOffs":               ScheduleTypeADWriteOffs,
+	"GeneralWriteOffs":          ScheduleTypeGeneralWriteOffs,
 	"MinimalWriteOffs":          ScheduleTypeMinimalWriteOffs,
+	"GAWriteOffs":               ScheduleTypeGAWriteOffs,
+	"GSWriteOffs":               ScheduleTypeGSWriteOffs,
+	"GTWriteOffs":               ScheduleTypeGTWriteOffs,
 	"ADWriteOffReversals":       ScheduleTypeADWriteOffReversals,
 	"GeneralWriteOffReversals":  ScheduleTypeGeneralWriteOffReversals,
 	"MinimalWriteOffReversals":  ScheduleTypeMinimalWriteOffReversals,
+	"GAWriteOffReversals":       ScheduleTypeGAWriteOffReversals,
+	"GSWriteOffReversals":       ScheduleTypeGSWriteOffReversals,
+	"GTWriteOffReversals":       ScheduleTypeGTWriteOffReversals,
 }
 
 func (s ScheduleType) String() string {
@@ -150,26 +207,64 @@ func (s ScheduleType) Translation() string {
 		return "GT Fee Invoices"
 	case ScheduleTypeADFeeReductions:
 		return "AD Fee Reductions"
+	case ScheduleTypeGeneralFeeReductions:
+		return "General Fee Reductions"
+	case ScheduleTypeMinimalFeeReductions:
+		return "Minimal Fee Reductions"
+	case ScheduleTypeGAFeeReductions:
+		return "GA Fee Reductions"
+	case ScheduleTypeGSFeeReductions:
+		return "GS Fee Reductions"
+	case ScheduleTypeGTFeeReductions:
+		return "GT Fee Reductions"
+	case ScheduleTypeADManualCredits:
+		return "AD Manual Credits"
 	case ScheduleTypeGeneralManualCredits:
 		return "General Manual Credits"
 	case ScheduleTypeMinimalManualCredits:
 		return "Minimal Manual Credits"
+	case ScheduleTypeGAManualCredits:
+		return "GA Manual Credits"
+	case ScheduleTypeGSManualCredits:
+		return "GS Manual Credits"
+	case ScheduleTypeGTManualCredits:
+		return "GT Manual Credits"
+	case ScheduleTypeADManualDebits:
+		return "AD Manual Debits"
 	case ScheduleTypeGeneralManualDebits:
 		return "General Manual Debits"
 	case ScheduleTypeMinimalManualDebits:
 		return "Minimal Manual Debits"
+	case ScheduleTypeGAManualDebits:
+		return "GA Manual Debits"
+	case ScheduleTypeGSManualDebits:
+		return "GS Manual Debits"
+	case ScheduleTypeGTManualDebits:
+		return "GT Manual Debits"
 	case ScheduleTypeADWriteOffs:
 		return "AD Write-offs"
 	case ScheduleTypeGeneralWriteOffs:
 		return "General Write-offs"
 	case ScheduleTypeMinimalWriteOffs:
 		return "Minimal Write-offs"
+	case ScheduleTypeGAWriteOffs:
+		return "GA Write-offs"
+	case ScheduleTypeGSWriteOffs:
+		return "GS Write-offs"
+	case ScheduleTypeGTWriteOffs:
+		return "GT Write-offs"
 	case ScheduleTypeADWriteOffReversals:
 		return "AD Write-off Reversals"
 	case ScheduleTypeGeneralWriteOffReversals:
 		return "General Write-off Reversals"
 	case ScheduleTypeMinimalWriteOffReversals:
 		return "Minimal Write-off Reversals"
+	case ScheduleTypeGAWriteOffReversals:
+		return "GA Write-off Reversals"
+	case ScheduleTypeGSWriteOffReversals:
+		return "GS Write-off Reversals"
+	case ScheduleTypeGTWriteOffReversals:
+		return "GT Write-off Reversals"
 	default:
 		return ""
 	}
@@ -217,26 +312,64 @@ func (s ScheduleType) Key() string {
 		return "GTFeeInvoices"
 	case ScheduleTypeADFeeReductions:
 		return "ADFeeReductions"
+	case ScheduleTypeGeneralFeeReductions:
+		return "GeneralFeeReductions"
+	case ScheduleTypeMinimalFeeReductions:
+		return "MinimalFeeReductions"
+	case ScheduleTypeGAFeeReductions:
+		return "GAFeeReductions"
+	case ScheduleTypeGSFeeReductions:
+		return "GSFeeReductions"
+	case ScheduleTypeGTFeeReductions:
+		return "GTFeeReductions"
+	case ScheduleTypeADManualCredits:
+		return "ADManualCredits"
 	case ScheduleTypeGeneralManualCredits:
 		return "GeneralManualCredits"
 	case ScheduleTypeMinimalManualCredits:
 		return "MinimalManualCredits"
+	case ScheduleTypeGAManualCredits:
+		return "GAManualCredits"
+	case ScheduleTypeGSManualCredits:
+		return "GSManualCredits"
+	case ScheduleTypeGTManualCredits:
+		return "GTManualCredits"
+	case ScheduleTypeADManualDebits:
+		return "ADManualDebits"
 	case ScheduleTypeGeneralManualDebits:
 		return "GeneralManualDebits"
 	case ScheduleTypeMinimalManualDebits:
 		return "MinimalManualDebits"
+	case ScheduleTypeGAManualDebits:
+		return "GAManualDebits"
+	case ScheduleTypeGSManualDebits:
+		return "GSManualDebits"
+	case ScheduleTypeGTManualDebits:
+		return "GTManualDebits"
 	case ScheduleTypeADWriteOffs:
-		return "ADWrite-offs"
+		return "ADWriteOffs"
 	case ScheduleTypeGeneralWriteOffs:
-		return "GeneralWrite-offs"
+		return "GeneralWriteOffs"
 	case ScheduleTypeMinimalWriteOffs:
 		return "MinimalWriteOffs"
+	case ScheduleTypeGAWriteOffs:
+		return "GAWriteOffs"
+	case ScheduleTypeGSWriteOffs:
+		return "GSWriteOffs"
+	case ScheduleTypeGTWriteOffs:
+		return "GTWriteOffs"
 	case ScheduleTypeADWriteOffReversals:
 		return "ADWriteOffReversals"
 	case ScheduleTypeGeneralWriteOffReversals:
 		return "GeneralWriteOffReversals"
 	case ScheduleTypeMinimalWriteOffReversals:
 		return "MinimalWriteOffReversals"
+	case ScheduleTypeGAWriteOffReversals:
+		return "GAWriteOffReversals"
+	case ScheduleTypeGSWriteOffReversals:
+		return "GSWriteOffReversals"
+	case ScheduleTypeGTWriteOffReversals:
+		return "GTWriteOffReversals"
 	default:
 		return ""
 	}
