@@ -49,8 +49,6 @@ func (s *Server) SetupRoutes(logger *slog.Logger) http.Handler {
 
 	handleFunc("POST /uploads", s.upload)
 
-	handleFunc("POST /events", s.handleEvents)
-
 	return otelhttp.NewHandler(telemetry.Middleware(logger)(securityheaders.Use(s.RequestLogger(mux))), "supervision-finance-admin-api")
 }
 
@@ -71,14 +69,6 @@ type StatusError struct {
 	Code   int    `json:"code"`
 	URL    string `json:"url"`
 	Method string `json:"method"`
-}
-
-func newStatusError(resp *http.Response) StatusError {
-	return StatusError{
-		Code:   resp.StatusCode,
-		URL:    resp.Request.URL.String(),
-		Method: resp.Request.Method,
-	}
 }
 
 func (e StatusError) Error() string {
