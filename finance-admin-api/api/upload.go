@@ -109,6 +109,7 @@ func (s *Server) upload(w http.ResponseWriter, r *http.Request) error {
 		Filename:     fmt.Sprintf("%s/%s", s3Directory, upload.Filename),
 		UploadType:   upload.ReportUploadType.Key(),
 		UploadDate:   upload.UploadDate,
+		PisNumber:    upload.PisNumber,
 	}
 	err = s.dispatch.FinanceAdminUpload(ctx, uploadEvent)
 
