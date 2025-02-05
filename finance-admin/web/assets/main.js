@@ -186,8 +186,10 @@ htmx.onLoad(content => {
         htmx.findAll(".govuk-form-group").forEach((element) => {
             if (errors.includes(`#${element.id}`)) {
                 element.classList.add("govuk-form-group--error");
+                element.querySelector('.govuk-error-message')?.classList.remove('hide');
             } else {
                 element.classList.remove("govuk-form-group--error");
+                element.querySelector('.govuk-error-message')?.classList.add('hide');
             }
         })
     }
