@@ -23,6 +23,10 @@ func validateCSVHeaders(file []byte, reportUploadType shared.ReportUploadType) e
 	csvReader := csv.NewReader(fileReader)
 	expectedHeaders := reportUploadType.CSVHeaders()
 
+	for i, header := range expectedHeaders {
+		expectedHeaders[i] = cleanString(header)
+	}
+
 	readHeaders, err := csvReader.Read()
 	if err != nil {
 		return apierror.ValidationError{Errors: apierror.ValidationErrors{
@@ -70,6 +74,13 @@ func reportHeadersByType(reportType string) []string {
 func cleanString(s string) string {
 	// Trim leading and trailing spaces
 	s = strings.TrimSpace(s)
+
+	// Replace double-spaces in headers with single spaces (BACS uploads have double spaces)
+	s = strings.Replace(s, "  ", " ", -1)
+
+	// Convert to lowercase for case-insensitive comparison
+	s = strings.ToLower(s)
+
 	// Remove non-printable characters
 	return strings.Map(func(r rune) rune {
 		if unicode.IsPrint(r) {

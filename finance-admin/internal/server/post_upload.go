@@ -35,26 +35,29 @@ func (h *UploadFormHandler) render(v AppVars, w http.ResponseWriter, r *http.Req
 	// Handle file upload
 	file, handler, err := r.FormFile("fileUpload")
 	if err != nil {
-		return h.handleError(w, r, "No file uploaded", http.StatusBadRequest)
+		return h.handleError(w, r, "FileUpload", "No file uploaded", http.StatusBadRequest)
 	}
+
 	defer file.Close()
 
 	var expectedFilename string
 	if uploadDate != "" {
 		expectedFilename, err = reportUploadType.Filename(uploadDate)
 		if err != nil {
-			return h.handleError(w, r, "Could not parse upload date", http.StatusBadRequest)
+			return h.handleError(w, r, "UploadDate", "Could not parse upload date", http.StatusBadRequest)
 		}
+	} else {
+		return h.handleError(w, r, "UploadDate", "Upload date required", http.StatusBadRequest)
 	}
 
 	if handler.Filename != expectedFilename && expectedFilename != "" {
 		expectedFilename := strings.Replace(expectedFilename, ":", "/", -1)
-		return h.handleError(w, r, fmt.Sprintf("Filename should be \"%s\"", expectedFilename), http.StatusBadRequest)
+		return h.handleError(w, r, "FileUpload", fmt.Sprintf("Filename should be \"%s\"", expectedFilename), http.StatusBadRequest)
 	}
 
 	data, err := shared.NewUpload(reportUploadType, pisNumber, uploadDate, email, file, handler.Filename)
 	if err != nil {
-		return h.handleError(w, r, "Failed to read file", http.StatusBadRequest)
+		return h.handleError(w, r, "FileUpload", "Failed to read file", http.StatusBadRequest)
 	}
 
 	// Upload the file
@@ -68,9 +71,9 @@ func (h *UploadFormHandler) render(v AppVars, w http.ResponseWriter, r *http.Req
 }
 
 // handleError simplifies repetitive error handling in the render method.
-func (h *UploadFormHandler) handleError(w http.ResponseWriter, r *http.Request, msg string, code int) error {
+func (h *UploadFormHandler) handleError(w http.ResponseWriter, r *http.Request, field string, msg string, code int) error {
 	fileError := model.ValidationErrors{
-		"FileUpload": map[string]string{"required": msg},
+		field: map[string]string{"required": msg},
 	}
 	data := AppVars{ValidationErrors: RenameErrors(fileError)}
 	w.WriteHeader(code)

@@ -1,40 +1,40 @@
 package shared
 
 type ReportRequest struct {
-	ReportType         string `json:"reportType"`
-	ReportJournalType  string `json:"reportJournalType"`
-	ReportScheduleType string `json:"reportScheduleType"`
-	ReportAccountType  string `json:"reportAccountType"`
-	ReportDebtType     string `json:"reportDebtType"`
-	DateOfTransaction  *Date  `json:"dateOfTransaction,omitempty"`
-	ToDateField        *Date  `json:"toDateField,omitempty"`
-	FromDateField      *Date  `json:"fromDateField,omitempty"`
-	Email              string `json:"email"`
+	ReportType             ReportsType             `json:"reportType"`
+	JournalType            *JournalType            `json:"journalType,omitempty"`
+	ScheduleType           *ScheduleType           `json:"scheduleType,omitempty"`
+	AccountsReceivableType *AccountsReceivableType `json:"AccountsReceivableType,omitempty"`
+	DebtType               *DebtType               `json:"debtType,omitempty"`
+	TransactionDate        *Date                   `json:"transactionDate,omitempty"`
+	ToDate                 *Date                   `json:"toDate,omitempty"`
+	FromDate               *Date                   `json:"fromDate,omitempty"`
+	Email                  string                  `json:"email"`
 }
 
-func NewReportRequest(reportType, reportJournalType, reportScheduleType, reportAccountType, reportDebtType, dateOfTransaction, dateTo, dateFrom, email string) ReportRequest {
+func NewReportRequest(reportType, journalType, scheduleType, accountsReceivableType, debtType, transactionDate, dateTo, dateFrom, email string) ReportRequest {
 	download := ReportRequest{
-		ReportType:         reportType,
-		ReportJournalType:  reportJournalType,
-		ReportScheduleType: reportScheduleType,
-		ReportAccountType:  reportAccountType,
-		ReportDebtType:     reportDebtType,
-		Email:              email,
+		ReportType:             ParseReportsType(reportType),
+		JournalType:            ParseJournalType(journalType),
+		ScheduleType:           ParseScheduleType(scheduleType),
+		AccountsReceivableType: ParseAccountsReceivableType(accountsReceivableType),
+		DebtType:               ParseReportDebtType(debtType),
+		Email:                  email,
 	}
 
-	if dateOfTransaction != "" {
-		raisedDateFormatted := NewDate(dateOfTransaction)
-		download.DateOfTransaction = &raisedDateFormatted
+	if transactionDate != "" {
+		raisedDateFormatted := NewDate(transactionDate)
+		download.TransactionDate = &raisedDateFormatted
 	}
 
 	if dateTo != "" {
 		startDateFormatted := NewDate(dateTo)
-		download.ToDateField = &startDateFormatted
+		download.ToDate = &startDateFormatted
 	}
 
 	if dateFrom != "" {
 		endDateFormatted := NewDate(dateFrom)
-		download.FromDateField = &endDateFormatted
+		download.FromDate = &endDateFormatted
 	}
 
 	return download
