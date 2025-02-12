@@ -20,7 +20,7 @@ func TestDownload(t *testing.T) {
 		}, nil
 	}
 
-	resp, err := client.Download(getContext(nil), "dGVzdC5jc3Y=")
+	resp, err := client.Download(testContext(), "dGVzdC5jc3Y=")
 	assert.NoError(t, err)
 
 	actual, _ := io.ReadAll(io.NopCloser(resp.Body))
