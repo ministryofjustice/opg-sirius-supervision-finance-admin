@@ -11,6 +11,7 @@ import (
 func TestCheckDownload(t *testing.T) {
 	client := &Client{
 		http: &MockClient{},
+		jwt:  &mockJWTClient{},
 	}
 
 	tests := []struct {

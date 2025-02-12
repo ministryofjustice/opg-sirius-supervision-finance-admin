@@ -37,7 +37,7 @@ type HtmxHandler interface {
 
 func New(logger *slog.Logger, client *api.Client, templates map[string]*template.Template, envVars EnvironmentVars) http.Handler {
 	mux := http.NewServeMux()
-	authenticator := auth.Authenticator{
+	authenticator := auth.Auth{
 		Client: client,
 		EnvVars: auth.EnvVars{
 			SiriusPublicURL: envVars.SiriusPublicURL,

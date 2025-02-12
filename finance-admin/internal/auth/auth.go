@@ -42,12 +42,12 @@ type EnvVars struct {
 	Prefix          string
 }
 
-type Authenticator struct {
+type Auth struct {
 	Client  Client
 	EnvVars EnvVars
 }
 
-func (a *Authenticator) Authenticate(next http.Handler) http.Handler {
+func (a *Auth) Authenticate(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := newContext(r)
 		logger := telemetry.LoggerFromContext(ctx)
@@ -69,6 +69,6 @@ func (a *Authenticator) Authenticate(next http.Handler) http.Handler {
 	})
 }
 
-func (a *Authenticator) redirectPath(to string) string {
+func (a *Auth) redirectPath(to string) string {
 	return fmt.Sprintf("%s/auth?redirect=%s", a.EnvVars.SiriusPublicURL, url.QueryEscape(fmt.Sprintf("%s%s", a.EnvVars.Prefix, to)))
 }

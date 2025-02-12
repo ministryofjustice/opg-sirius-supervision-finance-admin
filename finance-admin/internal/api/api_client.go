@@ -16,24 +16,32 @@ func (e ClientError) Error() string {
 	return string(e)
 }
 
-func NewClient(httpClient HTTPClient, siriusURL string, backendURL string, hubURL string) (*Client, error) {
-	return &Client{
-		http:       httpClient,
-		SiriusURL:  siriusURL,
-		BackendURL: backendURL,
-		HubURL:     hubURL,
-	}, nil
-}
-
 type HTTPClient interface {
 	Do(req *http.Request) (*http.Response, error)
 }
 
-type Client struct {
-	http       HTTPClient
+type JWTClient interface {
+	CreateJWT(ctx context.Context) string
+}
+
+type EnvVars struct {
 	SiriusURL  string
 	BackendURL string
 	HubURL     string
+}
+
+type Client struct {
+	http HTTPClient
+	jwt  JWTClient
+	EnvVars
+}
+
+func NewClient(httpClient HTTPClient, jwtClient JWTClient, env EnvVars) *Client {
+	return &Client{
+		http:    httpClient,
+		jwt:     jwtClient,
+		EnvVars: env,
+	}
 }
 
 type StatusError struct {
@@ -71,6 +79,7 @@ func (c *Client) newHubRequest(ctx context.Context, method, path string, body io
 
 	addCookiesFromContext(ctx, req)
 	addXsrfFromContext(ctx, req)
+	req.Header.Add("Authorization", "Bearer "+c.jwt.CreateJWT(ctx))
 
 	return req, err
 }
