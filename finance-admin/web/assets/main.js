@@ -6,26 +6,30 @@ import htmx from "htmx.org/dist/htmx.esm";
 document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');
 initAll();
 
-window.htmx = htmx
+window.htmx = htmx;
 htmx.logAll();
-htmx.config.responseHandling = [{code:".*", swap: true}]
+htmx.config.responseHandling = [{code:".*", swap: true}];
 
-function disableDownloadFormInputs() {
-    document.querySelector('#report-journal-type').setAttribute("disabled", "true")
-    document.querySelector('#report-schedule-type').setAttribute("disabled", "true")
-    document.querySelector('#report-account-type').setAttribute("disabled", "true")
-    document.querySelector('#report-debt-type').setAttribute("disabled", "true")
-    document.querySelector('#date-field').setAttribute("disabled", "true")
-    document.querySelector('#date-from-field').setAttribute("disabled", "true")
-    document.querySelector('#date-to-field').setAttribute("disabled", "true")
-    document.querySelector('#email-field').setAttribute("disabled", "true")
+const hideFieldInputs = () => {
+    htmx.findAll('[id$="-field-input"]').forEach(element => {
+        htmx.addClass(element, 'hide');
+        element.setAttribute("disabled", "true");
+    });
+}
+
+const showFieldInput = (idName) => {
+    document.querySelector(`#${idName}`).removeAttribute("disabled");
+    htmx.removeClass(htmx.find(`#${idName}-field-input`), "hide")
 }
 
 function disableUploadFormInputs() {
-    document.querySelector('#upload-date').setAttribute("disabled", "true")
-    document.querySelector('#file-upload').setAttribute("disabled", "true")
-    document.querySelector('#email-field').setAttribute("disabled", "true")
+    document.querySelector('#upload-date').setAttribute("disabled", "true");
+    document.querySelector('#file-upload').setAttribute("disabled", "true");
+    document.querySelector('#email-field').setAttribute("disabled", "true");
 }
+
+const dateRangeRequired = ["AgedDebt", "ARPaidInvoice", "TotalReceipts", "BadDebtWriteOff", "InvoiceAdjustments", "UnappliedReceipts"];
+const dateRequired = ["FeeAccrual"];
 
 // adding event listeners inside the onLoad function will ensure they are re-added to partial content when loaded back in
 htmx.onLoad(content => {
@@ -36,102 +40,58 @@ htmx.onLoad(content => {
     });
 
     if (document.getElementById('reports-type')) {
-        htmx.findAll("#reports-type").forEach((element) => {
-            element.addEventListener("change", function() {
-                const elements = document.querySelectorAll('[id$="-field-input"]');
-                elements.forEach(element => {
-                    htmx.addClass(element, 'hide');
-                });
-                disableDownloadFormInputs();
-                const form = document.querySelector('form');
-                const reportTypeSelect = document.getElementById('reports-type');
-                const reportTypeSelectValue = reportTypeSelect.value
+        htmx.find("#reports-type").addEventListener("change", () => {
+            const reportTypeEl = document.getElementById('reports-type');
+            const reportType = reportTypeEl.value;
+            hideFieldInputs();
+            document.querySelector("form").reset();
+            reportTypeEl.value =  reportType;
 
-                form.reset();
-                reportTypeSelect.value =  reportTypeSelectValue
-
-                switch (reportTypeSelect.value) {
-                    case "Journal":
-                        document.querySelector('#report-journal-type').removeAttribute("disabled");
-                        document.querySelector('#date-field').removeAttribute("disabled");
-                        htmx.removeClass(htmx.find("#journal-types-field-input"), "hide")
-                        htmx.removeClass(htmx.find("#date-field-input"), "hide")
-                        break;
-                    case "Schedule":
-                        document.querySelector('#report-schedule-type').removeAttribute("disabled");
-                        document.querySelector('#date-field').removeAttribute("disabled");
-                        htmx.removeClass(htmx.find("#schedule-types-field-input"), "hide")
-                        htmx.removeClass(htmx.find("#date-field-input"), "hide")
-                        break;
-                    case "AccountsReceivable":
-                        document.querySelector('#report-account-type').removeAttribute("disabled")
-                        htmx.removeClass(htmx.find("#account-types-field-input"), "hide")
-                        break;
-                    case "Debt":
-                        document.querySelector('#report-debt-type').removeAttribute("disabled")
-                        htmx.removeClass(htmx.find("#debt-types-field-input"), "hide")
-                        break;
-                    default:
-                        break;
-                }
-            }, false)
-        });
-
-        document.getElementById('report-account-type').addEventListener('change', function () {
-            const form = document.querySelector('form');
-            const reportTypeSelect = document.getElementById('reports-type');
-            const reportTypeSelectValue = reportTypeSelect.value
-            const reportAccountTypeSelectValue = this.value
-            disableDownloadFormInputs();
-            document.querySelector('#report-account-type').removeAttribute("disabled");
-
-            form.reset();
-            reportTypeSelect.value =  reportTypeSelectValue
-            this.value = reportAccountTypeSelectValue
-
-            switch (this.value) {
-                case "AgedDebt":
-                    document.querySelector('#email-field').removeAttribute("disabled");
-                    document.querySelector('#date-to-field').removeAttribute("disabled");
-                    document.querySelector('#date-from-field').removeAttribute("disabled");
-                    htmx.removeClass(htmx.find("#email-field-input"), "hide")
-                    htmx.removeClass(htmx.find("#date-to-field-input"), "hide")
-                    htmx.removeClass(htmx.find("#date-from-field-input"), "hide")
+            switch (reportType) {
+                case "Journal":
+                    showFieldInput("journal-types");
+                    showFieldInput("date");
+                    showFieldInput("email");
                     break;
-                case "AgedDebtByCustomer":
-                    document.querySelector('#email-field').removeAttribute("disabled");
-                    htmx.removeClass(htmx.find("#email-field-input"), "hide")
+                case "Schedule":
+                    showFieldInput("schedule-types");
+                    showFieldInput("date");
+                    showFieldInput("email");
                     break;
-                case "UnappliedReceipts":
-                    document.querySelector('#date-field').removeAttribute("disabled");
-                    document.querySelector('#email-field').removeAttribute("disabled");
-                    htmx.removeClass(htmx.find("#email-field-input"), "hide")
-                    htmx.addClass(htmx.find("#date-to-field-input"), "hide")
-                    htmx.addClass(htmx.find("#date-from-field-input"), "hide")
-                    htmx.removeClass(htmx.find("#date-field-input"), "hide")
+                case "AccountsReceivable":
+                    showFieldInput("account-types");
+                    showFieldInput("email");
                     break;
-                case "ARPaidInvoiceReport":
-                case "TotalReceiptsReport":
-                case "BadDebtWriteOffReport":
-                case "InvoiceAdjustments":
-                    document.querySelector('#date-to-field').removeAttribute("disabled");
-                    document.querySelector('#email-field').removeAttribute("disabled");
-                    document.querySelector('#date-from-field').removeAttribute("disabled");
-                    htmx.addClass(htmx.find("#date-field-input"), "hide")
-                    htmx.removeClass(htmx.find("#date-to-field-input"), "hide")
-                    htmx.removeClass(htmx.find("#email-field-input"), "hide")
-                    htmx.removeClass(htmx.find("#date-from-field-input"), "hide")
-                    break;
-                case "FeeAccrual":
-                    htmx.addClass(htmx.find("#date-field-input"), "hide")
-                    htmx.addClass(htmx.find("#date-to-field-input"), "hide")
-                    htmx.addClass(htmx.find("#email-field-input"), "hide")
-                    htmx.addClass(htmx.find("#date-from-field-input"), "hide")
+                case "Debt":
+                    showFieldInput("debt-types");
+                    showFieldInput("email");
                     break;
                 default:
                     break;
             }
-        })
+        }, false);
+
+        htmx.find("#account-types").addEventListener("change", () => {
+            const reportTypeEl = document.getElementById('reports-type');
+            const reportType = reportTypeEl.value;
+            const subTypeEl = document.getElementById('account-types');
+            const subType = subTypeEl.value;
+            hideFieldInputs();
+            document.querySelector("form").reset();
+            reportTypeEl.value =  reportType;
+            subTypeEl.value =  subType;
+
+            showFieldInput("account-types");
+            showFieldInput("email");
+
+            if (dateRangeRequired.includes(subType)) {
+                showFieldInput("date-to");
+                showFieldInput("date-from");
+            }
+            if (dateRequired.includes(subType)) {
+                showFieldInput("date");
+            }
+        });
     }
 
     if (document.getElementById('reports-upload-type')) {
@@ -144,34 +104,34 @@ htmx.onLoad(content => {
                 disableUploadFormInputs();
                 const form = document.querySelector('form');
                 const reportUploadTypeSelect = document.getElementById('reports-upload-type');
-                const reportUploadTypeSelectValue = reportUploadTypeSelect.value
+                const reportUploadTypeSelectValue = reportUploadTypeSelect.value;
 
                 form.reset();
-                reportUploadTypeSelect.value =  reportUploadTypeSelectValue
+                reportUploadTypeSelect.value =  reportUploadTypeSelectValue;
 
                 switch (reportUploadTypeSelect.value) {
                     case "PAYMENTS_MOTO_CARD":
                     case "PAYMENTS_ONLINE_CARD":
                     case "PAYMENTS_OPG_BACS":
                     case "PAYMENTS_SUPERVISION_BACS":
-                        document.querySelector('#upload-date').removeAttribute("disabled")
-                        document.querySelector('#file-upload').removeAttribute("disabled")
-                        document.querySelector('#email-field').removeAttribute("disabled")
-                        htmx.removeClass(htmx.find("#upload-date-input"), "hide")
-                        htmx.removeClass(htmx.find("#file-upload-input"), "hide")
-                        htmx.removeClass(htmx.find("#email-field-input"), "hide")
+                        document.querySelector('#upload-date').removeAttribute("disabled");
+                        document.querySelector('#file-upload').removeAttribute("disabled");
+                        document.querySelector('#email-field').removeAttribute("disabled");
+                        htmx.removeClass(htmx.find("#upload-date-input"), "hide");
+                        htmx.removeClass(htmx.find("#file-upload-input"), "hide");
+                        htmx.removeClass(htmx.find("#email-field-input"), "hide");
                         break;
                     case "DEBT_CHASE":
                     case "DEPUTY_SCHEDULE":
-                        document.querySelector('#file-upload').removeAttribute("disabled")
-                        htmx.addClass(htmx.find("#upload-date-input"), "hide")
-                        htmx.addClass(htmx.find("#email-field-input"), "hide")
-                        htmx.removeClass(htmx.find("#file-upload-input"), "hide")
+                        document.querySelector('#file-upload').removeAttribute("disabled");
+                        htmx.addClass(htmx.find("#upload-date-input"), "hide");
+                        htmx.addClass(htmx.find("#email-field-input"), "hide");
+                        htmx.removeClass(htmx.find("#file-upload-input"), "hide");
                         break;
                     default:
                         break;
                 }
-            }, false)
+            }, false);
         });
     }
 
