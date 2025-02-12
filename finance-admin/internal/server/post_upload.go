@@ -25,7 +25,7 @@ func (h *UploadFormHandler) render(v AppVars, w http.ResponseWriter, r *http.Req
 	if reportUploadType == shared.ReportTypeUploadPaymentsSupervisionCheque {
 		pisNumber, err = strconv.Atoi(r.PostFormValue("pisNumber"))
 		if err != nil {
-			return h.handleError(w, r, "Error parsing PIS number", http.StatusBadRequest)
+			return h.handleError(w, r, "PisNumber", "Error parsing PIS number", http.StatusBadRequest)
 		}
 	}
 
