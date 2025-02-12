@@ -6,6 +6,7 @@ import (
 	"github.com/ministryofjustice/opg-go-common/paginate"
 	"github.com/ministryofjustice/opg-go-common/telemetry"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/api"
+	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/auth"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/server"
 	"html/template"
 	"log/slog"
@@ -13,6 +14,7 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
+	"strconv"
 	"syscall"
 	"time"
 	"unicode"
@@ -40,15 +42,25 @@ func run(ctx context.Context, logger *slog.Logger) error {
 
 	envVars := server.NewEnvironmentVars()
 
-	client, err := api.NewClient(http.DefaultClient, envVars.SiriusURL, envVars.BackendURL, envVars.HubURL)
-	if err != nil {
-		return err
-	}
+	jwtExpiry, err := strconv.Atoi(os.Getenv("JWT_EXPIRY"))
+
+	client := api.NewClient(
+		http.DefaultClient,
+		&auth.JWT{
+			Secret: os.Getenv("JWT_SECRET"),
+			Expiry: jwtExpiry,
+		},
+		api.EnvVars{
+			SiriusURL:  envVars.SiriusURL,
+			BackendURL: envVars.BackendURL,
+			HubURL:     envVars.HubURL,
+		})
+
 	templates := createTemplates(envVars)
 
 	s := &http.Server{
-		Addr:    ":" + envVars.Port,
-		Handler: server.New(logger, client, templates, envVars),
+		Addr:    ":" + os.Getenv("PORT"),
+		Handler: server.New(logger, client, templates, server.NewEnvironmentVars()),
 	}
 
 	go func() {
@@ -58,7 +70,7 @@ func run(ctx context.Context, logger *slog.Logger) error {
 		}
 	}()
 
-	logger.Info("Running at :" + envVars.Port)
+	logger.Info("Running at :" + os.Getenv("PORT"))
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)

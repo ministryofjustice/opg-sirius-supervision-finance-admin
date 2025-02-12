@@ -10,7 +10,8 @@ import (
 
 func TestDownload(t *testing.T) {
 	mockClient := &MockClient{}
-	client, _ := NewClient(mockClient, "http://localhost:3000", "", "")
+	mockJwtClient := &mockJWTClient{}
+	client := NewClient(mockClient, mockJwtClient, EnvVars{"http://localhost:3000", "", ""})
 	fileContent := []byte("file content")
 
 	GetDoFunc = func(*http.Request) (*http.Response, error) {

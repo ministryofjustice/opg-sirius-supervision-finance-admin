@@ -5,7 +5,6 @@ import (
 )
 
 type EnvironmentVars struct {
-	Port            string
 	WebDir          string
 	SiriusURL       string
 	SiriusPublicURL string
@@ -16,20 +15,11 @@ type EnvironmentVars struct {
 
 func NewEnvironmentVars() EnvironmentVars {
 	return EnvironmentVars{
-		Port:            getEnv("PORT", "1234"),
-		WebDir:          getEnv("WEB_DIR", "web"),
-		SiriusURL:       getEnv("SIRIUS_URL", "http://host.docker.internal:8080"),
-		SiriusPublicURL: getEnv("SIRIUS_PUBLIC_URL", ""),
-		Prefix:          getEnv("PREFIX", ""),
-		BackendURL:      getEnv("BACKEND_URL", ""),
-		HubURL:          getEnv("HUB_URL", ""),
+		WebDir:          os.Getenv("WEB_DIR"),
+		SiriusURL:       os.Getenv("SIRIUS_URL"),
+		SiriusPublicURL: os.Getenv("SIRIUS_PUBLIC_URL"),
+		Prefix:          os.Getenv("PREFIX"),
+		BackendURL:      os.Getenv("BACKEND_URL"),
+		HubURL:          os.Getenv("HUB_URL"),
 	}
-}
-
-func getEnv(key, def string) string {
-	if value := os.Getenv(key); value != "" {
-		return value
-	}
-
-	return def
 }

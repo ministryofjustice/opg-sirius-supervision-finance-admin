@@ -46,7 +46,7 @@ func Test_authenticate_success(t *testing.T) {
 	}
 	client := &mockAuthClient{User: user}
 
-	auth := Authenticator{
+	auth := Auth{
 		Client: client,
 		EnvVars: EnvVars{
 			SiriusPublicURL: "https://sirius.gov.uk",
@@ -73,7 +73,7 @@ func Test_authenticate_unauthorised(t *testing.T) {
 
 	client := &mockAuthClient{}
 
-	auth := Authenticator{
+	auth := Auth{
 		Client: client,
 		EnvVars: EnvVars{
 			SiriusPublicURL: "https://sirius.gov.uk",
@@ -96,7 +96,7 @@ func Test_authenticate_error(t *testing.T) {
 
 	client := &mockAuthClient{error: errors.New("something went wrong")}
 
-	auth := Authenticator{
+	auth := Auth{
 		Client: client,
 		EnvVars: EnvVars{
 			SiriusPublicURL: "https://sirius.gov.uk",
