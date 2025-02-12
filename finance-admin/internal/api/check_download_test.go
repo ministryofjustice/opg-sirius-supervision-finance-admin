@@ -51,8 +51,7 @@ func TestCheckDownload(t *testing.T) {
 				}, nil
 			}
 
-			ctx := getContext(nil)
-			err := client.CheckDownload(ctx, tt.uid)
+			err := client.CheckDownload(testContext(), tt.uid)
 
 			if tt.wantErr {
 				assert.Error(t, err)
