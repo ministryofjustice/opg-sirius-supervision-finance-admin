@@ -38,7 +38,7 @@ func TestRequestReport(t *testing.T) {
 		}, nil
 	}
 
-	err := client.RequestReport(getContext(nil), data)
+	err := client.RequestReport(testContext(), data)
 	assert.NoError(t, err)
 }
 
@@ -53,7 +53,7 @@ func TestRequestReportUnauthorised(t *testing.T) {
 		}, nil
 	}
 
-	err := client.RequestReport(getContext(nil), shared.ReportRequest{})
+	err := client.RequestReport(testContext(), shared.ReportRequest{})
 
 	assert.Equal(t, ErrUnauthorized.Error(), err.Error())
 }
@@ -73,7 +73,7 @@ func TestRequestReportReturnsBadRequestError(t *testing.T) {
 		}, nil
 	}
 
-	err := client.RequestReport(getContext(nil), shared.ReportRequest{})
+	err := client.RequestReport(testContext(), shared.ReportRequest{})
 
 	expectedError := model.ValidationError{Message: "", Errors: model.ValidationErrors{"EndDate": map[string]string{"EndDate": "EndDate"}, "StartDate": map[string]string{"StartDate": "StartDate"}}}
 	assert.Equal(t, expectedError, err)
@@ -97,7 +97,7 @@ func TestRequestReportReturnsValidationError(t *testing.T) {
 
 	client, _ := NewClient(http.DefaultClient, svr.URL, svr.URL, svr.URL)
 
-	err := client.RequestReport(getContext(nil), shared.ReportRequest{})
+	err := client.RequestReport(testContext(), shared.ReportRequest{})
 	expectedError := model.ValidationError{Message: "", Errors: model.ValidationErrors{"ReportType": map[string]string{"required": "Please select a report type"}}}
 	assert.Equal(t, expectedError, err.(model.ValidationError))
 }
