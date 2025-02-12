@@ -7,6 +7,7 @@ import (
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/model"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/shared"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -15,9 +16,19 @@ type UploadFormHandler struct {
 }
 
 func (h *UploadFormHandler) render(v AppVars, w http.ResponseWriter, r *http.Request) error {
+	var err error
 	ctx := getContext(r)
 
+	pisNumber := 0
 	reportUploadType := shared.ParseReportUploadType(r.PostFormValue("reportUploadType"))
+
+	if reportUploadType == shared.ReportTypeUploadPaymentsSupervisionCheque {
+		pisNumber, err = strconv.Atoi(r.PostFormValue("pisNumber"))
+		if err != nil {
+			return h.handleError(w, r, "PisNumber", "Error parsing PIS number", http.StatusBadRequest)
+		}
+	}
+
 	uploadDate := r.PostFormValue("uploadDate")
 	email := r.PostFormValue("email")
 
@@ -44,7 +55,7 @@ func (h *UploadFormHandler) render(v AppVars, w http.ResponseWriter, r *http.Req
 		return h.handleError(w, r, "FileUpload", fmt.Sprintf("Filename should be \"%s\"", expectedFilename), http.StatusBadRequest)
 	}
 
-	data, err := shared.NewUpload(reportUploadType, uploadDate, email, file, handler.Filename)
+	data, err := shared.NewUpload(reportUploadType, pisNumber, uploadDate, email, file, handler.Filename)
 	if err != nil {
 		return h.handleError(w, r, "FileUpload", "Failed to read file", http.StatusBadRequest)
 	}
