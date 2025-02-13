@@ -17,7 +17,7 @@ build:
 	docker compose build --no-cache --parallel finance-admin finance-admin-api
 
 build-dev:
-	docker compose -f docker-compose.yml -f docker/docker-compose.dev.yml build --parallel finance-admin finance-admin-api yarn json-server
+	docker compose -f docker-compose.yml -f docker/docker-compose.dev.yml build --parallel finance-admin finance-admin-api yarn json-server finance-hub-api
 
 build-all:
 	docker compose build --parallel finance-admin finance-admin-api yarn cypress

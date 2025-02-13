@@ -14,6 +14,13 @@ import (
 	"net/http"
 )
 
+type Envs struct {
+	WebDir          string
+	SiriusURL       string
+	SiriusPublicURL string
+	Prefix          string
+}
+
 type ApiClient interface {
 	RequestReport(context.Context, shared.ReportRequest) error
 	Upload(context.Context, shared.Upload) error
@@ -35,8 +42,9 @@ type HtmxHandler interface {
 	render(app AppVars, w http.ResponseWriter, r *http.Request) error
 }
 
-func New(logger *slog.Logger, client *api.Client, templates map[string]*template.Template, envVars EnvironmentVars) http.Handler {
+func New(logger *slog.Logger, client *api.Client, templates map[string]*template.Template, envVars Envs) http.Handler {
 	mux := http.NewServeMux()
+
 	authenticator := auth.Auth{
 		Client: client,
 		EnvVars: auth.EnvVars{
