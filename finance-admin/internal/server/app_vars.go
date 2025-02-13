@@ -10,7 +10,7 @@ type AppVars struct {
 	Path             string
 	XSRFToken        string
 	Tabs             []Tab
-	EnvironmentVars  EnvironmentVars
+	EnvironmentVars  Envs
 	ValidationErrors model.ValidationErrors
 	Error            string
 }
@@ -25,7 +25,7 @@ func (t Tab) Path() string {
 	return "/" + t.Id
 }
 
-func NewAppVars(r *http.Request, envVars EnvironmentVars) AppVars {
+func NewAppVars(r *http.Request, envVars Envs) AppVars {
 	tabs := []Tab{
 		{
 			Id:    "downloads",

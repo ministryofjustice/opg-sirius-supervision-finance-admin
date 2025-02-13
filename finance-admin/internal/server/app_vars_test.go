@@ -10,7 +10,7 @@ func TestNewAppVars(t *testing.T) {
 	r, _ := http.NewRequest("GET", "/path", nil)
 	r.AddCookie(&http.Cookie{Name: "XSRF-TOKEN", Value: "abc123"})
 
-	envVars := EnvironmentVars{}
+	envVars := Envs{}
 	vars := NewAppVars(r, envVars)
 
 	assert.Equal(t, AppVars{
