@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"github.com/ministryofjustice/opg-go-common/env"
+	"errors"
 	"github.com/ministryofjustice/opg-go-common/paginate"
 	"github.com/ministryofjustice/opg-go-common/telemetry"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/api"
@@ -20,6 +20,58 @@ import (
 	"unicode"
 )
 
+type Envs struct {
+	webDir          string
+	siriusURL       string
+	siriusPublicURL string
+	backendURL      string
+	hubURL          string
+	prefix          string
+	port            string
+	jwtSecret       string
+	jwtExpiry       int
+}
+
+func parseEnvs() (*Envs, error) {
+	envs := map[string]string{
+		"SIRIUS_URL":        os.Getenv("SIRIUS_URL"),
+		"SIRIUS_PUBLIC_URL": os.Getenv("SIRIUS_PUBLIC_URL"),
+		"PREFIX":            os.Getenv("PREFIX"),
+		"BACKEND_URL":       os.Getenv("BACKEND_URL"),
+		"HUB_URL":           os.Getenv("HUB_URL"),
+		"JWT_SECRET":        os.Getenv("JWT_SECRET"),
+		"JWT_EXPIRY":        os.Getenv("JWT_EXPIRY"),
+	}
+
+	var missing []error
+	for k, v := range envs {
+		if v == "" {
+			missing = append(missing, errors.New("missing environment variable: "+k))
+		}
+	}
+
+	jwtExpiry, err := strconv.Atoi(envs["JWT_EXPIRY"])
+	if err != nil {
+		missing = append(missing, errors.New("invalid JWT_EXPIRY"))
+	}
+
+	if len(missing) > 0 {
+		return nil, errors.Join(missing...)
+	}
+
+	return &Envs{
+		siriusURL:       envs["SIRIUS_URL"],
+		siriusPublicURL: envs["SIRIUS_PUBLIC_URL"],
+		prefix:          envs["PREFIX"],
+		backendURL:      envs["BACKEND_URL"],
+		hubURL:          envs["HUB_URL"],
+		jwtSecret:       envs["JWT_SECRET"],
+		jwtExpiry:       jwtExpiry,
+		webDir:          "web",
+		port:            "8888",
+	}, nil
+}
+
 func main() {
 	ctx := context.Background()
 	logger := telemetry.NewLogger("opg-sirius-finance-admin")
@@ -32,7 +84,7 @@ func main() {
 }
 
 func run(ctx context.Context, logger *slog.Logger) error {
-	exportTraces := env.Get("TRACING_ENABLED", "0") == "1"
+	exportTraces := os.Getenv("TRACING_ENABLED") == "1"
 
 	shutdown, err := telemetry.StartTracerProvider(ctx, logger, exportTraces)
 	defer shutdown()
@@ -40,27 +92,33 @@ func run(ctx context.Context, logger *slog.Logger) error {
 		return err
 	}
 
-	envVars := server.NewEnvironmentVars()
-
-	jwtExpiry, err := strconv.Atoi(os.Getenv("JWT_EXPIRY"))
+	envs, err := parseEnvs()
+	if err != nil {
+		return err
+	}
 
 	client := api.NewClient(
 		http.DefaultClient,
 		&auth.JWT{
-			Secret: os.Getenv("JWT_SECRET"),
-			Expiry: jwtExpiry,
+			Secret: envs.jwtSecret,
+			Expiry: envs.jwtExpiry,
 		},
 		api.EnvVars{
-			SiriusURL:  envVars.SiriusURL,
-			BackendURL: envVars.BackendURL,
-			HubURL:     envVars.HubURL,
+			SiriusURL:  envs.siriusURL,
+			BackendURL: envs.backendURL,
+			HubURL:     envs.hubURL,
 		})
 
-	templates := createTemplates(envVars)
+	templates := createTemplates(envs)
 
 	s := &http.Server{
-		Addr:    ":" + os.Getenv("PORT"),
-		Handler: server.New(logger, client, templates, server.NewEnvironmentVars()),
+		Addr: ":" + envs.port,
+		Handler: server.New(logger, client, templates, server.Envs{
+			WebDir:          envs.webDir,
+			SiriusURL:       envs.siriusURL,
+			SiriusPublicURL: envs.siriusPublicURL,
+			Prefix:          envs.prefix,
+		}),
 	}
 
 	go func() {
@@ -70,7 +128,7 @@ func run(ctx context.Context, logger *slog.Logger) error {
 		}
 	}()
 
-	logger.Info("Running at :" + os.Getenv("PORT"))
+	logger.Info("Running at :" + envs.port)
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
@@ -84,7 +142,7 @@ func run(ctx context.Context, logger *slog.Logger) error {
 	return s.Shutdown(tc)
 }
 
-func createTemplates(envVars server.EnvironmentVars) map[string]*template.Template {
+func createTemplates(envs *Envs) map[string]*template.Template {
 	templates := map[string]*template.Template{}
 	templateFunctions := map[string]interface{}{
 		"contains": func(xs []string, needle string) bool {
@@ -103,14 +161,14 @@ func createTemplates(envVars server.EnvironmentVars) map[string]*template.Templa
 			return string(r)
 		},
 		"prefix": func(s string) string {
-			return envVars.Prefix + s
+			return envs.prefix + s
 		},
 		"sirius": func(s string) string {
-			return envVars.SiriusPublicURL + s
+			return envs.siriusPublicURL + s
 		},
 	}
 
-	templateDirPath := envVars.WebDir + "/template"
+	templateDirPath := envs.webDir + "/template"
 	templateDir, _ := os.Open(templateDirPath)
 	templateDirs, _ := templateDir.Readdir(0)
 	_ = templateDir.Close()
