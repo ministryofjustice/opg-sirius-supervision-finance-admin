@@ -66,7 +66,6 @@ func (c *Client) newBackendRequest(ctx context.Context, method, path string, bod
 	}
 
 	addCookiesFromContext(ctx, req)
-	addXsrfFromContext(ctx, req)
 
 	return req, err
 }
@@ -78,7 +77,6 @@ func (c *Client) newHubRequest(ctx context.Context, method, path string, body io
 	}
 
 	addCookiesFromContext(ctx, req)
-	addXsrfFromContext(ctx, req)
 	req.Header.Add("Authorization", "Bearer "+c.jwt.CreateJWT(ctx))
 
 	return req, err
@@ -100,10 +98,6 @@ func addCookiesFromContext(ctx context.Context, req *http.Request) {
 	for _, c := range ctx.(auth.Context).Cookies {
 		req.AddCookie(c)
 	}
-}
-
-func addXsrfFromContext(ctx context.Context, req *http.Request) {
-	req.Header.Add("X-XSRF-TOKEN", ctx.(auth.Context).XSRFToken)
 }
 
 func newStatusError(resp *http.Response) StatusError {

@@ -19,12 +19,8 @@ type Context struct {
 func newContext(r *http.Request) Context {
 	token := ""
 
-	if r.Method == http.MethodGet {
-		if cookie, err := r.Cookie("XSRF-TOKEN"); err == nil {
-			token, _ = url.QueryUnescape(cookie.Value)
-		}
-	} else {
-		token = r.FormValue("xsrfToken")
+	if cookie, err := r.Cookie("XSRF-TOKEN"); err == nil {
+		token, _ = url.QueryUnescape(cookie.Value)
 	}
 	return Context{
 		Context:   r.Context(),
