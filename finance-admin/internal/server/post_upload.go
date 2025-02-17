@@ -15,7 +15,7 @@ type UploadFormHandler struct {
 }
 
 func (h *UploadFormHandler) render(v AppVars, w http.ResponseWriter, r *http.Request) error {
-	ctx := getContext(r)
+	ctx := r.Context()
 
 	reportUploadType := shared.ParseReportUploadType(r.PostFormValue("reportUploadType"))
 	uploadDate := r.PostFormValue("uploadDate")

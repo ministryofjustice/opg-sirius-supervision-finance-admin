@@ -14,7 +14,7 @@ type RequestReportHandler struct {
 }
 
 func (h *RequestReportHandler) render(v AppVars, w http.ResponseWriter, r *http.Request) error {
-	ctx := getContext(r)
+	ctx := r.Context()
 	params := r.Form
 
 	var (

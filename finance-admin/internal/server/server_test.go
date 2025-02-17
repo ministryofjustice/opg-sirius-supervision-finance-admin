@@ -1,7 +1,7 @@
 package server
 
 import (
-	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/api"
+	"context"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/shared"
 	"io"
 	"net/http"
@@ -53,18 +53,18 @@ type mockApiClient struct {
 	downloadResponse *http.Response
 }
 
-func (m mockApiClient) Upload(context api.Context, data shared.Upload) error {
+func (m mockApiClient) Upload(ctx context.Context, data shared.Upload) error {
 	return m.error
 }
 
-func (m mockApiClient) RequestReport(context api.Context, data shared.ReportRequest) error {
+func (m mockApiClient) RequestReport(ctx context.Context, data shared.ReportRequest) error {
 	return m.error
 }
 
-func (m mockApiClient) Download(ctx api.Context, uid string) (*http.Response, error) {
+func (m mockApiClient) Download(ctx context.Context, uid string) (*http.Response, error) {
 	return m.downloadResponse, m.error
 }
 
-func (m mockApiClient) CheckDownload(ctx api.Context, uid string) error {
+func (m mockApiClient) CheckDownload(ctx context.Context, uid string) error {
 	return m.error
 }

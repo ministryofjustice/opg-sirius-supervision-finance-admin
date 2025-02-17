@@ -12,7 +12,7 @@ import (
 type ErrorVars struct {
 	Code  int
 	Error string
-	EnvironmentVars
+	Envs
 }
 
 type StatusError int
@@ -27,7 +27,7 @@ func (e StatusError) Code() int {
 	return int(e)
 }
 
-func wrapHandler(errTmpl Template, errPartial string, envVars EnvironmentVars) func(next HtmxHandler) http.Handler {
+func wrapHandler(errTmpl Template, errPartial string, envVars Envs) func(next HtmxHandler) http.Handler {
 	return func(next HtmxHandler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			start := time.Now()
@@ -64,9 +64,9 @@ func wrapHandler(errTmpl Template, errPartial string, envVars EnvironmentVars) f
 				w.Header().Add("HX-Retarget", "#main-container")
 				w.WriteHeader(code)
 				errVars := ErrorVars{
-					Code:            code,
-					Error:           err.Error(),
-					EnvironmentVars: envVars,
+					Code:  code,
+					Error: err.Error(),
+					Envs:  envVars,
 				}
 				if IsHxRequest(r) {
 					err = errTmpl.ExecuteTemplate(w, errPartial, errVars)
