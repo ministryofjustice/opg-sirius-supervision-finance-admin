@@ -6,12 +6,12 @@ services:
     ports:
       - "8888:8888"
     environment:
-      PORT: 8888
       PREFIX: /finance-admin
       SIRIUS_PUBLIC_URL: http://host.docker.internal:3000
       SIRIUS_URL: http://json-server:3000
       BACKEND_URL: http://finance-admin-api:8080
       HUB_URL: http://finance-hub-api:8080
+      JWT_SECRET: mysupersecrettestkeythatis128bits
     healthcheck:
       test: wget -O /dev/null -S 'http://localhost:8888/finance-admin/health-check' 2>&1 | grep 'HTTP/1.1 200 OK' || exit 1
       interval: 15s
@@ -76,11 +76,11 @@ services:
         condition: service_healthy
 
   go-lint:
-    image: golangci/golangci-lint:v1.63.4
+    image: golangci/golangci-lint:v1.64.5
     working_dir: /go/src/app
     volumes:
       - ./:/go/src/app
-      - ./.cache/golangci-lint/v1.53.3:/root/.cache
+      - ./.cache/golangci-lint/v1.64.5:/root/.cache
     command: golangci-lint run -v --timeout 5m
 
   trivy:

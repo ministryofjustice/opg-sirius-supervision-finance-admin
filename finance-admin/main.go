@@ -2,10 +2,11 @@ package main
 
 import (
 	"context"
-	"github.com/ministryofjustice/opg-go-common/env"
+	"errors"
 	"github.com/ministryofjustice/opg-go-common/paginate"
 	"github.com/ministryofjustice/opg-go-common/telemetry"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/api"
+	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/auth"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/server"
 	"html/template"
 	"log/slog"
@@ -17,6 +18,50 @@ import (
 	"time"
 	"unicode"
 )
+
+type Envs struct {
+	webDir          string
+	siriusURL       string
+	siriusPublicURL string
+	backendURL      string
+	hubURL          string
+	prefix          string
+	port            string
+	jwtSecret       string
+}
+
+func parseEnvs() (*Envs, error) {
+	envs := map[string]string{
+		"SIRIUS_URL":        os.Getenv("SIRIUS_URL"),
+		"SIRIUS_PUBLIC_URL": os.Getenv("SIRIUS_PUBLIC_URL"),
+		"PREFIX":            os.Getenv("PREFIX"),
+		"BACKEND_URL":       os.Getenv("BACKEND_URL"),
+		"HUB_URL":           os.Getenv("HUB_URL"),
+		"JWT_SECRET":        os.Getenv("JWT_SECRET"),
+	}
+
+	var missing []error
+	for k, v := range envs {
+		if v == "" {
+			missing = append(missing, errors.New("missing environment variable: "+k))
+		}
+	}
+
+	if len(missing) > 0 {
+		return nil, errors.Join(missing...)
+	}
+
+	return &Envs{
+		siriusURL:       envs["SIRIUS_URL"],
+		siriusPublicURL: envs["SIRIUS_PUBLIC_URL"],
+		prefix:          envs["PREFIX"],
+		backendURL:      envs["BACKEND_URL"],
+		hubURL:          envs["HUB_URL"],
+		jwtSecret:       envs["JWT_SECRET"],
+		webDir:          "web",
+		port:            "8888",
+	}, nil
+}
 
 func main() {
 	ctx := context.Background()
@@ -30,7 +75,7 @@ func main() {
 }
 
 func run(ctx context.Context, logger *slog.Logger) error {
-	exportTraces := env.Get("TRACING_ENABLED", "0") == "1"
+	exportTraces := os.Getenv("TRACING_ENABLED") == "1"
 
 	shutdown, err := telemetry.StartTracerProvider(ctx, logger, exportTraces)
 	defer shutdown()
@@ -38,17 +83,32 @@ func run(ctx context.Context, logger *slog.Logger) error {
 		return err
 	}
 
-	envVars := server.NewEnvironmentVars()
-
-	client, err := api.NewClient(http.DefaultClient, envVars.SiriusURL, envVars.BackendURL, envVars.HubURL)
+	envs, err := parseEnvs()
 	if err != nil {
 		return err
 	}
-	templates := createTemplates(envVars)
+
+	client := api.NewClient(
+		http.DefaultClient,
+		&auth.JWT{
+			Secret: envs.jwtSecret,
+		},
+		api.EnvVars{
+			SiriusURL:  envs.siriusURL,
+			BackendURL: envs.backendURL,
+			HubURL:     envs.hubURL,
+		})
+
+	templates := createTemplates(envs)
 
 	s := &http.Server{
-		Addr:    ":" + envVars.Port,
-		Handler: server.New(logger, client, templates, envVars),
+		Addr: ":" + envs.port,
+		Handler: server.New(logger, client, templates, server.Envs{
+			WebDir:          envs.webDir,
+			SiriusURL:       envs.siriusURL,
+			SiriusPublicURL: envs.siriusPublicURL,
+			Prefix:          envs.prefix,
+		}),
 	}
 
 	go func() {
@@ -58,7 +118,7 @@ func run(ctx context.Context, logger *slog.Logger) error {
 		}
 	}()
 
-	logger.Info("Running at :" + envVars.Port)
+	logger.Info("Running at :" + envs.port)
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
@@ -72,7 +132,7 @@ func run(ctx context.Context, logger *slog.Logger) error {
 	return s.Shutdown(tc)
 }
 
-func createTemplates(envVars server.EnvironmentVars) map[string]*template.Template {
+func createTemplates(envs *Envs) map[string]*template.Template {
 	templates := map[string]*template.Template{}
 	templateFunctions := map[string]interface{}{
 		"contains": func(xs []string, needle string) bool {
@@ -91,14 +151,14 @@ func createTemplates(envVars server.EnvironmentVars) map[string]*template.Templa
 			return string(r)
 		},
 		"prefix": func(s string) string {
-			return envVars.Prefix + s
+			return envs.prefix + s
 		},
 		"sirius": func(s string) string {
-			return envVars.SiriusPublicURL + s
+			return envs.siriusPublicURL + s
 		},
 	}
 
-	templateDirPath := envVars.WebDir + "/template"
+	templateDirPath := envs.webDir + "/template"
 	templateDir, _ := os.Open(templateDirPath)
 	templateDirs, _ := templateDir.Readdir(0)
 	_ = templateDir.Close()
