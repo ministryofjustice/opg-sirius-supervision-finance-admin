@@ -32,11 +32,11 @@
 
                             <div class="hide" id="journal-types-field-input">
                                 <div class="govuk-form-group" id="f-ReportSubType">
-                                    <label class="govuk-label" for="report-journal-type">
+                                    <label class="govuk-label" for="journal-types">
                                         Select a report
                                         <span id="error-message__ReportSubType"></span>
                                     </label>
-                                    <select disabled data-cy="report-journal-type" class="govuk-select" id="report-journal-type" name="reportJournalType">
+                                    <select disabled data-cy="journal-types" class="govuk-select" id="journal-types" name="journalType">
                                         <option value=""></option>
                                         {{ range .ReportJournalTypes }}
                                             <option value="{{ .Key }}" id="{{.Key}}">{{.Translation}}</option>
@@ -47,11 +47,11 @@
 
                             <div class="hide" id="schedule-types-field-input">
                                 <div class="govuk-form-group" id="f-ReportSubType">
-                                    <label class="govuk-label" for="report-schedule-type">
+                                    <label class="govuk-label" for="schedule-types">
                                         Select a report
                                         <span id="error-message__ReportSubType"></span>
                                     </label>
-                                    <select disabled data-cy="report-schedule-type" class="govuk-select" id="report-schedule-type" name="reportScheduleType">
+                                    <select disabled data-cy="schedule-types" class="govuk-select" id="schedule-types" name="scheduleType">
                                         <option value=""></option>
                                         {{ range .ReportScheduleTypes }}
                                             <option value="{{ .Key }}" id="{{.Key}}">{{.Translation}}</option>
@@ -62,13 +62,13 @@
 
                             <div class="hide" id="account-types-field-input">
                                 <div class="govuk-form-group" id="f-ReportSubType">
-                                    <label class="govuk-label" for="report-account-type">
+                                    <label class="govuk-label" for="account-types">
                                         Select a report
                                         <span id="error-message__ReportSubType"></span>
                                     </label>
-                                    <select disabled class="govuk-select" id="report-account-type" name="reportAccountType">
+                                    <select disabled class="govuk-select" id="account-types" name="accountsReceivableType">
                                         <option value=""></option>
-                                        {{ range .ReportAccountTypes }}
+                                        {{ range .ReportAccountsReceivableTypes }}
                                             <option value="{{ .Key }}" id="{{.Key}}">{{.Translation}}</option>
                                         {{end}}
                                     </select>
@@ -77,11 +77,11 @@
 
                             <div class="hide" id="debt-types-field-input">
                                 <div class="govuk-form-group" id="f-ReportSubType">
-                                    <label class="govuk-label" for="report-debt-type">
+                                    <label class="govuk-label" for="debt-types">
                                         Select a report
                                         <span id="error-message__ReportSubType"></span>
                                     </label>
-                                    <select disabled class="govuk-select" id="report-debt-type" name="reportDebtType">
+                                    <select disabled class="govuk-select" id="debt-types" name="debtType">
                                         <option value=""></option>
                                         {{ range .ReportDebtTypes }}
                                             <option value="{{ .Key }}" id="{{.Key}}">{{.Translation}}</option>
@@ -92,44 +92,44 @@
 
                             <div class="hide govuk-!-margin-top-5" id="date-field-input">
                                 <div class="govuk-form-group" id="f-Date">
-                                    <label class="govuk-label" for="date-field">
+                                    <label class="govuk-label" for="date">
                                         Date
                                         <span id="error-message__Date"></span>
                                     </label>
-                                    <input disabled class="govuk-input govuk-input--width-10" id="date-field" name="dateOfTransaction" type="date">
+                                    <input disabled class="govuk-input govuk-input--width-10" id="date" name="transactionDate" type="date">
                                 </div>
                             </div>
 
                             <div class="hide govuk-!-margin-top-5" id="date-from-field-input">
                                 <div class="govuk-form-group" id="f-FromDate">
-                                    <label class="govuk-label" for="date-from-field">
+                                    <label class="govuk-label" for="date-from">
                                         Date from
                                         <span id="error-message__FromDate"></span>
                                     </label>
-                                    <input disabled class="govuk-input govuk-input--width-10" id="date-from-field" name="dateFrom" type="date">
+                                    <input disabled class="govuk-input govuk-input--width-10" id="date-from" name="dateFrom" type="date">
                                 </div>
                             </div>
 
                             <div class="hide govuk-!-margin-top-5" id="date-to-field-input">
                                 <div class="govuk-form-group" id="f-ToDate">
-                                    <label class="govuk-label" for="date-to-field">
+                                    <label class="govuk-label" for="date-to">
                                         Date to
                                         <span id="error-message__ToDate"></span>
                                     </label>
-                                    <input disabled class="govuk-input govuk-input--width-10" id="date-to-field" name="dateTo" type="date">
+                                    <input disabled class="govuk-input govuk-input--width-10" id="date-to" name="dateTo" type="date">
                                 </div>
                             </div>
 
                             <div class="hide govuk-!-margin-top-5" id="email-field-input">
                                 <div class="govuk-form-group" id="f-Email">
-                                    <label class="govuk-label" for="email-field">
+                                    <label class="govuk-label" for="email">
                                         Email address
                                         <span id="error-message__Email"></span>
                                     </label>
                                     <div id="email-hint" class="govuk-hint">
                                         We’ll only use this to send you the finished report
                                     </div>
-                                    <input disabled class="govuk-input" id="email-field" name="email" type="email" spellcheck="false" aria-describedby="email-hint" autocomplete="email">
+                                    <input disabled class="govuk-input" id="email" name="email" type="email" spellcheck="false" aria-describedby="email-hint" autocomplete="email">
                                 </div>
                             </div>
 
