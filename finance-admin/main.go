@@ -38,6 +38,7 @@ func parseEnvs() (*Envs, error) {
 		"BACKEND_URL":       os.Getenv("BACKEND_URL"),
 		"HUB_URL":           os.Getenv("HUB_URL"),
 		"JWT_SECRET":        os.Getenv("JWT_SECRET"),
+		"PORT":              os.Getenv("PORT"),
 	}
 
 	var missing []error
@@ -59,7 +60,7 @@ func parseEnvs() (*Envs, error) {
 		hubURL:          envs["HUB_URL"],
 		jwtSecret:       envs["JWT_SECRET"],
 		webDir:          "web",
-		port:            "8888",
+		port:            envs["PORT"],
 	}, nil
 }
 
