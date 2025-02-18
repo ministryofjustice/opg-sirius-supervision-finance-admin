@@ -6,6 +6,7 @@ services:
     ports:
       - "8888:8888"
     environment:
+      PORT: 8888
       PREFIX: /finance-admin
       SIRIUS_PUBLIC_URL: http://host.docker.internal:3000
       SIRIUS_URL: http://json-server:3000
