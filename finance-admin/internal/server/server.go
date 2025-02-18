@@ -1,27 +1,31 @@
 package server
 
 import (
+	"context"
 	"github.com/ministryofjustice/opg-go-common/securityheaders"
 	"github.com/ministryofjustice/opg-go-common/telemetry"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/api"
+	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/auth"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/shared"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"html/template"
 	"io"
 	"log/slog"
 	"net/http"
-	"net/url"
 )
 
-type ApiClient interface {
-	RequestReport(api.Context, shared.ReportRequest) error
-	Upload(api.Context, shared.Upload) error
-	CheckDownload(api.Context, string) error
-	Download(api.Context, string) (*http.Response, error)
+type Envs struct {
+	WebDir          string
+	SiriusURL       string
+	SiriusPublicURL string
+	Prefix          string
 }
 
-type AuthClient interface {
-	CheckUserSession(ctx api.Context) (bool, error)
+type ApiClient interface {
+	RequestReport(context.Context, shared.ReportRequest) error
+	Upload(context.Context, shared.Upload) error
+	CheckDownload(context.Context, string) error
+	Download(context.Context, string) (*http.Response, error)
 }
 
 type router interface {
@@ -38,16 +42,20 @@ type HtmxHandler interface {
 	render(app AppVars, w http.ResponseWriter, r *http.Request) error
 }
 
-func New(logger *slog.Logger, client *api.Client, templates map[string]*template.Template, envVars EnvironmentVars) http.Handler {
+func New(logger *slog.Logger, client *api.Client, templates map[string]*template.Template, envVars Envs) http.Handler {
 	mux := http.NewServeMux()
-	auth := Authenticator{
-		Client:  client,
-		EnvVars: envVars,
+
+	authenticator := auth.Auth{
+		Client: client,
+		EnvVars: auth.EnvVars{
+			SiriusPublicURL: envVars.SiriusPublicURL,
+			Prefix:          envVars.Prefix,
+		},
 	}
 
 	handleMux := func(pattern string, h HtmxHandler) {
 		errors := wrapHandler(templates["error.gotmpl"], "main", envVars)
-		mux.Handle(pattern, telemetry.Middleware(logger)(auth.Authenticate(errors(h))))
+		mux.Handle(pattern, telemetry.Middleware(logger)(authenticator.Authenticate(errors(h))))
 	}
 
 	// tabs
@@ -63,7 +71,7 @@ func New(logger *slog.Logger, client *api.Client, templates map[string]*template
 	handleMux("GET /download", &GetDownloadHandler{&route{client: client, tmpl: templates["download-button.gotmpl"], partial: "download"}})
 
 	downloadMux := func(pattern string, h http.Handler) {
-		mux.Handle(pattern, telemetry.Middleware(logger)(auth.Authenticate(h)))
+		mux.Handle(pattern, telemetry.Middleware(logger)(authenticator.Authenticate(h)))
 	}
 
 	downloadMux("GET /download/callback", downloadCallback(client))
@@ -76,22 +84,4 @@ func New(logger *slog.Logger, client *api.Client, templates map[string]*template
 	mux.Handle("/stylesheets/", static)
 
 	return otelhttp.NewHandler(http.StripPrefix(envVars.Prefix, securityheaders.Use(mux)), "supervision-finance-admin")
-}
-
-func getContext(r *http.Request) api.Context {
-	token := ""
-
-	if r.Method == http.MethodGet {
-		if cookie, err := r.Cookie("XSRF-TOKEN"); err == nil {
-			token, _ = url.QueryUnescape(cookie.Value)
-		}
-	} else {
-		token = r.FormValue("xsrfToken")
-	}
-
-	return api.Context{
-		Context:   r.Context(),
-		Cookies:   r.Cookies(),
-		XSRFToken: token,
-	}
 }

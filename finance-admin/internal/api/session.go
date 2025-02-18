@@ -1,13 +1,34 @@
 package api
 
 import (
+	"context"
+	"encoding/json"
+	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/shared"
 	"net/http"
 )
 
-func (c *Client) CheckUserSession(ctx Context) (bool, error) {
-	req, _ := c.newSessionRequest(ctx)
+func (c *Client) GetUserSession(ctx context.Context) (*shared.User, error) {
+	req, err := c.newSessionRequest(ctx)
+	if err != nil {
+		return nil, err
+	}
 
-	res, err := c.http.Do(req)
+	resp, err := c.http.Do(req)
+	if err != nil {
+		return nil, err
+	}
 
-	return err == nil && res.StatusCode == http.StatusOK, err
+	defer resp.Body.Close()
+
+	if resp.StatusCode == http.StatusUnauthorized {
+		return nil, ErrUnauthorized
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, newStatusError(resp)
+	}
+
+	var v shared.User
+	err = json.NewDecoder(resp.Body).Decode(&v)
+	return &v, err
 }
