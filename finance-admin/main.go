@@ -14,7 +14,6 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
-	"strconv"
 	"syscall"
 	"time"
 	"unicode"
@@ -29,7 +28,6 @@ type Envs struct {
 	prefix          string
 	port            string
 	jwtSecret       string
-	jwtExpiry       int
 }
 
 func parseEnvs() (*Envs, error) {
@@ -40,7 +38,6 @@ func parseEnvs() (*Envs, error) {
 		"BACKEND_URL":       os.Getenv("BACKEND_URL"),
 		"HUB_URL":           os.Getenv("HUB_URL"),
 		"JWT_SECRET":        os.Getenv("JWT_SECRET"),
-		"JWT_EXPIRY":        os.Getenv("JWT_EXPIRY"),
 	}
 
 	var missing []error
@@ -48,11 +45,6 @@ func parseEnvs() (*Envs, error) {
 		if v == "" {
 			missing = append(missing, errors.New("missing environment variable: "+k))
 		}
-	}
-
-	jwtExpiry, err := strconv.Atoi(envs["JWT_EXPIRY"])
-	if err != nil {
-		missing = append(missing, errors.New("invalid JWT_EXPIRY"))
 	}
 
 	if len(missing) > 0 {
@@ -66,7 +58,6 @@ func parseEnvs() (*Envs, error) {
 		backendURL:      envs["BACKEND_URL"],
 		hubURL:          envs["HUB_URL"],
 		jwtSecret:       envs["JWT_SECRET"],
-		jwtExpiry:       jwtExpiry,
 		webDir:          "web",
 		port:            "8888",
 	}, nil
@@ -101,7 +92,6 @@ func run(ctx context.Context, logger *slog.Logger) error {
 		http.DefaultClient,
 		&auth.JWT{
 			Secret: envs.jwtSecret,
-			Expiry: envs.jwtExpiry,
 		},
 		api.EnvVars{
 			SiriusURL:  envs.siriusURL,
