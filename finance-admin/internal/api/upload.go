@@ -2,13 +2,14 @@ package api
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/model"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/shared"
 	"net/http"
 )
 
-func (c *Client) Upload(ctx Context, data shared.Upload) error {
+func (c *Client) Upload(ctx context.Context, data shared.Upload) error {
 	var body bytes.Buffer
 
 	err := json.NewEncoder(&body).Encode(data)
