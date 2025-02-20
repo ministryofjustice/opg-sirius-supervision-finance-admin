@@ -10,7 +10,8 @@ import (
 
 func TestDownload(t *testing.T) {
 	mockClient := &MockClient{}
-	client, _ := NewClient(mockClient, "http://localhost:3000", "", "")
+	mockJwtClient := &mockJWTClient{}
+	client := NewClient(mockClient, mockJwtClient, EnvVars{"http://localhost:3000", "", ""})
 	fileContent := []byte("file content")
 
 	GetDoFunc = func(*http.Request) (*http.Response, error) {
@@ -20,7 +21,7 @@ func TestDownload(t *testing.T) {
 		}, nil
 	}
 
-	resp, err := client.Download(getContext(nil), "dGVzdC5jc3Y=")
+	resp, err := client.Download(testContext(), "dGVzdC5jc3Y=")
 	assert.NoError(t, err)
 
 	actual, _ := io.ReadAll(io.NopCloser(resp.Body))

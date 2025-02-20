@@ -14,19 +14,18 @@ type RequestReportHandler struct {
 }
 
 func (h *RequestReportHandler) render(v AppVars, w http.ResponseWriter, r *http.Request) error {
-	ctx := getContext(r)
-	params := r.Form
+	ctx := r.Context()
 
 	var (
-		reportType             = params.Get("reportType")
-		journalType            = params.Get("journalType")
-		scheduleType           = params.Get("scheduleType")
-		accountsReceivableType = params.Get("accountsReceivableType")
-		debtType               = params.Get("debtType")
-		transactionDate        = params.Get("transactionDate")
-		dateFrom               = params.Get("dateFrom")
-		dateTo                 = params.Get("dateTo")
-		email                  = params.Get("email")
+		reportType             = r.PostFormValue("reportType")
+		journalType            = r.PostFormValue("journalType")
+		scheduleType           = r.PostFormValue("scheduleType")
+		accountsReceivableType = r.PostFormValue("accountsReceivableType")
+		debtType               = r.PostFormValue("debtType")
+		transactionDate        = r.PostFormValue("transactionDate")
+		dateFrom               = r.PostFormValue("dateFrom")
+		dateTo                 = r.PostFormValue("dateTo")
+		email                  = r.PostFormValue("email")
 	)
 
 	data := shared.NewReportRequest(reportType, journalType, scheduleType, accountsReceivableType, debtType, transactionDate, dateTo, dateFrom, email)
