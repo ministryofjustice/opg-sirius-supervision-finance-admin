@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/ministryofjustice/opg-go-common/telemetry"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/api"
+	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/auth"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
@@ -41,11 +42,11 @@ func (m *mockRenderer) render(app AppVars, w http.ResponseWriter, r *http.Reques
 
 func Test_wrapHandler_successful_request(t *testing.T) {
 	w := httptest.NewRecorder()
-	ctx := telemetry.ContextWithLogger(context.Background(), telemetry.NewLogger("opg-sirius-finance-admin"))
+	ctx := auth.Context{XSRFToken: "abc123", Context: telemetry.ContextWithLogger(context.Background(), telemetry.NewLogger("opg-sirius-finance-admin"))}
 	r, _ := http.NewRequestWithContext(ctx, http.MethodGet, "test-url/1", nil)
 
 	errorTemplate := &mockTemplate{}
-	envVars := EnvironmentVars{}
+	envVars := Envs{}
 	nextHandlerFunc := wrapHandler(errorTemplate, "", envVars)
 	next := &mockRenderer{}
 	httpHandler := nextHandlerFunc(next)
@@ -79,11 +80,11 @@ func Test_wrapHandler_status_error_handling(t *testing.T) {
 	for i, test := range tests {
 		t.Run("Scenario "+strconv.Itoa(i), func(t *testing.T) {
 			w := httptest.NewRecorder()
-			ctx := telemetry.ContextWithLogger(context.Background(), telemetry.NewLogger("opg-sirius-finance-admin"))
+			ctx := auth.Context{XSRFToken: "abc123", Context: telemetry.ContextWithLogger(context.Background(), telemetry.NewLogger("opg-sirius-finance-admin"))}
 			r, _ := http.NewRequestWithContext(ctx, http.MethodGet, "test-url/1", nil)
 
 			errorTemplate := &mockTemplate{error: errors.New("some template error")}
-			envVars := EnvironmentVars{}
+			envVars := Envs{}
 			nextHandlerFunc := wrapHandler(errorTemplate, "", envVars)
 			next := &mockRenderer{Err: test.error}
 			httpHandler := nextHandlerFunc(next)

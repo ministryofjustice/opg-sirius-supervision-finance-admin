@@ -14,7 +14,8 @@ import (
 
 func TestRequestReport(t *testing.T) {
 	mockClient := &MockClient{}
-	client, _ := NewClient(mockClient, "http://localhost:3000", "", "")
+	mockJwtClient := &mockJWTClient{}
+	client := NewClient(mockClient, mockJwtClient, EnvVars{"http://localhost:3000", "", ""})
 	dateOfTransaction := shared.NewDate("2024-05-11")
 	dateTo := shared.NewDate("2025-06-15")
 	dateFrom := shared.NewDate("2022-07-21")
@@ -38,13 +39,14 @@ func TestRequestReport(t *testing.T) {
 		}, nil
 	}
 
-	err := client.RequestReport(getContext(nil), data)
+	err := client.RequestReport(testContext(), data)
 	assert.NoError(t, err)
 }
 
 func TestRequestReportUnauthorised(t *testing.T) {
 	mockClient := &MockClient{}
-	client, _ := NewClient(mockClient, "http://localhost:3000", "", "")
+	mockJwtClient := &mockJWTClient{}
+	client := NewClient(mockClient, mockJwtClient, EnvVars{"http://localhost:3000", "", ""})
 
 	GetDoFunc = func(*http.Request) (*http.Response, error) {
 		return &http.Response{
@@ -53,14 +55,15 @@ func TestRequestReportUnauthorised(t *testing.T) {
 		}, nil
 	}
 
-	err := client.RequestReport(getContext(nil), shared.ReportRequest{})
+	err := client.RequestReport(testContext(), shared.ReportRequest{})
 
 	assert.Equal(t, ErrUnauthorized.Error(), err.Error())
 }
 
 func TestRequestReportReturnsBadRequestError(t *testing.T) {
 	mockClient := &MockClient{}
-	client, _ := NewClient(mockClient, "http://localhost:3000", "", "")
+	mockJwtClient := &mockJWTClient{}
+	client := NewClient(mockClient, mockJwtClient, EnvVars{"http://localhost:3000", "", ""})
 
 	json := `{"reasons":["StartDate","EndDate"]}`
 
@@ -73,7 +76,7 @@ func TestRequestReportReturnsBadRequestError(t *testing.T) {
 		}, nil
 	}
 
-	err := client.RequestReport(getContext(nil), shared.ReportRequest{})
+	err := client.RequestReport(testContext(), shared.ReportRequest{})
 
 	expectedError := model.ValidationError{Message: "", Errors: model.ValidationErrors{"EndDate": map[string]string{"EndDate": "EndDate"}, "StartDate": map[string]string{"StartDate": "StartDate"}}}
 	assert.Equal(t, expectedError, err)
@@ -95,9 +98,10 @@ func TestRequestReportReturnsValidationError(t *testing.T) {
 	}))
 	defer svr.Close()
 
-	client, _ := NewClient(http.DefaultClient, svr.URL, svr.URL, svr.URL)
+	mockJwtClient := &mockJWTClient{}
+	client := NewClient(http.DefaultClient, mockJwtClient, EnvVars{svr.URL, svr.URL, svr.URL})
 
-	err := client.RequestReport(getContext(nil), shared.ReportRequest{})
+	err := client.RequestReport(testContext(), shared.ReportRequest{})
 	expectedError := model.ValidationError{Message: "", Errors: model.ValidationErrors{"ReportType": map[string]string{"required": "Please select a report type"}}}
 	assert.Equal(t, expectedError, err.(model.ValidationError))
 }

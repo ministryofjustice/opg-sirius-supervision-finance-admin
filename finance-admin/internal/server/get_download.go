@@ -24,7 +24,7 @@ type GetDownloadHandler struct {
 }
 
 func (h *GetDownloadHandler) render(v AppVars, w http.ResponseWriter, r *http.Request) error {
-	ctx := getContext(r)
+	ctx := r.Context()
 	uid := r.URL.Query().Get("uid")
 
 	var downloadRequest shared.DownloadRequest

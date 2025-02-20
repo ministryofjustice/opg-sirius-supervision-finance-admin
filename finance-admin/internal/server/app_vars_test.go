@@ -1,6 +1,7 @@
 package server
 
 import (
+	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/auth"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"testing"
@@ -8,9 +9,8 @@ import (
 
 func TestNewAppVars(t *testing.T) {
 	r, _ := http.NewRequest("GET", "/path", nil)
-	r.AddCookie(&http.Cookie{Name: "XSRF-TOKEN", Value: "abc123"})
-
-	envVars := EnvironmentVars{}
+	r = r.WithContext(auth.Context{XSRFToken: "abc123"})
+	envVars := Envs{}
 	vars := NewAppVars(r, envVars)
 
 	assert.Equal(t, AppVars{
