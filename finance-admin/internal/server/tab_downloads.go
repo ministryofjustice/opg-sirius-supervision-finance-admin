@@ -1,6 +1,7 @@
 package server
 
 import (
+	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/auth"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/shared"
 	"net/http"
 )
@@ -19,8 +20,18 @@ type DownloadsTabHandler struct {
 }
 
 func (h *DownloadsTabHandler) render(v AppVars, w http.ResponseWriter, r *http.Request) error {
+	var reportsTypes []shared.ReportsType
+
+	user := r.Context().(auth.Context).User
+	if user.IsCorporateFinance() {
+		reportsTypes = shared.PaymentReportsTypes
+	}
+	if user.IsFinanceReporting() {
+		reportsTypes = shared.ReportsTypes
+	}
+
 	data := GetDownloadsVars{
-		shared.ReportsTypes,
+		reportsTypes,
 		shared.JournalTypes,
 		shared.ScheduleTypes,
 		shared.DebtTypes,
