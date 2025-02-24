@@ -14,7 +14,8 @@ import (
 
 func TestUploadUrlSwitching(t *testing.T) {
 	mockClient := &MockClient{}
-	client, _ := NewClient(mockClient, "http://localhost:3000", "", "")
+	mockJwtClient := &mockJWTClient{}
+	client := NewClient(mockClient, mockJwtClient, EnvVars{"http://localhost:3000", "", ""})
 
 	data := shared.Upload{
 		ReportUploadType: shared.ParseReportUploadType("reportUploadType"),
@@ -30,7 +31,7 @@ func TestUploadUrlSwitching(t *testing.T) {
 		}, nil
 	}
 
-	err := client.Upload(getContext(nil), data)
+	err := client.Upload(testContext(), data)
 	assert.NoError(t, err)
 }
 
@@ -40,9 +41,10 @@ func TestSubmitUploadUnauthorised(t *testing.T) {
 	}))
 	defer svr.Close()
 
-	client, _ := NewClient(http.DefaultClient, svr.URL, svr.URL, "")
+	mockJwtClient := &mockJWTClient{}
+	client := NewClient(http.DefaultClient, mockJwtClient, EnvVars{svr.URL, svr.URL, svr.URL})
 
-	err := client.Upload(getContext(nil), shared.Upload{})
+	err := client.Upload(testContext(), shared.Upload{})
 
 	assert.Equal(t, ErrUnauthorized.Error(), err.Error())
 }
@@ -53,9 +55,10 @@ func TestSubmitUploadReturns500Error(t *testing.T) {
 	}))
 	defer svr.Close()
 
-	client, _ := NewClient(http.DefaultClient, svr.URL, svr.URL, "")
+	mockJwtClient := &mockJWTClient{}
+	client := NewClient(http.DefaultClient, mockJwtClient, EnvVars{svr.URL, svr.URL, svr.URL})
 
-	err := client.Upload(getContext(nil), shared.Upload{})
+	err := client.Upload(testContext(), shared.Upload{})
 
 	assert.Equal(t, StatusError{
 		Code:   http.StatusInternalServerError,
@@ -66,7 +69,8 @@ func TestSubmitUploadReturns500Error(t *testing.T) {
 
 func TestSubmitUploadReturnsBadRequestError(t *testing.T) {
 	mockClient := &MockClient{}
-	client, _ := NewClient(mockClient, "http://localhost:3000", "", "")
+	mockJwtClient := &mockJWTClient{}
+	client := NewClient(mockClient, mockJwtClient, EnvVars{"http://localhost:3000", "", ""})
 
 	json := `
 		{"reasons":["StartDate","EndDate"]}
@@ -81,7 +85,7 @@ func TestSubmitUploadReturnsBadRequestError(t *testing.T) {
 		}, nil
 	}
 
-	err := client.Upload(getContext(nil), shared.Upload{})
+	err := client.Upload(testContext(), shared.Upload{})
 
 	expectedError := model.ValidationError{Message: "", Errors: model.ValidationErrors{"EndDate": map[string]string{"EndDate": "EndDate"}, "StartDate": map[string]string{"StartDate": "StartDate"}}}
 	assert.Equal(t, expectedError, err)
@@ -103,9 +107,10 @@ func TestSubmitUploadReturnsValidationError(t *testing.T) {
 	}))
 	defer svr.Close()
 
-	client, _ := NewClient(http.DefaultClient, svr.URL, svr.URL, "")
+	mockJwtClient := &mockJWTClient{}
+	client := NewClient(http.DefaultClient, mockJwtClient, EnvVars{svr.URL, svr.URL, svr.URL})
 
-	err := client.Upload(getContext(nil), shared.Upload{})
+	err := client.Upload(testContext(), shared.Upload{})
 	expectedError := model.ValidationError{Message: "", Errors: model.ValidationErrors{"ReportUploadType": map[string]string{"required": "Please select a report type"}}}
 	assert.Equal(t, expectedError, err.(model.ValidationError))
 }

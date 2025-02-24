@@ -1,32 +1,61 @@
 package api
 
 import (
+	"bytes"
+	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/shared"
 	"github.com/stretchr/testify/assert"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 )
 
-func TestClient_CheckUserSession(t *testing.T) {
+func TestClient_GetUserSession(t *testing.T) {
+	mockClient := &MockClient{}
+	mockJwtClient := &mockJWTClient{}
+	client := NewClient(mockClient, mockJwtClient, EnvVars{"http://localhost:3000", "", ""})
+
+	json := `{
+            "id": 1,
+            "displayName": "Ian Test",
+            "roles": ["role1","role2"]
+        }`
+
+	r := io.NopCloser(bytes.NewReader([]byte(json)))
+
+	GetDoFunc = func(*http.Request) (*http.Response, error) {
+		return &http.Response{
+			StatusCode: 200,
+			Body:       r,
+		}, nil
+	}
+
+	expected := shared.User{
+		ID:          1,
+		DisplayName: "Ian Test",
+		Roles:       []string{"role1", "role2"},
+	}
+
+	user, err := client.GetUserSession(testContext())
+	assert.Equal(t, &expected, user)
+	assert.Equal(t, nil, err)
+}
+
+func TestClient_GetUserSession_Errors(t *testing.T) {
 	tests := []struct {
 		name   string
 		status int
-		want   bool
+		want   *shared.User
 	}{
-		{
-			name:   "valid session",
-			status: http.StatusOK,
-			want:   true,
-		},
 		{
 			name:   "unauthorised",
 			status: http.StatusUnauthorized,
-			want:   false,
+			want:   nil,
 		},
 		{
 			name:   "server error",
 			status: http.StatusInternalServerError,
-			want:   false,
+			want:   nil,
 		},
 	}
 	for _, tt := range tests {
@@ -36,10 +65,11 @@ func TestClient_CheckUserSession(t *testing.T) {
 			}))
 			defer svr.Close()
 
-			client, _ := NewClient(http.DefaultClient, svr.URL, "", "")
+			mockJwtClient := &mockJWTClient{}
+			client := NewClient(http.DefaultClient, mockJwtClient, EnvVars{svr.URL, svr.URL, svr.URL})
 
-			got, _ := client.CheckUserSession(getContext(nil))
-			assert.Equalf(t, tt.want, got, "CheckUserSession()")
+			got, _ := client.GetUserSession(testContext())
+			assert.Equalf(t, tt.want, got, "GetUserSession()")
 		})
 	}
 }

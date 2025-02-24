@@ -8,7 +8,7 @@ import (
 
 func downloadCallback(client ApiClient) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx := getContext(r)
+		ctx := r.Context()
 		uid := r.URL.Query().Get("uid")
 		resp, err := client.Download(ctx, uid)
 		if err != nil {
