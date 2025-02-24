@@ -9,6 +9,11 @@ var ReportsTypes = []ReportsType{
 	ReportsTypeDebt,
 }
 
+var PaymentReportsTypes = []ReportsType{
+	ReportsTypeSchedule,
+	ReportsTypeJournal,
+}
+
 type ReportsType int
 
 const (
