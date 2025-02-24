@@ -1,12 +1,13 @@
 package api
 
 import (
+	"context"
 	"fmt"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/apierror"
 	"net/http"
 )
 
-func (c *Client) CheckDownload(ctx Context, uid string) error {
+func (c *Client) CheckDownload(ctx context.Context, uid string) error {
 	req, err := c.newHubRequest(ctx, http.MethodHead, fmt.Sprintf("/download?uid=%s", uid), nil)
 
 	if err != nil {

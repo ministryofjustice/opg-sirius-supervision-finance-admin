@@ -16,9 +16,6 @@ type UploadFormHandler struct {
 }
 
 func (h *UploadFormHandler) render(v AppVars, w http.ResponseWriter, r *http.Request) error {
-	var err error
-	ctx := getContext(r)
-
 	pisNumber := 0
 	reportUploadType := shared.ParseReportUploadType(r.PostFormValue("reportUploadType"))
 
