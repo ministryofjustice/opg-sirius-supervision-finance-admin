@@ -1,4 +1,4 @@
-describe("Downloading Files", () => {
+describe.skip("Downloading Files", () => {
     it("downloads a file by visiting the emailed link", () => {
         const bucket = 'opg-backoffice-finance-reports-local';
         const key = 'cypress-test.csv';

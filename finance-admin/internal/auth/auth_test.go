@@ -1,10 +1,10 @@
-package server
+package auth
 
 import (
 	"context"
 	"errors"
 	"github.com/ministryofjustice/opg-go-common/telemetry"
-	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/api"
+	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/shared"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
@@ -24,26 +24,31 @@ func (m *mockHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 type mockAuthClient struct {
-	validSession bool
-	error        error
-	called       bool
+	User   *shared.User
+	error  error
+	called bool
 }
 
-func (m *mockAuthClient) CheckUserSession(ctx api.Context) (bool, error) {
+func (m *mockAuthClient) GetUserSession(ctx context.Context) (*shared.User, error) {
 	m.called = true
-	return m.validSession, m.error
+	return m.User, m.error
 }
 
 func Test_authenticate_success(t *testing.T) {
 	w := httptest.NewRecorder()
 	ctx := telemetry.ContextWithLogger(context.Background(), telemetry.NewLogger("test"))
 	r, _ := http.NewRequestWithContext(ctx, http.MethodGet, "test-url/1?q=abc", nil)
+	r.AddCookie(&http.Cookie{Name: "XSRF-TOKEN", Value: "abcde"})
+	r.AddCookie(&http.Cookie{Name: "session", Value: "12345"})
 
-	client := &mockAuthClient{validSession: true}
+	user := &shared.User{
+		ID: 1,
+	}
+	client := &mockAuthClient{User: user}
 
-	auth := Authenticator{
+	auth := Auth{
 		Client: client,
-		EnvVars: EnvironmentVars{
+		EnvVars: EnvVars{
 			SiriusPublicURL: "https://sirius.gov.uk",
 		},
 	}
@@ -52,9 +57,13 @@ func Test_authenticate_success(t *testing.T) {
 
 	assert.Equal(t, true, client.called)
 	assert.Equal(t, w, next.w)
-	assert.Equal(t, r, next.r)
 	assert.Equal(t, true, next.called)
 	assert.Equal(t, 200, w.Result().StatusCode)
+
+	rCtx := next.r.Context().(Context)
+	assert.Equal(t, "12345", rCtx.Cookies[1].Value)
+	assert.Equal(t, "abcde", rCtx.XSRFToken)
+	assert.Equal(t, user, rCtx.user)
 }
 
 func Test_authenticate_unauthorised(t *testing.T) {
@@ -62,11 +71,11 @@ func Test_authenticate_unauthorised(t *testing.T) {
 	ctx := telemetry.ContextWithLogger(context.Background(), telemetry.NewLogger("test"))
 	r, _ := http.NewRequestWithContext(ctx, http.MethodGet, "test-url/1?q=abc", nil)
 
-	client := &mockAuthClient{validSession: false}
+	client := &mockAuthClient{}
 
-	auth := Authenticator{
+	auth := Auth{
 		Client: client,
-		EnvVars: EnvironmentVars{
+		EnvVars: EnvVars{
 			SiriusPublicURL: "https://sirius.gov.uk",
 			Prefix:          "finance-admin/",
 		},
@@ -85,11 +94,11 @@ func Test_authenticate_error(t *testing.T) {
 	ctx := telemetry.ContextWithLogger(context.Background(), telemetry.NewLogger("test"))
 	r, _ := http.NewRequestWithContext(ctx, http.MethodGet, "test-url/1?q=abc", nil)
 
-	client := &mockAuthClient{validSession: false, error: errors.New("something went wrong")}
+	client := &mockAuthClient{error: errors.New("something went wrong")}
 
-	auth := Authenticator{
+	auth := Auth{
 		Client: client,
-		EnvVars: EnvironmentVars{
+		EnvVars: EnvVars{
 			SiriusPublicURL: "https://sirius.gov.uk",
 			Prefix:          "finance-admin/",
 		},
