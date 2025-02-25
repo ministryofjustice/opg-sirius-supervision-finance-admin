@@ -1,16 +1,16 @@
 package server
 
 import (
+	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/auth"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/model"
 	"net/http"
-	"net/url"
 )
 
 type AppVars struct {
 	Path             string
 	XSRFToken        string
 	Tabs             []Tab
-	EnvironmentVars  EnvironmentVars
+	EnvironmentVars  Envs
 	ValidationErrors model.ValidationErrors
 	Error            string
 }
@@ -25,7 +25,7 @@ func (t Tab) Path() string {
 	return "/" + t.Id
 }
 
-func NewAppVars(r *http.Request, envVars EnvironmentVars) AppVars {
+func NewAppVars(r *http.Request, envVars Envs) AppVars {
 	tabs := []Tab{
 		{
 			Id:    "downloads",
@@ -41,18 +41,9 @@ func NewAppVars(r *http.Request, envVars EnvironmentVars) AppVars {
 		},
 	}
 
-	var token string
-	if r.Method == http.MethodGet {
-		if cookie, err := r.Cookie("XSRF-TOKEN"); err == nil {
-			token, _ = url.QueryUnescape(cookie.Value)
-		}
-	} else {
-		token = r.FormValue("xsrfToken")
-	}
-
 	vars := AppVars{
 		Path:            r.URL.Path,
-		XSRFToken:       token,
+		XSRFToken:       r.Context().(auth.Context).XSRFToken,
 		EnvironmentVars: envVars,
 		Tabs:            tabs,
 	}
