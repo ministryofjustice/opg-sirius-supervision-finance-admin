@@ -6,6 +6,7 @@ import (
 	"github.com/ministryofjustice/opg-go-common/telemetry"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/api"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/auth"
+	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/shared"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
@@ -42,7 +43,14 @@ func (m *mockRenderer) render(app AppVars, w http.ResponseWriter, r *http.Reques
 
 func Test_wrapHandler_successful_request(t *testing.T) {
 	w := httptest.NewRecorder()
-	ctx := auth.Context{XSRFToken: "abc123", Context: telemetry.ContextWithLogger(context.Background(), telemetry.NewLogger("opg-sirius-finance-admin"))}
+	ctx := auth.Context{
+		XSRFToken: "abc123",
+		User: &shared.User{
+			ID:    1,
+			Roles: []string{"Finance Reporting"},
+		},
+		Context: telemetry.ContextWithLogger(context.Background(), telemetry.NewLogger("opg-sirius-finance-admin")),
+	}
 	r, _ := http.NewRequestWithContext(ctx, http.MethodGet, "test-url/1", nil)
 
 	errorTemplate := &mockTemplate{}
@@ -58,6 +66,32 @@ func Test_wrapHandler_successful_request(t *testing.T) {
 	assert.Equal(t, 1, next.Called)
 	assert.Equal(t, "test-url/1", next.app.Path)
 	assert.Equal(t, 200, w.Result().StatusCode)
+}
+
+func Test_wrapHandler_unauthorised_role(t *testing.T) {
+	w := httptest.NewRecorder()
+	ctx := auth.Context{
+		XSRFToken: "abc123",
+		User: &shared.User{
+			ID:    1,
+			Roles: []string{"Wrong Role"},
+		},
+		Context: telemetry.ContextWithLogger(context.Background(), telemetry.NewLogger("opg-sirius-finance-admin")),
+	}
+	r, _ := http.NewRequestWithContext(ctx, http.MethodGet, "test-url/1", nil)
+
+	errorTemplate := &mockTemplate{}
+	envVars := Envs{}
+	nextHandlerFunc := wrapHandler(errorTemplate, "", envVars)
+	next := &mockRenderer{}
+	httpHandler := nextHandlerFunc(next)
+	httpHandler.ServeHTTP(w, r)
+
+	assert.Nil(t, next.Err)
+	assert.Equal(t, 0, next.Called)
+	assert.True(t, errorTemplate.executed)
+	assert.Equal(t, 403, errorTemplate.lastVars.(ErrorVars).Code)
+	assert.Equal(t, 403, w.Result().StatusCode)
 }
 
 func Test_wrapHandler_status_error_handling(t *testing.T) {
@@ -80,7 +114,14 @@ func Test_wrapHandler_status_error_handling(t *testing.T) {
 	for i, test := range tests {
 		t.Run("Scenario "+strconv.Itoa(i), func(t *testing.T) {
 			w := httptest.NewRecorder()
-			ctx := auth.Context{XSRFToken: "abc123", Context: telemetry.ContextWithLogger(context.Background(), telemetry.NewLogger("opg-sirius-finance-admin"))}
+			ctx := auth.Context{
+				XSRFToken: "abc123",
+				User: &shared.User{
+					ID:    1,
+					Roles: []string{"Finance Reporting"},
+				},
+				Context: telemetry.ContextWithLogger(context.Background(), telemetry.NewLogger("opg-sirius-finance-admin")),
+			}
 			r, _ := http.NewRequestWithContext(ctx, http.MethodGet, "test-url/1", nil)
 
 			errorTemplate := &mockTemplate{error: errors.New("some template error")}
