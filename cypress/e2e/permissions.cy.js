@@ -1,29 +1,35 @@
-const financeUser = "2"
-const financeReporting = "3"
-const corporateFinance = "4"
+const allAccess = "1"
+const financeReportingOnly = "2"
+const corporateFinanceOnly = "3"
 
 describe("Role-based permissions", () => {
-    it("checks access for invalid roles", () => {
-        cy.setCookie("x-test-user-id", financeUser);
+    it("checks permissions for all access", () => {
+        cy.setCookie("x-test-user-id", allAccess);
         cy.visit("/uploads");
-        //TODO: Add assertions
+        cy.get('[data-cy="report-upload-type"]').find("option")
+            .should("have.length", 8);
+
         cy.visit("/downloads");
-        //TODO: Add assertions
+        cy.contains(".govuk-heading-m", "Download a report");
     });
 
-    it("checks permissions for Finance Reporting role", () => {
-        cy.setCookie("x-test-user-id", financeReporting);
+    it("checks permissions for Finance Reporting only", () => {
+        cy.setCookie("x-test-user-id", financeReportingOnly);
         cy.visit("/uploads");
-        //TODO: Add assertions
+        cy.get('[data-cy="report-upload-type"]').find("option")
+            .should("have.length", 3);
+
         cy.visit("/downloads");
-        //TODO: Add assertions
+        cy.contains(".govuk-heading-m", "Download a report");
     });
 
-    it("checks permissions for Corporate Finance role", () => {
-        cy.setCookie("x-test-user-id", corporateFinance);
-        cy.visit("/uploads");
-        //TODO: Add assertions
-        cy.visit("/downloads");
-        //TODO: Add assertions
+    it("checks permissions for Corporate Finance only", () => {
+        // should see nothing as Finance Reporting required to access page
+        cy.setCookie("x-test-user-id", corporateFinanceOnly);
+        cy.visit("/uploads", {failOnStatusCode: false});
+        cy.contains(".govuk-heading-l", "Forbidden");
+
+        cy.visit("/downloads", {failOnStatusCode: false});
+        cy.contains(".govuk-heading-l", "Forbidden");
     });
 });

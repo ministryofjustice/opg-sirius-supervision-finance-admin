@@ -10,20 +10,13 @@
     },
     {
       "id": 2,
-      "displayName": "Usain Userman",
-      "roles": [
-        "Finance User"
-      ]
-    },
-    {
-      "id": 3,
       "displayName": "Mandy Manager",
       "roles": [
         "Finance Reporting"
       ]
     },
     {
-      "id": 4,
+      "id": 3,
       "displayName": "Colin Corporate",
       "roles": [
         "Corporate Finance"
