@@ -15,6 +15,7 @@
                             hx-post="{{ prefix "/request-report" }}"
                             hx-target="#error-summary"
                     >
+                        <input type="hidden" name="xsrfToken" value="{{ .AppVars.XSRFToken }}"/>
                         <div class="govuk-form-group">
 
                             <div class="govuk-form-group" id="f-ReportType">
