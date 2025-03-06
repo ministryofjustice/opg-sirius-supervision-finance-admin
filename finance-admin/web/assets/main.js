@@ -114,6 +114,7 @@ htmx.onLoad(content => {
                     case "PAYMENTS_ONLINE_CARD":
                     case "PAYMENTS_OPG_BACS":
                     case "PAYMENTS_SUPERVISION_BACS":
+                    case "SOP_UNALLOCATED":
                         document.querySelector('#upload-date').removeAttribute("disabled");
                         document.querySelector('#file-upload').removeAttribute("disabled");
                         document.querySelector('#email-field').removeAttribute("disabled");
