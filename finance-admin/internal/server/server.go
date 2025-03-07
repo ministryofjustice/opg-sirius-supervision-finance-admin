@@ -55,7 +55,7 @@ func New(logger *slog.Logger, client *api.Client, templates map[string]*template
 
 	handleMux := func(pattern string, h HtmxHandler) {
 		errors := wrapHandler(templates["error.gotmpl"], "main", envVars)
-		mux.Handle(pattern, telemetry.Middleware(logger)(authenticator.Authenticate(errors(h))))
+		mux.Handle(pattern, telemetry.Middleware(logger)(authenticator.Authenticate(auth.XsrfCheck(errors(h)))))
 	}
 
 	// tabs

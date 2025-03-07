@@ -4,7 +4,7 @@ services:
     build:
       dockerfile: docker/finance-admin/Dockerfile
     ports:
-      - "8888:8888"
+      - "8889:8888"
     environment:
       PORT: 8888
       PREFIX: /finance-admin
@@ -55,7 +55,7 @@ services:
       - "./scripts/localstack/init:/etc/localstack/init/ready.d"
       - "./scripts/localstack/wait:/scripts/wait"
     ports:
-      - "4566:4566"
+      - "4567:4566"
     environment:
       AWS_DEFAULT_REGION: eu-west-1
     healthcheck:
@@ -115,7 +115,7 @@ services:
     build:
       dockerfile: docker/json-server/Dockerfile
     ports:
-      - '3000:3000'
+      - '3001:3000'
 
   finance-hub-api:
     image: 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-api:latest
