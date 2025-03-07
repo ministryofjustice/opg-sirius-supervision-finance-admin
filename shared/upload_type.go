@@ -7,12 +7,15 @@ import (
 )
 
 var ReportUploadTypes = []ReportUploadType{
+	ReportTypeUploadDebtChase,
+	ReportTypeUploadDeputySchedule,
+}
+
+var PaymentUploadTypes = []ReportUploadType{
 	ReportTypeUploadPaymentsMOTOCard,
 	ReportTypeUploadPaymentsOnlineCard,
 	ReportTypeUploadPaymentsOPGBACS,
 	ReportTypeUploadPaymentsSupervisionBACS,
-	ReportTypeUploadDebtChase,
-	ReportTypeUploadDeputySchedule,
 	ReportTypeUploadSOPUnallocated,
 }
 
