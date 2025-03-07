@@ -10,16 +10,30 @@ window.htmx = htmx;
 htmx.logAll();
 htmx.config.responseHandling = [{code:".*", swap: true}];
 
-const hideFieldInputs = () => {
+const resetFieldInputs = () => {
     htmx.findAll('[id$="-field-input"]').forEach(element => {
-        htmx.addClass(element, 'hide');
-        element.setAttribute("disabled", "true");
+        htmx.addClass(element, "hide");
+        const input = element.querySelector("input");
+        if (input) {
+            input.setAttribute("disabled", "true");
+            input.removeAttribute("max");
+        }
     });
 }
 
 const showFieldInput = (idName) => {
     document.querySelector(`#${idName}`).removeAttribute("disabled");
     htmx.removeClass(htmx.find(`#${idName}-field-input`), "hide")
+}
+
+const yesterday = () => {
+    const date = new Date();
+    date.setDate(date.getDate() - 1);
+    return date.toISOString().split('T')[0];
+}
+
+const setMaxDate = (idName, date) => {
+    document.getElementById(idName).setAttribute("max", date);
 }
 
 function disableUploadFormInputs() {
@@ -43,7 +57,7 @@ htmx.onLoad(content => {
         htmx.find("#reports-type").addEventListener("change", () => {
             const reportTypeEl = document.getElementById('reports-type');
             const reportType = reportTypeEl.value;
-            hideFieldInputs();
+            resetFieldInputs();
             document.querySelector("form").reset();
             reportTypeEl.value =  reportType;
 
@@ -52,11 +66,13 @@ htmx.onLoad(content => {
                     showFieldInput("journal-types");
                     showFieldInput("date");
                     showFieldInput("email");
+                    setMaxDate("date", yesterday());
                     break;
                 case "Schedule":
                     showFieldInput("schedule-types");
                     showFieldInput("date");
                     showFieldInput("email");
+                    setMaxDate("date", yesterday());
                     break;
                 case "AccountsReceivable":
                     showFieldInput("account-types");
@@ -76,7 +92,7 @@ htmx.onLoad(content => {
             const reportType = reportTypeEl.value;
             const subTypeEl = document.getElementById('account-types');
             const subType = subTypeEl.value;
-            hideFieldInputs();
+            resetFieldInputs();
             document.querySelector("form").reset();
             reportTypeEl.value =  reportType;
             subTypeEl.value =  subType;
