@@ -32,7 +32,7 @@ module.exports = defineConfig({
                 failed: require("cypress-failed-log/src/failed")()
             });
         },
-        baseUrl: "http://localhost:8888/finance-admin",
+        baseUrl: "http://localhost:8889/finance-admin",
         downloadsFolder: "cypress/downloads",
         specPattern: "cypress/e2e/**/*.cy.{js,ts}",
         screenshotsFolder: "cypress/screenshots",
