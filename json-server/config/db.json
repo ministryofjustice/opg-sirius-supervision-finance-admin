@@ -4,9 +4,22 @@
       "id": 1,
       "displayName": "Super User",
       "roles": [
-        "Case Manager",
-        "Manager",
+        "Finance Reporting",
+        "Corporate Finance"
+      ]
+    },
+    {
+      "id": 2,
+      "displayName": "Mandy Manager",
+      "roles": [
         "Finance Reporting"
+      ]
+    },
+    {
+      "id": 3,
+      "displayName": "Colin Corporate",
+      "roles": [
+        "Corporate Finance"
       ]
     }
   ]
