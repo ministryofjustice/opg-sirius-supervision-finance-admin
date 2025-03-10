@@ -14,7 +14,7 @@
 
 ## Local development
 
-The application ran through Docker can be accessed on `localhost:8888/finance-admin`.
+The application ran through Docker can be accessed on `localhost:8889/finance-admin`.
 
 To enable debugging and hot-reloading of Go files:
 

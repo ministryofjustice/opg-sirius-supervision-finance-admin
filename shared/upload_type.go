@@ -7,13 +7,17 @@ import (
 )
 
 var ReportUploadTypes = []ReportUploadType{
+	ReportTypeUploadDebtChase,
+	ReportTypeUploadDeputySchedule,
+}
+
+var PaymentUploadTypes = []ReportUploadType{
 	ReportTypeUploadPaymentsMOTOCard,
 	ReportTypeUploadPaymentsOnlineCard,
 	ReportTypeUploadPaymentsOPGBACS,
 	ReportTypeUploadPaymentsSupervisionBACS,
 	ReportTypeUploadPaymentsSupervisionCheque,
-	ReportTypeUploadDebtChase,
-	ReportTypeUploadDeputySchedule,
+	ReportTypeUploadSOPUnallocated,
 }
 
 type ReportUploadType int
@@ -27,6 +31,7 @@ const (
 	ReportTypeUploadPaymentsSupervisionCheque
 	ReportTypeUploadDebtChase
 	ReportTypeUploadDeputySchedule
+	ReportTypeUploadSOPUnallocated
 )
 
 var reportTypeUploadMap = map[string]ReportUploadType{
@@ -37,6 +42,7 @@ var reportTypeUploadMap = map[string]ReportUploadType{
 	"PAYMENTS_SUPERVISION_CHEQUE": ReportTypeUploadPaymentsSupervisionCheque,
 	"DEBT_CHASE":                  ReportTypeUploadDebtChase,
 	"DEPUTY_SCHEDULE":             ReportTypeUploadDeputySchedule,
+	"SOP_UNALLOCATED":             ReportTypeUploadSOPUnallocated,
 }
 
 func (i ReportUploadType) String() string {
@@ -59,6 +65,8 @@ func (i ReportUploadType) Translation() string {
 		return "Debt chase"
 	case ReportTypeUploadDeputySchedule:
 		return "Deputy schedule"
+	case ReportTypeUploadSOPUnallocated:
+		return "SOP Unallocated"
 	default:
 		return ""
 	}
@@ -80,6 +88,8 @@ func (i ReportUploadType) Key() string {
 		return "DEBT_CHASE"
 	case ReportTypeUploadDeputySchedule:
 		return "DEPUTY_SCHEDULE"
+	case ReportTypeUploadSOPUnallocated:
+		return "SOP_UNALLOCATED"
 	default:
 		return ""
 	}
@@ -99,6 +109,8 @@ func (i ReportUploadType) CSVHeaders() []string {
 		return []string{"Deputy number", "Deputy name", "Case number", "Client forename", "Client surname", "Do not invoice", "Total outstanding"}
 	case ReportTypeUploadDebtChase:
 		return []string{"Client_no", "Deputy_name", "Total_debt"}
+	case ReportTypeUploadSOPUnallocated:
+		return []string{"Court reference", "Amount"}
 	}
 
 	return []string{"Unknown report type"}
@@ -121,6 +133,8 @@ func (i ReportUploadType) Filename(date string) (string, error) {
 		return fmt.Sprintf("feebacs_%s.csv", parsedDate.Format("02012006")), nil
 	case ReportTypeUploadPaymentsSupervisionCheque:
 		return fmt.Sprintf("supervisioncheques_%s.csv", parsedDate.Format("02012006")), nil
+	case ReportTypeUploadSOPUnallocated:
+		return fmt.Sprintf("sopunallocated_%s.csv", parsedDate.Format("02012006")), nil
 	default:
 		return "", nil
 	}
