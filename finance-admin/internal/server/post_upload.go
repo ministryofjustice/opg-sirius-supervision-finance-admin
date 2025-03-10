@@ -21,7 +21,11 @@ func (h *UploadFormHandler) render(v AppVars, w http.ResponseWriter, r *http.Req
 	reportUploadType := shared.ParseReportUploadType(r.PostFormValue("reportUploadType"))
 
 	if reportUploadType == shared.ReportTypeUploadPaymentsSupervisionCheque {
-		pisNumber, err = strconv.Atoi(r.PostFormValue("pisNumber"))
+		pisNumberForm := r.PostFormValue("pisNumber")
+		pisNumber, err = strconv.Atoi(pisNumberForm)
+		if len([]rune(pisNumberForm)) != 6 {
+			return h.handleError(w, r, "PisNumber", "PIS number must be 6 digits", http.StatusBadRequest)
+		}
 		if err != nil {
 			return h.handleError(w, r, "PisNumber", "Error parsing PIS number", http.StatusBadRequest)
 		}
