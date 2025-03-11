@@ -7,6 +7,7 @@ import (
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/model"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/shared"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -15,9 +16,21 @@ type UploadFormHandler struct {
 }
 
 func (h *UploadFormHandler) render(v AppVars, w http.ResponseWriter, r *http.Request) error {
-	ctx := r.Context()
-
+	var err error
+	pisNumber := 0
 	reportUploadType := shared.ParseReportUploadType(r.PostFormValue("reportUploadType"))
+
+	if reportUploadType == shared.ReportTypeUploadPaymentsSupervisionCheque {
+		pisNumberForm := r.PostFormValue("pisNumber")
+		pisNumber, err = strconv.Atoi(pisNumberForm)
+		if len([]rune(pisNumberForm)) != 6 {
+			return h.handleError(w, r, "PisNumber", "PIS number must be 6 digits", http.StatusBadRequest)
+		}
+		if err != nil {
+			return h.handleError(w, r, "PisNumber", "Error parsing PIS number", http.StatusBadRequest)
+		}
+	}
+
 	uploadDate := r.PostFormValue("uploadDate")
 	email := r.PostFormValue("email")
 
@@ -44,13 +57,13 @@ func (h *UploadFormHandler) render(v AppVars, w http.ResponseWriter, r *http.Req
 		return h.handleError(w, r, "FileUpload", fmt.Sprintf("Filename should be \"%s\"", expectedFilename), http.StatusBadRequest)
 	}
 
-	data, err := shared.NewUpload(reportUploadType, uploadDate, email, file, handler.Filename)
+	data, err := shared.NewUpload(reportUploadType, pisNumber, uploadDate, email, file, handler.Filename)
 	if err != nil {
 		return h.handleError(w, r, "FileUpload", "Failed to read file", http.StatusBadRequest)
 	}
 
 	// Upload the file
-	if err := h.Client().Upload(ctx, data); err != nil {
+	if err := h.Client().Upload(r.Context(), data); err != nil {
 		return h.handleUploadError(w, r, err)
 	}
 
