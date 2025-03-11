@@ -97,40 +97,6 @@ func TestUploadFailedToReadCSVHeaders(t *testing.T) {
 	assert.Equal(t, expected, err)
 }
 
-func Test_reportHeadersByType(t *testing.T) {
-	tests := []struct {
-		name       string
-		reportType string
-		want       []string
-	}{
-		{
-			name:       "Deputy schedule report get the correct header",
-			reportType: "DEPUTY_SCHEDULE",
-			want:       []string{"Deputy number", "Deputy name", "Case number", "Client forename", "Client surname", "Do not invoice", "Total outstanding"},
-		},
-		{
-			name:       "Debt chase report get the correct header",
-			reportType: "DEBT_CHASE",
-			want:       []string{"Client_no", "Deputy_name", "Total_debt"},
-		},
-		{
-			name:       "Payments OPG BACS report get the correct header",
-			reportType: "PAYMENTS_OPG_BACS",
-			want:       []string{"Line", "Type", "Code", "Number", "Transaction", "Value Date", "Amount", "Amount Reconciled", "Charges", "Status", "Desc Flex", "Consolidated line"},
-		},
-		{
-			name:       "No match will return unknown",
-			reportType: "",
-			want:       []string{"Unknown report type"},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			assert.Equalf(t, tt.want, reportHeadersByType(tt.reportType), "reportHeadersByType(%v)", tt.reportType)
-		})
-	}
-}
-
 func TestCleanString(t *testing.T) {
 	tests := []struct {
 		name     string
