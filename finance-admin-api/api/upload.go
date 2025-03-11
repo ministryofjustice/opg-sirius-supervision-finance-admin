@@ -58,19 +58,6 @@ func validateCSVHeaders(file []byte, reportUploadType shared.ReportUploadType) e
 	return nil
 }
 
-func reportHeadersByType(reportType string) []string {
-	switch reportType {
-	case shared.ReportTypeUploadDeputySchedule.Key():
-		return []string{"Deputy number", "Deputy name", "Case number", "Client forename", "Client surname", "Do not invoice", "Total outstanding"}
-	case shared.ReportTypeUploadDebtChase.Key():
-		return []string{"Client_no", "Deputy_name", "Total_debt"}
-	case shared.ReportTypeUploadPaymentsOPGBACS.Key():
-		return []string{"Line", "Type", "Code", "Number", "Transaction", "Value Date", "Amount", "Amount Reconciled", "Charges", "Status", "Desc Flex", "Consolidated line"}
-	default:
-		return []string{"Unknown report type"}
-	}
-}
-
 func cleanString(s string) string {
 	// Trim leading and trailing spaces
 	s = strings.TrimSpace(s)
