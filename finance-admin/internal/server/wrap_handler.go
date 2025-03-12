@@ -57,6 +57,7 @@ func wrapHandler(errTmpl Template, errPartial string, envVars Envs) func(next Ht
 				"Page Request",
 				"duration", time.Since(start),
 				"hx-request", r.Header.Get("HX-Request") == "true",
+				"user-id", user.ID,
 			)
 
 			if err != nil {
