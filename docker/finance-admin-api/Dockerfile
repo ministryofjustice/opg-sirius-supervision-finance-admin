@@ -14,7 +14,7 @@ EXPOSE 2345
 
 ENTRYPOINT ["air"]
 
-FROM base as build-env
+FROM base AS build-env
 WORKDIR /app
 
 COPY go.mod go.sum ./
