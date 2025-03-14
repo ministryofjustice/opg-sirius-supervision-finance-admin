@@ -1,11 +1,11 @@
-FROM golang:1.24-alpine as base
+FROM golang:1.24-alpine AS base
 WORKDIR /app
 
 ENV CGO_ENABLED=0 GOOS=linux
 
 RUN update-ca-certificates
 
-FROM node:22-alpine3.19 as asset-env
+FROM node:22-alpine3.19 AS asset-env
 WORKDIR /app
 
 RUN mkdir -p web/static
@@ -28,7 +28,7 @@ EXPOSE 2345
 
 ENTRYPOINT ["air"]
 
-FROM base as build-env
+FROM base AS build-env
 WORKDIR /app
 
 COPY go.mod .
