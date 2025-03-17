@@ -13,7 +13,7 @@ type Context struct {
 	context.Context
 	Cookies   []*http.Cookie
 	XSRFToken string
-	user      *shared.User
+	User      *shared.User
 }
 
 func newContext(r *http.Request) Context {
@@ -60,7 +60,7 @@ func (a *Auth) Authenticate(next http.Handler) http.Handler {
 			return
 		}
 
-		ctx.user = user
+		ctx.User = user
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
