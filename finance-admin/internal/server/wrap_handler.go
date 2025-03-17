@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/ministryofjustice/opg-go-common/telemetry"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/api"
+	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/auth"
 	"net/http"
 	"time"
 )
@@ -33,14 +34,30 @@ func wrapHandler(errTmpl Template, errPartial string, envVars Envs) func(next Ht
 			start := time.Now()
 
 			vars := NewAppVars(r, envVars)
-			err := next.render(vars, w, r)
-
 			logger := telemetry.LoggerFromContext(r.Context())
+
+			user := r.Context().(auth.Context).User
+			if !user.IsFinanceReporting() {
+				w.WriteHeader(http.StatusForbidden)
+				errVars := ErrorVars{
+					Code: http.StatusForbidden,
+					Envs: envVars,
+				}
+				err := errTmpl.Execute(w, errVars)
+				if err != nil {
+					logger.Error("failed to render error template", "error", err)
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+				}
+				return
+			}
+
+			err := next.render(vars, w, r)
 
 			logger.Info(
 				"Page Request",
 				"duration", time.Since(start),
 				"hx-request", r.Header.Get("HX-Request") == "true",
+				"user-id", user.ID,
 			)
 
 			if err != nil {
