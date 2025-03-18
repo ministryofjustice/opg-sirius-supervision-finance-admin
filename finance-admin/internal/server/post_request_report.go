@@ -28,6 +28,15 @@ func (h *RequestReportHandler) render(v AppVars, w http.ResponseWriter, r *http.
 		email                  = r.PostFormValue("email")
 	)
 
+	if accountsReceivableType == shared.AccountsReceivableTypeFeeAccrual.Key() {
+		downloadRequest := shared.DownloadRequest{Key: "Fee_Accrual.csv"}
+		uid, err := downloadRequest.Encode()
+
+		w.Header().Add("HX-Redirect", fmt.Sprintf("%s/download?uid=%s", v.EnvironmentVars.Prefix, uid))
+
+		return err
+	}
+
 	data := shared.NewReportRequest(reportType, journalType, scheduleType, accountsReceivableType, debtType, transactionDate, dateTo, dateFrom, email)
 	err := h.Client().RequestReport(ctx, data)
 
