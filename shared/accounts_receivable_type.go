@@ -10,6 +10,7 @@ var AccountsReceivableTypes = []AccountsReceivableType{
 	AccountsReceivableTypeTotalReceipts,
 	AccountsReceivableTypeBadDebtWriteOff,
 	AccountsReceivableTypeFeeAccrual,
+	AccountsReceivableTypeInvoiceAdjustments,
 }
 
 var AccountsReceivableTypeMap = map[string]AccountsReceivableType{
@@ -20,6 +21,7 @@ var AccountsReceivableTypeMap = map[string]AccountsReceivableType{
 	"TotalReceipts":      AccountsReceivableTypeTotalReceipts,
 	"BadDebtWriteOff":    AccountsReceivableTypeBadDebtWriteOff,
 	"FeeAccrual":         AccountsReceivableTypeFeeAccrual,
+	"InvoiceAdjustments": AccountsReceivableTypeInvoiceAdjustments,
 }
 
 type AccountsReceivableType int

@@ -133,6 +133,7 @@ services:
       AWS_SECRET_ACCESS_KEY: localstack
       AWS_IAM_ROLE: arn:aws:iam::000000000000:role/role
       EVENT_BUS_NAME: local-main
+      EVENT_BRIDGE_API_KEY: test
       S3_ENCRYPTION_KEY: alias/aws/s3
       AWS_S3_ENDPOINT: http://localstack:4566
       SIRIUS_PUBLIC_URL: http://localhost:8080
