@@ -92,7 +92,7 @@ func (s *Server) upload(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	useStrictHeaderComparison := !(upload.ReportUploadType == shared.ReportTypeUploadPaymentsSupervisionCheque)
+	useStrictHeaderComparison := upload.ReportUploadType != shared.ReportTypeUploadPaymentsSupervisionCheque
 
 	err := validateCSVHeaders(upload.File, upload.ReportUploadType, useStrictHeaderComparison)
 	if err != nil {

@@ -104,7 +104,7 @@ func (i ReportUploadType) CSVHeaders() []string {
 	case ReportTypeUploadPaymentsOPGBACS:
 		return []string{"Line", "Type", "Code", "Number", "Transaction Date", "Value Date", "Amount", "Amount Reconciled", "Charges", "Status", "Desc Flex"}
 	case ReportTypeUploadPaymentsSupervisionCheque:
-		return []string{"Case number (confirmed on Sirius)", "Cheque number", "Cheque Value (£)", "Comments", "Date in Bank"}
+		return []string{"Case number", "Cheque number", "Cheque Value", "Comments", "Date in Bank"}
 	case ReportTypeUploadDeputySchedule:
 		return []string{"Deputy number", "Deputy name", "Case number", "Client forename", "Client surname", "Do not invoice", "Total outstanding"}
 	case ReportTypeUploadDebtChase:
