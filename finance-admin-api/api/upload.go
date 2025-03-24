@@ -11,21 +11,17 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"reflect"
 	"strings"
 	"unicode"
 )
 
 const s3Directory = "finance-admin"
 
-func validateCSVHeaders(file []byte, reportUploadType shared.ReportUploadType) error {
+func validateCSVHeaders(file []byte, reportUploadType shared.ReportUploadType, useStrictComparison bool) error {
 	fileReader := bytes.NewReader(file)
 	csvReader := csv.NewReader(fileReader)
-	expectedHeaders := reportUploadType.CSVHeaders()
 
-	for i, header := range expectedHeaders {
-		expectedHeaders[i] = cleanString(header)
-	}
+	expectedHeaders := reportUploadType.CSVHeaders()
 
 	readHeaders, err := csvReader.Read()
 	if err != nil {
@@ -37,25 +33,34 @@ func validateCSVHeaders(file []byte, reportUploadType shared.ReportUploadType) e
 		}
 	}
 
-	for i, header := range readHeaders {
-		readHeaders[i] = cleanString(header)
-	}
-
-	// Compare the extracted headers with the expected headers
-	if !reflect.DeepEqual(readHeaders, expectedHeaders) {
-		return apierror.ValidationError{Errors: apierror.ValidationErrors{
-			"FileUpload": {
-				"incorrect-headers": "CSV headers do not match for the report trying to be uploaded",
-			},
-		},
+	if len(readHeaders) == len(expectedHeaders) {
+		for i := range readHeaders {
+			if useStrictComparison {
+				if cleanString(readHeaders[i]) == cleanString(expectedHeaders[i]) {
+					_, err = fileReader.Seek(0, io.SeekStart)
+					if err != nil {
+						return err
+					}
+					return nil
+				}
+			} else {
+				if strings.Contains(cleanString(readHeaders[i]), cleanString(expectedHeaders[i])) {
+					_, err = fileReader.Seek(0, io.SeekStart)
+					if err != nil {
+						return err
+					}
+					return nil
+				}
+			}
 		}
 	}
 
-	_, err = fileReader.Seek(0, io.SeekStart)
-	if err != nil {
-		return err
+	return apierror.ValidationError{Errors: apierror.ValidationErrors{
+		"FileUpload": {
+			"incorrect-headers": "CSV headers do not match for the report trying to be uploaded",
+		},
+	},
 	}
-	return nil
 }
 
 func cleanString(s string) string {
@@ -87,7 +92,9 @@ func (s *Server) upload(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	err := validateCSVHeaders(upload.File, upload.ReportUploadType)
+	useStrictHeaderComparison := !(upload.ReportUploadType == shared.ReportTypeUploadPaymentsSupervisionCheque)
+
+	err := validateCSVHeaders(upload.File, upload.ReportUploadType, useStrictHeaderComparison)
 	if err != nil {
 		return err
 	}
@@ -107,6 +114,7 @@ func (s *Server) upload(w http.ResponseWriter, r *http.Request) error {
 		Filename:     fmt.Sprintf("%s/%s", s3Directory, upload.Filename),
 		UploadType:   upload.ReportUploadType.Key(),
 		UploadDate:   upload.UploadDate,
+		PisNumber:    upload.PisNumber,
 	}
 	err = s.dispatch.FinanceAdminUpload(ctx, uploadEvent)
 
