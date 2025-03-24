@@ -18,6 +18,7 @@ var PaymentUploadTypes = []ReportUploadType{
 	ReportTypeUploadPaymentsSupervisionBACS,
 	ReportTypeUploadPaymentsSupervisionCheque,
 	ReportTypeUploadSOPUnallocated,
+	ReportTypeUploadMisappliedPayments,
 }
 
 type ReportUploadType int
@@ -32,6 +33,7 @@ const (
 	ReportTypeUploadDebtChase
 	ReportTypeUploadDeputySchedule
 	ReportTypeUploadSOPUnallocated
+	ReportTypeUploadMisappliedPayments
 )
 
 var reportTypeUploadMap = map[string]ReportUploadType{
@@ -43,6 +45,7 @@ var reportTypeUploadMap = map[string]ReportUploadType{
 	"DEBT_CHASE":                  ReportTypeUploadDebtChase,
 	"DEPUTY_SCHEDULE":             ReportTypeUploadDeputySchedule,
 	"SOP_UNALLOCATED":             ReportTypeUploadSOPUnallocated,
+	"MISAPPLIED_PAYMENTS":         ReportTypeUploadMisappliedPayments,
 }
 
 func (i ReportUploadType) String() string {
@@ -67,6 +70,8 @@ func (i ReportUploadType) Translation() string {
 		return "Deputy schedule"
 	case ReportTypeUploadSOPUnallocated:
 		return "SOP Unallocated"
+	case ReportTypeUploadMisappliedPayments:
+		return "Payment Reversals - Misapplied payments"
 	default:
 		return ""
 	}
@@ -90,6 +95,8 @@ func (i ReportUploadType) Key() string {
 		return "DEPUTY_SCHEDULE"
 	case ReportTypeUploadSOPUnallocated:
 		return "SOP_UNALLOCATED"
+	case ReportTypeUploadMisappliedPayments:
+		return "MISAPPLIED_PAYMENTS"
 	default:
 		return ""
 	}
@@ -111,6 +118,8 @@ func (i ReportUploadType) CSVHeaders() []string {
 		return []string{"Client_no", "Deputy_name", "Total_debt"}
 	case ReportTypeUploadSOPUnallocated:
 		return []string{"Court reference", "Amount"}
+	case ReportTypeUploadMisappliedPayments:
+		return []string{"Payment type", "Current (errored) court reference", "New (correct) court reference", "Bank date", "Received date", "Amount", "PIS number (cheque only)"}
 	}
 
 	return []string{"Unknown report type"}
@@ -135,6 +144,8 @@ func (i ReportUploadType) Filename(date string) (string, error) {
 		return fmt.Sprintf("supervisioncheques_%s.csv", parsedDate.Format("02012006")), nil
 	case ReportTypeUploadSOPUnallocated:
 		return fmt.Sprintf("sopunallocated_%s.csv", parsedDate.Format("02012006")), nil
+	case ReportTypeUploadMisappliedPayments:
+		return "misappliedpayments.csv", nil
 	default:
 		return "", nil
 	}
