@@ -34,7 +34,7 @@ func validateCSVHeaders(file []byte, reportUploadType shared.ReportUploadType, u
 	}
 
 	if len(readHeaders) == len(expectedHeaders) {
-		for i, _ := range readHeaders {
+		for i := range readHeaders {
 			if useStrictComparison {
 				if cleanString(readHeaders[i]) == cleanString(expectedHeaders[i]) {
 					_, err = fileReader.Seek(0, io.SeekStart)
