@@ -9,7 +9,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/eventbridge v1.36.5
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.73.1
 	github.com/aws/aws-sdk-go-v2/service/sts v1.33.8
-	github.com/golang-jwt/jwt/v5 v5.2.1
+	github.com/golang-jwt/jwt/v5 v5.2.2
 	github.com/ministryofjustice/opg-go-common v1.63.0
 	github.com/stretchr/testify v1.10.0
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.58.0
