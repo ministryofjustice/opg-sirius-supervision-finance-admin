@@ -140,6 +140,13 @@ func TestValidateCSVHeaders(t *testing.T) {
 			false,
 			false,
 		},
+		{
+			"Ignores blank fields",
+			[]byte("Court reference, Amount,,,\nTest"),
+			shared.ReportTypeUploadSOPUnallocated,
+			true,
+			false,
+		},
 	}
 
 	for _, tt := range tests {

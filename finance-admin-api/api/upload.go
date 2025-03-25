@@ -33,34 +33,45 @@ func validateCSVHeaders(file []byte, reportUploadType shared.ReportUploadType, u
 		}
 	}
 
-	if len(readHeaders) == len(expectedHeaders) {
-		for i := range readHeaders {
-			if useStrictComparison {
-				if cleanString(readHeaders[i]) == cleanString(expectedHeaders[i]) {
-					_, err = fileReader.Seek(0, io.SeekStart)
-					if err != nil {
-						return err
-					}
-					return nil
+	for i, header := range readHeaders {
+		cleanedHeader := cleanString(header)
+		if cleanedHeader == "" {
+			continue
+		}
+		if i >= len(expectedHeaders) {
+			return apierror.ValidationError{Errors: apierror.ValidationErrors{
+				"FileUpload": {
+					"incorrect-headers": "CSV headers do not match for the report trying to be uploaded",
+				},
+			},
+			}
+		}
+		if useStrictComparison {
+			if cleanString(readHeaders[i]) != cleanString(expectedHeaders[i]) {
+				return apierror.ValidationError{Errors: apierror.ValidationErrors{
+					"FileUpload": {
+						"incorrect-headers": "CSV headers do not match for the report trying to be uploaded",
+					},
+				},
 				}
-			} else {
-				if strings.Contains(cleanString(readHeaders[i]), cleanString(expectedHeaders[i])) {
-					_, err = fileReader.Seek(0, io.SeekStart)
-					if err != nil {
-						return err
-					}
-					return nil
+			}
+		} else {
+			if !strings.Contains(cleanString(readHeaders[i]), cleanString(expectedHeaders[i])) {
+				return apierror.ValidationError{Errors: apierror.ValidationErrors{
+					"FileUpload": {
+						"incorrect-headers": "CSV headers do not match for the report trying to be uploaded",
+					},
+				},
 				}
 			}
 		}
 	}
 
-	return apierror.ValidationError{Errors: apierror.ValidationErrors{
-		"FileUpload": {
-			"incorrect-headers": "CSV headers do not match for the report trying to be uploaded",
-		},
-	},
+	_, err = fileReader.Seek(0, io.SeekStart)
+	if err != nil {
+		return err
 	}
+	return nil
 }
 
 func cleanString(s string) string {
