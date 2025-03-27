@@ -1,4 +1,4 @@
-all: go-lint test build-all scan cypress down
+all: go-lint gosec test build-all scan cypress down
 
 .PHONY: cypress
 
