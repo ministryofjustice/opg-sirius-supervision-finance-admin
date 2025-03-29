@@ -43,7 +43,6 @@ function disableUploadFormInputs() {
 }
 
 const dateRangeRequired = ["AgedDebt", "ARPaidInvoice", "TotalReceipts", "BadDebtWriteOff", "InvoiceAdjustments", "UnappliedReceipts"];
-const dateRequired = ["FeeAccrual"];
 
 // adding event listeners inside the onLoad function will ensure they are re-added to partial content when loaded back in
 htmx.onLoad(content => {
@@ -103,9 +102,6 @@ htmx.onLoad(content => {
             if (dateRangeRequired.includes(subType)) {
                 showFieldInput("date-to");
                 showFieldInput("date-from");
-            }
-            if (dateRequired.includes(subType)) {
-                showFieldInput("date");
             }
         });
     }
