@@ -10,6 +10,7 @@ type FinanceAdminUpload struct {
 	Filename     string      `json:"filename"`
 	UploadType   string      `json:"uploadType"`
 	UploadDate   shared.Date `json:"uploadDate"`
+	PisNumber    int         `json:"pisNumber"`
 }
 
 func (c *Client) FinanceAdminUpload(ctx context.Context, event FinanceAdminUpload) error {

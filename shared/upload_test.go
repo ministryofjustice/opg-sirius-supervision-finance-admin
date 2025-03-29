@@ -15,6 +15,7 @@ func (e *errorReader) Read(_ []byte) (int, error) {
 
 func TestNewUploadReturnsCorrectly(t *testing.T) {
 	reportUploadType := ParseReportUploadType("SomeReportType")
+	pisNumber := 12345678
 	email := "test@example.com"
 	uploadDate := "11/05/2024"
 	fileContent := []byte("file content")
@@ -23,13 +24,14 @@ func TestNewUploadReturnsCorrectly(t *testing.T) {
 
 	expectedUpload := Upload{
 		ReportUploadType: reportUploadType,
+		PisNumber:        12345678,
 		Email:            email,
 		Filename:         fileName,
 		File:             fileContent,
 		UploadDate:       NewDate(uploadDate),
 	}
 
-	upload, err := NewUpload(reportUploadType, uploadDate, email, fileReader, fileName)
+	upload, err := NewUpload(reportUploadType, pisNumber, uploadDate, email, fileReader, fileName)
 
 	assert.NoError(t, err)
 	assert.Equal(t, expectedUpload, upload)
@@ -38,6 +40,7 @@ func TestNewUploadReturnsCorrectly(t *testing.T) {
 func TestNewUploadWithNoFileReturnsCorrectly(t *testing.T) {
 	reportUploadType := ParseReportUploadType("SomeReportType")
 	email := "test@example.com"
+	pisNumber := 0
 	uploadDate := ""
 	fileContent := []byte("file content")
 	fileName := ""
@@ -50,7 +53,7 @@ func TestNewUploadWithNoFileReturnsCorrectly(t *testing.T) {
 		File:             fileContent,
 	}
 
-	upload, err := NewUpload(reportUploadType, uploadDate, email, fileReader, fileName)
+	upload, err := NewUpload(reportUploadType, pisNumber, uploadDate, email, fileReader, fileName)
 
 	assert.NoError(t, err)
 	assert.Equal(t, expectedUpload, upload)
@@ -60,11 +63,12 @@ func TestNewUpload_ReturnsError(t *testing.T) {
 	// Prepare input with an errorReader that always fails
 	reportUploadType := ParseReportUploadType("SomeReportType")
 	email := "test@example.com"
+	pisNumber := 12345678
 	uploadDate := "11/05/2024"
 	fileName := "TestFile.txt"
 	reader := &errorReader{}
 
-	upload, err := NewUpload(reportUploadType, uploadDate, email, reader, fileName)
+	upload, err := NewUpload(reportUploadType, pisNumber, uploadDate, email, reader, fileName)
 
 	assert.ErrorIs(t, err, io.ErrUnexpectedEOF)
 	assert.Empty(t, upload.File)

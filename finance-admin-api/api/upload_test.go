@@ -97,6 +97,70 @@ func TestUploadFailedToReadCSVHeaders(t *testing.T) {
 	assert.Equal(t, expected, err)
 }
 
+func TestValidateCSVHeaders(t *testing.T) {
+	tests := []struct {
+		name                string
+		file                []byte
+		reportType          shared.ReportUploadType
+		useStrictComparison bool
+		wantErr             bool
+	}{
+		{
+			"Failed to read empty file",
+			[]byte{},
+			shared.ReportTypeUploadPaymentsSupervisionCheque,
+			true,
+			true,
+		},
+		{
+			"Successfully validates only first row",
+			[]byte("Court reference, Amount\nTest"),
+			shared.ReportTypeUploadSOPUnallocated,
+			true,
+			false,
+		},
+		{
+			"Too many headers causes an error",
+			[]byte("Court reference, Amount, Hehe\nTest"),
+			shared.ReportTypeUploadSOPUnallocated,
+			true,
+			true,
+		},
+		{
+			"Too many headers causes an error",
+			[]byte("Court reference, Amount, Hehe\nTest"),
+			shared.ReportTypeUploadSOPUnallocated,
+			true,
+			true,
+		},
+		{
+			"Un-strict comparison allows extra characters before and after headers",
+			[]byte("1. Court reference (Defined by Sirius), 2. Amount (£)\nTest"),
+			shared.ReportTypeUploadSOPUnallocated,
+			false,
+			false,
+		},
+		{
+			"Ignores blank fields",
+			[]byte("Court reference, Amount,,,\nTest"),
+			shared.ReportTypeUploadSOPUnallocated,
+			true,
+			false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := validateCSVHeaders(tt.file, tt.reportType, tt.useStrictComparison)
+			if tt.wantErr && err == nil {
+				t.Errorf("wanted error got no error")
+			} else if !tt.wantErr && err != nil {
+				t.Errorf("wanted no error got error")
+			}
+		})
+	}
+}
+
 func TestCleanString(t *testing.T) {
 	tests := []struct {
 		name     string
