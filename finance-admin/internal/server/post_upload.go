@@ -19,7 +19,7 @@ func (h *UploadFormHandler) render(v AppVars, w http.ResponseWriter, r *http.Req
 	ctx := r.Context()
 
 	var err error
-	pisNumber := 0
+	var pisNumber int
 	reportUploadType := shared.ParseReportUploadType(r.PostFormValue("reportUploadType"))
 
 	if reportUploadType == shared.ReportTypeUploadPaymentsSupervisionCheque {
