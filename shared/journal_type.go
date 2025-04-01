@@ -5,17 +5,20 @@ import "encoding/json"
 var JournalTypes = []JournalType{
 	JournalTypeReceiptTransactions,
 	JournalTypeNonReceiptTransactions,
+	JournalTypeUnappliedTransactions,
 }
 
 const (
 	JournalTypeUnknown JournalType = iota
 	JournalTypeReceiptTransactions
 	JournalTypeNonReceiptTransactions
+	JournalTypeUnappliedTransactions
 )
 
 var journalTypeMap = map[string]JournalType{
-	"ReceiptTransactions":    JournalTypeReceiptTransactions,
-	"NonReceiptTransactions": JournalTypeNonReceiptTransactions,
+	"ReceiptTransactions":         JournalTypeReceiptTransactions,
+	"NonReceiptTransactions":      JournalTypeNonReceiptTransactions,
+	"RefundUnappliedTransactions": JournalTypeUnappliedTransactions,
 }
 
 type JournalType int
@@ -30,6 +33,8 @@ func (j JournalType) Translation() string {
 		return "Receipt Transactions"
 	case JournalTypeNonReceiptTransactions:
 		return "Non Receipt Transactions"
+	case JournalTypeUnappliedTransactions:
+		return "Refunds & Unapplied Transactions"
 	default:
 		return ""
 	}
@@ -41,6 +46,8 @@ func (j JournalType) Key() string {
 		return "ReceiptTransactions"
 	case JournalTypeNonReceiptTransactions:
 		return "NonReceiptTransactions"
+	case JournalTypeUnappliedTransactions:
+		return "RefundUnappliedTransactions"
 	default:
 		return ""
 	}
