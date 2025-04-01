@@ -110,7 +110,6 @@ func run(ctx context.Context, logger *slog.Logger) error {
 			SiriusPublicURL: envs.siriusPublicURL,
 			Prefix:          envs.prefix,
 		}),
-		ReadHeaderTimeout: 2 * time.Second,
 	}
 
 	go func() {
@@ -161,7 +160,7 @@ func createTemplates(envs *Envs) map[string]*template.Template {
 	}
 
 	templateDirPath := envs.webDir + "/template"
-	templateDir, _ := os.Open(templateDirPath) // #nosec:G304 -- Safe Env Var Loading
+	templateDir, _ := os.Open(templateDirPath)
 	templateDirs, _ := templateDir.Readdir(0)
 	_ = templateDir.Close()
 
