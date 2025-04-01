@@ -13,14 +13,16 @@ services:
       BACKEND_URL: http://finance-admin-api:8080
       HUB_URL: http://finance-hub-api:8080
       JWT_SECRET: mysupersecrettestkeythatis128bits
-      HEALTHCHECK: /finance-admin/health-check
+    healthcheck:
+      test: wget -O /dev/null -S 'http://localhost:8888/finance-admin/health-check' 2>&1 | grep 'HTTP/1.1 200 OK' || exit 1
+      interval: 15s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     depends_on:
-      finance-admin-api:
-        condition: service_healthy
-      finance-hub-api:
-        condition: service_healthy
-      json-server:
-        condition: service_started
+      - json-server
+      - finance-admin-api
+      - finance-hub-api
 
   finance-admin-api:
     image: 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-admin-api:latest
@@ -37,8 +39,12 @@ services:
       AWS_SECRET_ACCESS_KEY: localstack
       EVENT_BUS_NAME: local-main
       S3_ENCRYPTION_KEY: alias/aws/s3
-      PORT: 8080
-      HEALTHCHECK: /health-check
+    healthcheck:
+      test: wget -O /dev/null -S 'http://localhost:8080/health-check' 2>&1 | grep 'HTTP/1.1 200 OK' || exit 1
+      interval: 15s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     depends_on:
       localstack:
         condition: service_healthy
@@ -138,4 +144,9 @@ services:
       ASYNC_S3_BUCKET: opg-backoffice-async-uploads-local
       OPG_NOTIFY_API_KEY: test
       OPG_SUPERVISION_SYSTEM_USER_ID: 1
-      HEALTHCHECK: /health-check
+    healthcheck:
+      test: wget -O /dev/null -S 'http://localhost:8080/health-check' 2>&1 | grep 'HTTP/1.1 200 OK' || exit 1
+      interval: 15s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
