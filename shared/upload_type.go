@@ -16,6 +16,7 @@ var PaymentUploadTypes = []ReportUploadType{
 	ReportTypeUploadPaymentsOnlineCard,
 	ReportTypeUploadPaymentsOPGBACS,
 	ReportTypeUploadPaymentsSupervisionBACS,
+	ReportTypeUploadPaymentsSupervisionCheque,
 	ReportTypeUploadSOPUnallocated,
 }
 
@@ -27,19 +28,21 @@ const (
 	ReportTypeUploadPaymentsOnlineCard
 	ReportTypeUploadPaymentsOPGBACS
 	ReportTypeUploadPaymentsSupervisionBACS
+	ReportTypeUploadPaymentsSupervisionCheque
 	ReportTypeUploadDebtChase
 	ReportTypeUploadDeputySchedule
 	ReportTypeUploadSOPUnallocated
 )
 
 var reportTypeUploadMap = map[string]ReportUploadType{
-	"PAYMENTS_MOTO_CARD":        ReportTypeUploadPaymentsMOTOCard,
-	"PAYMENTS_ONLINE_CARD":      ReportTypeUploadPaymentsOnlineCard,
-	"PAYMENTS_OPG_BACS":         ReportTypeUploadPaymentsOPGBACS,
-	"PAYMENTS_SUPERVISION_BACS": ReportTypeUploadPaymentsSupervisionBACS,
-	"DEBT_CHASE":                ReportTypeUploadDebtChase,
-	"DEPUTY_SCHEDULE":           ReportTypeUploadDeputySchedule,
-	"SOP_UNALLOCATED":           ReportTypeUploadSOPUnallocated,
+	"PAYMENTS_MOTO_CARD":          ReportTypeUploadPaymentsMOTOCard,
+	"PAYMENTS_ONLINE_CARD":        ReportTypeUploadPaymentsOnlineCard,
+	"PAYMENTS_OPG_BACS":           ReportTypeUploadPaymentsOPGBACS,
+	"PAYMENTS_SUPERVISION_BACS":   ReportTypeUploadPaymentsSupervisionBACS,
+	"PAYMENTS_SUPERVISION_CHEQUE": ReportTypeUploadPaymentsSupervisionCheque,
+	"DEBT_CHASE":                  ReportTypeUploadDebtChase,
+	"DEPUTY_SCHEDULE":             ReportTypeUploadDeputySchedule,
+	"SOP_UNALLOCATED":             ReportTypeUploadSOPUnallocated,
 }
 
 func (i ReportUploadType) String() string {
@@ -56,6 +59,8 @@ func (i ReportUploadType) Translation() string {
 		return "Payments - OPG BACS"
 	case ReportTypeUploadPaymentsSupervisionBACS:
 		return "Payments - Supervision BACS"
+	case ReportTypeUploadPaymentsSupervisionCheque:
+		return "Payments - Supervision Cheque"
 	case ReportTypeUploadDebtChase:
 		return "Debt chase"
 	case ReportTypeUploadDeputySchedule:
@@ -77,6 +82,8 @@ func (i ReportUploadType) Key() string {
 		return "PAYMENTS_OPG_BACS"
 	case ReportTypeUploadPaymentsSupervisionBACS:
 		return "PAYMENTS_SUPERVISION_BACS"
+	case ReportTypeUploadPaymentsSupervisionCheque:
+		return "PAYMENTS_SUPERVISION_CHEQUE"
 	case ReportTypeUploadDebtChase:
 		return "DEBT_CHASE"
 	case ReportTypeUploadDeputySchedule:
@@ -92,14 +99,16 @@ func (i ReportUploadType) CSVHeaders() []string {
 	switch i {
 	case ReportTypeUploadPaymentsMOTOCard, ReportTypeUploadPaymentsOnlineCard:
 		return []string{"Ordercode", "Date", "Amount"}
-	case ReportTypeUploadDeputySchedule:
-		return []string{"Deputy number", "Deputy name", "Case number", "Client forename", "Client surname", "Do not invoice", "Total outstanding"}
-	case ReportTypeUploadDebtChase:
-		return []string{"Client_no", "Deputy_name", "Total_debt"}
 	case ReportTypeUploadPaymentsSupervisionBACS:
 		return []string{"Line", "Type", "Code", "Number", "Transaction Date", "Value Date", "Amount", "Amount Reconciled", "Charges", "Status", "Desc Flex", "Consolidated line"}
 	case ReportTypeUploadPaymentsOPGBACS:
 		return []string{"Line", "Type", "Code", "Number", "Transaction Date", "Value Date", "Amount", "Amount Reconciled", "Charges", "Status", "Desc Flex"}
+	case ReportTypeUploadPaymentsSupervisionCheque:
+		return []string{"Case number", "Cheque number", "Cheque Value", "Comments", "Date in Bank"}
+	case ReportTypeUploadDeputySchedule:
+		return []string{"Deputy number", "Deputy name", "Case number", "Client forename", "Client surname", "Do not invoice", "Total outstanding"}
+	case ReportTypeUploadDebtChase:
+		return []string{"Client_no", "Deputy_name", "Total_debt"}
 	case ReportTypeUploadSOPUnallocated:
 		return []string{"Court reference", "Amount"}
 	}
@@ -122,6 +131,8 @@ func (i ReportUploadType) Filename(date string) (string, error) {
 		return fmt.Sprintf("feebacs_%s_new_acc.csv", parsedDate.Format("02012006")), nil
 	case ReportTypeUploadPaymentsOPGBACS:
 		return fmt.Sprintf("feebacs_%s.csv", parsedDate.Format("02012006")), nil
+	case ReportTypeUploadPaymentsSupervisionCheque:
+		return fmt.Sprintf("supervisioncheques_%s.csv", parsedDate.Format("02012006")), nil
 	case ReportTypeUploadSOPUnallocated:
 		return fmt.Sprintf("sopunallocated_%s.csv", parsedDate.Format("02012006")), nil
 	default:
