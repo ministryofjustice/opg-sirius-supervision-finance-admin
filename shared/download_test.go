@@ -14,11 +14,10 @@ func TestDownloadRequest_Decode(t *testing.T) {
 	}{
 		{
 			name: "success",
-			in:   "eyJLZXkiOiJ0ZXN0LmNzdiIsIlZlcnNpb25JZCI6InZwckF4c1l0TFZzYjVQOUhfcUhlTlVpVTlNQm5QTmN6IiwiQnVja2V0IjoicmVhbC1idWNrZXQifQ==",
+			in:   "eyJLZXkiOiJ0ZXN0LmNzdiIsIlZlcnNpb25JZCI6InZwckF4c1l0TFZzYjVQOUhfcUhlTlVpVTlNQm5QTmN6In0=",
 			expected: DownloadRequest{
 				Key:       "test.csv",
 				VersionId: "vprAxsYtLVsb5P9H_qHeNUiU9MBnPNcz",
-				Bucket:    "real-bucket",
 			},
 			fail: false,
 		},
@@ -46,8 +45,7 @@ func TestDownloadRequest_Encode(t *testing.T) {
 	d := &DownloadRequest{
 		Key:       "test.csv",
 		VersionId: "vprAxsYtLVsb5P9H_qHeNUiU9MBnPNcz",
-		Bucket:    "real-bucket",
 	}
 	got, _ := d.Encode()
-	assert.Equalf(t, "eyJLZXkiOiJ0ZXN0LmNzdiIsIlZlcnNpb25JZCI6InZwckF4c1l0TFZzYjVQOUhfcUhlTlVpVTlNQm5QTmN6IiwiQnVja2V0IjoicmVhbC1idWNrZXQifQ==", got, "Encode()")
+	assert.Equalf(t, "eyJLZXkiOiJ0ZXN0LmNzdiIsIlZlcnNpb25JZCI6InZwckF4c1l0TFZzYjVQOUhfcUhlTlVpVTlNQm5QTmN6In0=", got, "Encode()")
 }
