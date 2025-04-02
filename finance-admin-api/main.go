@@ -2,6 +2,13 @@ package main
 
 import (
 	"context"
+	"log/slog"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/ministryofjustice/opg-go-common/env"
@@ -9,12 +16,6 @@ import (
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin-api/api"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin-api/event"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin-api/filestorage"
-	"log/slog"
-	"net/http"
-	"os"
-	"os/signal"
-	"syscall"
-	"time"
 )
 
 func main() {
@@ -47,8 +48,9 @@ func run(ctx context.Context, logger *slog.Logger) error {
 	server := api.NewServer(http.DefaultClient, eventClient, filestorageclient)
 
 	s := &http.Server{
-		Addr:    ":8080",
-		Handler: server.SetupRoutes(logger),
+		Addr:              ":8080",
+		Handler:           server.SetupRoutes(logger),
+		ReadHeaderTimeout: 2 * time.Second,
 	}
 
 	go func() {
