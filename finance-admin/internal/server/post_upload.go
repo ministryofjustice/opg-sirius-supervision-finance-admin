@@ -23,7 +23,7 @@ func (h *UploadFormHandler) render(v AppVars, w http.ResponseWriter, r *http.Req
 	reportUploadType := shared.ParseReportUploadType(r.PostFormValue("reportUploadType"))
 
 	if reportUploadType == shared.ReportTypeUploadPaymentsSupervisionCheque {
-		pisNumberForm := r.PostFormValue("pisNumber")
+		pisNumberForm := strings.ReplaceAll(r.PostFormValue("pisNumber"), " ", "")
 		pisNumber, err = strconv.Atoi(pisNumberForm)
 		if len([]rune(pisNumberForm)) != 6 {
 			return h.handleError(w, r, "PisNumber", "PIS number must be 6 digits", http.StatusBadRequest)
@@ -55,7 +55,7 @@ func (h *UploadFormHandler) render(v AppVars, w http.ResponseWriter, r *http.Req
 	}
 
 	if handler.Filename != expectedFilename && expectedFilename != "" {
-		expectedFilename := strings.Replace(expectedFilename, ":", "/", -1)
+		expectedFilename := strings.ReplaceAll(expectedFilename, ":", "/")
 		return h.handleError(w, r, "FileUpload", fmt.Sprintf("Filename should be \"%s\"", expectedFilename), http.StatusBadRequest)
 	}
 

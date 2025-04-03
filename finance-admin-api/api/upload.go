@@ -79,7 +79,7 @@ func cleanString(s string) string {
 	s = strings.TrimSpace(s)
 
 	// Replace double-spaces in headers with single spaces (BACS uploads have double spaces)
-	s = strings.Replace(s, "  ", " ", -1)
+	s = strings.ReplaceAll(s, "  ", " ")
 
 	// Convert to lowercase for case-insensitive comparison
 	s = strings.ToLower(s)
