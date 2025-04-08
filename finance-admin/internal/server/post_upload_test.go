@@ -91,3 +91,32 @@ func TestUploadFormHandlerValidationErrors(t *testing.T) {
 	assert.Nil(err)
 	assert.Equal("400 Bad Request", w.Result().Status)
 }
+
+func TestUploadDateNotInTheFutureValidationErrors(t *testing.T) {
+	assert := assert.New(t)
+	client := &mockApiClient{}
+	ro := &mockRoute{client: client}
+
+	validationErrors := model.ValidationErrors{
+		"UploadDate": {
+			"date-in-the-future": "The report date must be today or in the past",
+		},
+	}
+
+	client.error = model.ValidationError{
+		Errors: validationErrors,
+	}
+
+	w := httptest.NewRecorder()
+	r, _ := http.NewRequest(http.MethodGet, "/uploads", nil)
+	r.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+
+	appVars := AppVars{
+		Path: "/uploads",
+	}
+
+	sut := UploadFormHandler{ro}
+	err := sut.render(appVars, w, r)
+	assert.Nil(err)
+	assert.Equal("400 Bad Request", w.Result().Status)
+}
