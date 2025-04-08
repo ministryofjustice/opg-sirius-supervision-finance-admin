@@ -70,6 +70,8 @@ func (i ReportUploadType) Translation() string {
 		return "Deputy schedule"
 	case ReportTypeUploadSOPUnallocated:
 		return "SOP Unallocated"
+	case ReportTypeUploadDirectDebitsCollections:
+		return "Direct Debits Collections"
 	default:
 		return ""
 	}
