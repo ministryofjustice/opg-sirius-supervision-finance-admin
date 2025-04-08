@@ -18,6 +18,7 @@ var PaymentUploadTypes = []ReportUploadType{
 	ReportTypeUploadPaymentsSupervisionBACS,
 	ReportTypeUploadPaymentsSupervisionCheque,
 	ReportTypeUploadSOPUnallocated,
+	ReportTypeUploadDirectDebitsCollections,
 }
 
 type ReportUploadType int
@@ -32,6 +33,7 @@ const (
 	ReportTypeUploadDebtChase
 	ReportTypeUploadDeputySchedule
 	ReportTypeUploadSOPUnallocated
+	ReportTypeUploadDirectDebitsCollections
 )
 
 var reportTypeUploadMap = map[string]ReportUploadType{
@@ -43,6 +45,7 @@ var reportTypeUploadMap = map[string]ReportUploadType{
 	"DEBT_CHASE":                  ReportTypeUploadDebtChase,
 	"DEPUTY_SCHEDULE":             ReportTypeUploadDeputySchedule,
 	"SOP_UNALLOCATED":             ReportTypeUploadSOPUnallocated,
+	"DIRECT_DEBITS_COLLECTIONS":   ReportTypeUploadDirectDebitsCollections,
 }
 
 func (i ReportUploadType) String() string {
@@ -67,6 +70,8 @@ func (i ReportUploadType) Translation() string {
 		return "Deputy schedule"
 	case ReportTypeUploadSOPUnallocated:
 		return "SOP Unallocated"
+	case ReportTypeUploadDirectDebitsCollections:
+		return "Direct Debits Collections"
 	default:
 		return ""
 	}
@@ -90,6 +95,8 @@ func (i ReportUploadType) Key() string {
 		return "DEPUTY_SCHEDULE"
 	case ReportTypeUploadSOPUnallocated:
 		return "SOP_UNALLOCATED"
+	case ReportTypeUploadDirectDebitsCollections:
+		return "DIRECT_DEBITS_COLLECTIONS"
 	default:
 		return ""
 	}
@@ -135,6 +142,8 @@ func (i ReportUploadType) Filename(date string) (string, error) {
 		return fmt.Sprintf("supervisioncheques_%s.csv", parsedDate.Format("02012006")), nil
 	case ReportTypeUploadSOPUnallocated:
 		return fmt.Sprintf("sopunallocated_%s.csv", parsedDate.Format("02012006")), nil
+	case ReportTypeUploadDirectDebitsCollections:
+		return fmt.Sprintf("directdebitscollections_%s.csv", parsedDate.Format("02012006")), nil
 	default:
 		return "", nil
 	}

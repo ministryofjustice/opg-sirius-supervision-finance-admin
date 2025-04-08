@@ -75,16 +75,13 @@ func validateCSVHeaders(file []byte, reportUploadType shared.ReportUploadType, u
 }
 
 func cleanString(s string) string {
-	// Trim leading and trailing spaces
 	s = strings.TrimSpace(s)
 
 	// Replace double-spaces in headers with single spaces (BACS uploads have double spaces)
 	s = strings.ReplaceAll(s, "  ", " ")
 
-	// Convert to lowercase for case-insensitive comparison
 	s = strings.ToLower(s)
 
-	// Remove non-printable characters
 	return strings.Map(func(r rune) rune {
 		if unicode.IsPrint(r) {
 			return r
@@ -96,18 +93,21 @@ func cleanString(s string) string {
 func (s *Server) upload(w http.ResponseWriter, r *http.Request) error {
 	ctx := r.Context()
 
+	var err error
 	var upload shared.Upload
 	defer r.Body.Close()
 
-	if err := json.NewDecoder(r.Body).Decode(&upload); err != nil {
+	if err = json.NewDecoder(r.Body).Decode(&upload); err != nil {
 		return err
 	}
 
 	useStrictHeaderComparison := upload.ReportUploadType != shared.ReportTypeUploadPaymentsSupervisionCheque
 
-	err := validateCSVHeaders(upload.File, upload.ReportUploadType, useStrictHeaderComparison)
-	if err != nil {
-		return err
+	if upload.ReportUploadType != shared.ReportTypeUploadDirectDebitsCollections {
+		err = validateCSVHeaders(upload.File, upload.ReportUploadType, useStrictHeaderComparison)
+		if err != nil {
+			return err
+		}
 	}
 
 	_, err = s.filestorage.PutFile(
