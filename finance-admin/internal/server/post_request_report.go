@@ -7,6 +7,8 @@ import (
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/model"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/shared"
 	"net/http"
+	"strconv"
+	"strings"
 )
 
 type RequestReportHandler struct {
@@ -14,6 +16,8 @@ type RequestReportHandler struct {
 }
 
 func (h *RequestReportHandler) render(v AppVars, w http.ResponseWriter, r *http.Request) error {
+	var pisNumber int
+	var err error
 	ctx := r.Context()
 
 	var (
@@ -28,8 +32,25 @@ func (h *RequestReportHandler) render(v AppVars, w http.ResponseWriter, r *http.
 		email                  = r.PostFormValue("email")
 	)
 
-	data := shared.NewReportRequest(reportType, journalType, scheduleType, accountsReceivableType, debtType, transactionDate, dateTo, dateFrom, email)
-	err := h.Client().RequestReport(ctx, data)
+	if scheduleType == shared.ScheduleTypeChequePayments.Key() {
+		pisNumberForm := strings.ReplaceAll(r.PostFormValue("pisNumber"), " ", "")
+		pisNumber, err = strconv.Atoi(pisNumberForm)
+		if len([]rune(pisNumberForm)) != 6 {
+			valErr := model.ValidationErrors{
+				"pisNumber": map[string]string{"pisNumber": "PIS number must be 6 digits"},
+			}
+			data := AppVars{ValidationErrors: RenameErrors(valErr)}
+			w.WriteHeader(http.StatusUnprocessableEntity)
+			err = h.execute(w, r, data)
+			return nil
+		}
+		if err != nil {
+			return err
+		}
+	}
+
+	data := shared.NewReportRequest(reportType, journalType, scheduleType, accountsReceivableType, debtType, transactionDate, dateTo, dateFrom, email, &pisNumber)
+	err = h.Client().RequestReport(ctx, data)
 
 	if err != nil {
 		var (

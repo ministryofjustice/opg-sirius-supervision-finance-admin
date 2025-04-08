@@ -10,9 +10,10 @@ type ReportRequest struct {
 	ToDate                 *Date                   `json:"toDate,omitempty"`
 	FromDate               *Date                   `json:"fromDate,omitempty"`
 	Email                  string                  `json:"email"`
+	PisNumber              *int                    `json:"pisNumber,omitempty"`
 }
 
-func NewReportRequest(reportType, journalType, scheduleType, accountsReceivableType, debtType, transactionDate, dateTo, dateFrom, email string) ReportRequest {
+func NewReportRequest(reportType, journalType, scheduleType, accountsReceivableType, debtType, transactionDate, dateTo, dateFrom, email string, pisNumber *int) ReportRequest {
 	download := ReportRequest{
 		ReportType:             ParseReportsType(reportType),
 		JournalType:            ParseJournalType(journalType),
@@ -20,6 +21,7 @@ func NewReportRequest(reportType, journalType, scheduleType, accountsReceivableT
 		AccountsReceivableType: ParseAccountsReceivableType(accountsReceivableType),
 		DebtType:               ParseReportDebtType(debtType),
 		Email:                  email,
+		PisNumber:              pisNumber,
 	}
 
 	if transactionDate != "" {

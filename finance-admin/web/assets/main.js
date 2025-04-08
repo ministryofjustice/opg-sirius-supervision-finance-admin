@@ -106,6 +106,19 @@ htmx.onLoad(content => {
                 toggle.show("date-from");
             }
         });
+
+        htmx.find('#schedule-types').addEventListener("change", () => {
+            const subTypeEl = document.getElementById('schedule-types');
+            const subType = subTypeEl.value;
+
+            if (subType === 'ChequePayments') {
+                document.querySelector('#pis-number').removeAttribute("disabled")
+                htmx.removeClass(htmx.find("#pis-number-input"), "hide")
+            } else {
+                document.querySelector('#pis-number').setAttribute("disabled", "true")
+                htmx.addClass(htmx.find("#pis-number-input"), "hide")
+            }
+        });
     }
 
     if (document.getElementById('reports-upload-type')) {
