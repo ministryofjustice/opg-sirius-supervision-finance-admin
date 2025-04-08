@@ -89,9 +89,9 @@ htmx.onLoad(content => {
 
         htmx.find("#account-types").addEventListener("change", () => {
             const reportTypeEl = document.getElementById('reports-type');
-            const reportType = reportTypeEl.value;
+            const reportType = reportTypeEl.value.replace("'", "''");
             const subTypeEl = document.getElementById('account-types');
-            const subType = subTypeEl.value;
+            const subType = subTypeEl.value.replace("'", "''");
             resetFieldInputs();
             document.querySelector("form").reset();
             reportTypeEl.value =  reportType;
@@ -130,7 +130,7 @@ htmx.onLoad(content => {
                     case "PAYMENTS_ONLINE_CARD":
                     case "PAYMENTS_OPG_BACS":
                     case "PAYMENTS_SUPERVISION_BACS":
-                    case "SOP_UNALLOCATED":
+                    case "DIRECT_DEBITS_COLLECTIONS":
                         document.querySelector('#upload-date').removeAttribute("disabled");
                         document.querySelector('#file-upload').removeAttribute("disabled");
                         document.querySelector('#email-field').removeAttribute("disabled");
