@@ -89,9 +89,9 @@ htmx.onLoad(content => {
 
         htmx.find("#account-types").addEventListener("change", () => {
             const reportTypeEl = document.getElementById('reports-type');
-            const reportType = reportTypeEl.value;
+            const reportType = reportTypeEl.value.replace(/'/g, "''");
             const subTypeEl = document.getElementById('account-types');
-            const subType = subTypeEl.value;
+            const subType = subTypeEl.value.replace(/'/g, "''");
             resetFieldInputs();
             document.querySelector("form").reset();
             reportTypeEl.value =  reportType;
