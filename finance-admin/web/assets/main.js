@@ -125,12 +125,14 @@ htmx.onLoad(content => {
                 switch (reportUploadTypeSelect.value) {
                     case "PAYMENTS_SUPERVISION_CHEQUE":
                         document.querySelector('#pis-number').removeAttribute("disabled")
+                        document.querySelector('#file-upload').removeAttribute("disabled")
                         htmx.removeClass(htmx.find("#pis-number-input"), "hide")
+                        htmx.removeClass(htmx.find("#file-upload-input"), "hide")
+                        break;
                     case "PAYMENTS_MOTO_CARD":
                     case "PAYMENTS_ONLINE_CARD":
                     case "PAYMENTS_OPG_BACS":
                     case "PAYMENTS_SUPERVISION_BACS":
-                    case "SOP_UNALLOCATED":
                         document.querySelector('#upload-date').removeAttribute("disabled");
                         document.querySelector('#file-upload').removeAttribute("disabled");
                         document.querySelector('#email-field').removeAttribute("disabled");
@@ -141,11 +143,12 @@ htmx.onLoad(content => {
                     case "DEBT_CHASE":
                     case "DEPUTY_SCHEDULE":
                         document.querySelector('#file-upload').removeAttribute("disabled")
-                        htmx.addClass(htmx.find("#upload-date-input"), "hide")
-                        htmx.addClass(htmx.find("#pis-number-input"), "hide")
-                        htmx.addClass(htmx.find("#email-field-input"), "hide")
                         htmx.removeClass(htmx.find("#file-upload-input"), "hide")
                         break;
+                    case "MISAPPLIED_PAYMENTS":
+                        document.querySelector('#upload-date').removeAttribute("disabled");
+                        htmx.removeClass(htmx.find("#file-upload-input"), "hide");
+                        break
                     default:
                         break;
                 }
