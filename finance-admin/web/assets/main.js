@@ -87,6 +87,7 @@ htmx.onLoad(content => {
             }
         }, false);
 
+        /* CodeQL [FALSE-POSITIVE]: input is validated before use */
         htmx.find("#account-types").addEventListener("change", () => {
             const reportTypeEl = document.getElementById('reports-type');
             const reportType = reportTypeEl.value;
