@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type UploadFormHandler struct {
@@ -52,6 +53,15 @@ func (h *UploadFormHandler) render(v AppVars, w http.ResponseWriter, r *http.Req
 		}
 	} else {
 		return h.handleError(w, r, "UploadDate", "Upload date required", http.StatusBadRequest)
+	}
+
+	if shared.NewDate(uploadDate).After(shared.Date{Time: time.Now()}) {
+		fileError := model.ValidationErrors{
+			"UploadDate": map[string]string{"date-in-the-future": "Can not upload for a date in the future"},
+		}
+		data := AppVars{ValidationErrors: RenameErrors(fileError)}
+		w.WriteHeader(http.StatusBadRequest)
+		return h.execute(w, r, data)
 	}
 
 	if handler.Filename != expectedFilename && expectedFilename != "" {

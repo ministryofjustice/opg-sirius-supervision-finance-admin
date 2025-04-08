@@ -87,6 +87,7 @@ htmx.onLoad(content => {
             }
         }, false);
 
+        /* CodeQL [FALSE-POSITIVE]: input is validated before use */
         htmx.find("#account-types").addEventListener("change", () => {
             const reportTypeEl = document.getElementById('reports-type');
             const reportType = reportTypeEl.value;
@@ -130,7 +131,7 @@ htmx.onLoad(content => {
                     case "PAYMENTS_ONLINE_CARD":
                     case "PAYMENTS_OPG_BACS":
                     case "PAYMENTS_SUPERVISION_BACS":
-                    case "SOP_UNALLOCATED":
+                    case "DIRECT_DEBITS_COLLECTIONS":
                         document.querySelector('#upload-date').removeAttribute("disabled");
                         document.querySelector('#file-upload').removeAttribute("disabled");
                         document.querySelector('#email-field').removeAttribute("disabled");
