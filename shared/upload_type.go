@@ -127,6 +127,9 @@ func (i ReportUploadType) CSVHeaders() []string {
 }
 
 func (i ReportUploadType) Filename(date string) (string, error) {
+	if i == ReportTypeUploadMisappliedPayments {
+		return "misappliedpayments.csv", nil
+	}
 	parsedDate, err := time.Parse("2006-01-02", date)
 	if err != nil {
 		return "", err
