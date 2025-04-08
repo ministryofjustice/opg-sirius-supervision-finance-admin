@@ -45,7 +45,7 @@ func (h *UploadFormHandler) render(v AppVars, w http.ResponseWriter, r *http.Req
 	defer file.Close()
 
 	var expectedFilename string
-	if uploadDate != "" {
+	if uploadDate != "" || reportUploadType == shared.ReportTypeUploadMisappliedPayments {
 		expectedFilename, err = reportUploadType.Filename(uploadDate)
 		if err != nil {
 			return h.handleError(w, r, "UploadDate", "Could not parse upload date", http.StatusBadRequest)

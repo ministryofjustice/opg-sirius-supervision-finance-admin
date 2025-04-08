@@ -126,6 +126,9 @@ func (i ReportUploadType) CSVHeaders() []string {
 }
 
 func (i ReportUploadType) Filename(date string) (string, error) {
+	if i == ReportTypeUploadMisappliedPayments {
+		return "misappliedpayments.csv", nil
+	}
 	parsedDate, err := time.Parse("2006-01-02", date)
 	if err != nil {
 		return "", err
@@ -144,8 +147,6 @@ func (i ReportUploadType) Filename(date string) (string, error) {
 		return fmt.Sprintf("supervisioncheques_%s.csv", parsedDate.Format("02012006")), nil
 	case ReportTypeUploadSOPUnallocated:
 		return fmt.Sprintf("sopunallocated_%s.csv", parsedDate.Format("02012006")), nil
-	case ReportTypeUploadMisappliedPayments:
-		return "misappliedpayments.csv", nil
 	default:
 		return "", nil
 	}
