@@ -10,8 +10,15 @@ window.htmx = htmx;
 htmx.logAll();
 htmx.config.responseHandling = [{code:".*", swap: true}];
 
-const resetFieldInputs = () => {
-    htmx.findAll('[id$="-field-input"]').forEach(element => {
+const formToggler = (suffix) => {
+    return {
+        resetAll: resetAll(suffix),
+        show: show(suffix),
+    }
+}
+
+const resetAll = (suffix) => () => {
+    htmx.findAll(`[id$="-${suffix}"]`).forEach(element => {
         htmx.addClass(element, "hide");
         const input = element.querySelector("input");
         if (input) {
@@ -21,9 +28,9 @@ const resetFieldInputs = () => {
     });
 }
 
-const showFieldInput = (idName) => {
+const show = (suffix) => (idName) => {
     document.querySelector(`#${idName}`).removeAttribute("disabled");
-    htmx.removeClass(htmx.find(`#${idName}-field-input`), "hide")
+    htmx.removeClass(htmx.find(`#${idName}-${suffix}`), "hide")
 }
 
 const yesterday = () => {
@@ -34,13 +41,6 @@ const yesterday = () => {
 
 const setMaxDate = (idName, date) => {
     document.getElementById(idName).setAttribute("max", date);
-}
-
-function disableUploadFormInputs() {
-    document.querySelector('#pis-number').setAttribute("disabled", "true")
-    document.querySelector('#upload-date').setAttribute("disabled", "true")
-    document.querySelector('#file-upload').setAttribute("disabled", "true")
-    document.querySelector('#email-field').setAttribute("disabled", "true")
 }
 
 const dateRangeRequired = ["AgedDebt", "ARPaidInvoice", "TotalReceipts", "BadDebtWriteOff", "InvoiceAdjustments", "UnappliedReceipts"];
@@ -54,33 +54,34 @@ htmx.onLoad(content => {
     });
 
     if (document.getElementById('reports-type')) {
+        const toggle = formToggler("field-input")
         htmx.find("#reports-type").addEventListener("change", () => {
             const reportTypeEl = document.getElementById('reports-type');
             const reportType = reportTypeEl.value;
-            resetFieldInputs();
+            toggle.resetAll();
             document.querySelector("form").reset();
             reportTypeEl.value =  reportType;
 
             switch (reportType) {
                 case "Journal":
-                    showFieldInput("journal-types");
-                    showFieldInput("date");
-                    showFieldInput("email");
+                    toggle.show("journal-types");
+                    toggle.show("date");
+                    toggle.show("email");
                     setMaxDate("date", yesterday());
                     break;
                 case "Schedule":
-                    showFieldInput("schedule-types");
-                    showFieldInput("date");
-                    showFieldInput("email");
+                    toggle.show("schedule-types");
+                    toggle.show("date");
+                    toggle.show("email");
                     setMaxDate("date", yesterday());
                     break;
                 case "AccountsReceivable":
-                    showFieldInput("account-types");
-                    showFieldInput("email");
+                    toggle.show("account-types");
+                    toggle.show("email");
                     break;
                 case "Debt":
-                    showFieldInput("debt-types");
-                    showFieldInput("email");
+                    toggle.show("debt-types");
+                    toggle.show("email");
                     break;
                 default:
                     break;
@@ -97,55 +98,48 @@ htmx.onLoad(content => {
             reportTypeEl.value =  reportType;
             subTypeEl.value =  subType;
 
-            showFieldInput("account-types");
-            showFieldInput("email");
+            toggle.show("account-types");
+            toggle.show("email");
 
             if (dateRangeRequired.includes(subType)) {
-                showFieldInput("date-to");
-                showFieldInput("date-from");
+                toggle.show("date-to");
+                toggle.show("date-from");
             }
         });
     }
 
     if (document.getElementById('reports-upload-type')) {
         htmx.findAll("#reports-upload-type").forEach((element) => {
+            const toggle = formToggler("input");
             element.addEventListener("change", function() {
-                const elements = document.querySelectorAll('[id$="-input"]');
-                elements.forEach(element => {
-                    htmx.addClass(element, 'hide');
-                });
-                disableUploadFormInputs();
+                toggle.resetAll();
                 const form = document.querySelector('form');
                 const reportUploadTypeSelect = document.getElementById('reports-upload-type');
                 const reportUploadTypeSelectValue = reportUploadTypeSelect.value;
-
                 form.reset();
+
                 reportUploadTypeSelect.value =  reportUploadTypeSelectValue;
 
                 switch (reportUploadTypeSelect.value) {
                     case "PAYMENTS_SUPERVISION_CHEQUE":
-                        document.querySelector('#pis-number').removeAttribute("disabled")
-                        htmx.removeClass(htmx.find("#pis-number-input"), "hide")
+                        toggle.show("pis-number");
+                        toggle.show("file-upload");
+                        toggle.show("email-field");
+                        break;
                     case "PAYMENTS_MOTO_CARD":
                     case "PAYMENTS_ONLINE_CARD":
                     case "PAYMENTS_OPG_BACS":
                     case "PAYMENTS_SUPERVISION_BACS":
-                    case "SOP_UNALLOCATED":
-                        document.querySelector('#upload-date').removeAttribute("disabled");
-                        document.querySelector('#file-upload').removeAttribute("disabled");
-                        document.querySelector('#email-field').removeAttribute("disabled");
-                        htmx.removeClass(htmx.find("#upload-date-input"), "hide");
-                        htmx.removeClass(htmx.find("#file-upload-input"), "hide");
-                        htmx.removeClass(htmx.find("#email-field-input"), "hide");
+                        toggle.show("upload-date");
+                        toggle.show("file-upload");
+                        toggle.show("email-field");
                         break;
                     case "DEBT_CHASE":
                     case "DEPUTY_SCHEDULE":
-                        document.querySelector('#file-upload').removeAttribute("disabled")
-                        htmx.addClass(htmx.find("#upload-date-input"), "hide")
-                        htmx.addClass(htmx.find("#pis-number-input"), "hide")
-                        htmx.addClass(htmx.find("#email-field-input"), "hide")
-                        htmx.removeClass(htmx.find("#file-upload-input"), "hide")
-                        break;
+                    case "MISAPPLIED_PAYMENTS":
+                        toggle.show("file-upload");
+                        toggle.show("email-field");
+                        break
                     default:
                         break;
                 }
