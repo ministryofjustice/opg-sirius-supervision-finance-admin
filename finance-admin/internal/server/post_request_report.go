@@ -14,6 +14,7 @@ type RequestReportHandler struct {
 }
 
 func (h *RequestReportHandler) render(v AppVars, w http.ResponseWriter, r *http.Request) error {
+	var err error
 	ctx := r.Context()
 
 	var (
@@ -26,10 +27,11 @@ func (h *RequestReportHandler) render(v AppVars, w http.ResponseWriter, r *http.
 		dateFrom               = r.PostFormValue("dateFrom")
 		dateTo                 = r.PostFormValue("dateTo")
 		email                  = r.PostFormValue("email")
+		pisNumber              = r.PostFormValue("pisNumber")
 	)
 
-	data := shared.NewReportRequest(reportType, journalType, scheduleType, accountsReceivableType, debtType, transactionDate, dateTo, dateFrom, email)
-	err := h.Client().RequestReport(ctx, data)
+	data := shared.NewReportRequest(reportType, journalType, scheduleType, accountsReceivableType, debtType, transactionDate, dateTo, dateFrom, email, pisNumber)
+	err = h.Client().RequestReport(ctx, data)
 
 	if err != nil {
 		var (

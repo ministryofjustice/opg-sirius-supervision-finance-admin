@@ -91,6 +91,7 @@ func TestNewReportRequest(t *testing.T) {
 				tt.args.dateOfTransaction,
 				tt.args.dateTo,
 				tt.args.dateFrom,
+				"",
 				tt.args.email,
 			)
 			assert.Equal(t, tt.want, got)
