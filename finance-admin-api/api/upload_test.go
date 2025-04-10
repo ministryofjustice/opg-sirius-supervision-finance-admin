@@ -140,6 +140,13 @@ func TestValidateCSVHeaders(t *testing.T) {
 			true,
 			false,
 		},
+		{
+			"Returns nil for empty headers",
+			[]byte(","),
+			shared.ReportTypeUploadDirectDebitsCollections,
+			true,
+			false,
+		},
 	}
 
 	for _, tt := range tests {
