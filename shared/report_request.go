@@ -1,5 +1,7 @@
 package shared
 
+import "strconv"
+
 type ReportRequest struct {
 	ReportType             ReportsType             `json:"reportType"`
 	JournalType            *JournalType            `json:"journalType,omitempty"`
@@ -10,9 +12,10 @@ type ReportRequest struct {
 	ToDate                 *Date                   `json:"toDate,omitempty"`
 	FromDate               *Date                   `json:"fromDate,omitempty"`
 	Email                  string                  `json:"email"`
+	PisNumber              int                     `json:"pisNumber"`
 }
 
-func NewReportRequest(reportType, journalType, scheduleType, accountsReceivableType, debtType, transactionDate, dateTo, dateFrom, email string) ReportRequest {
+func NewReportRequest(reportType, journalType, scheduleType, accountsReceivableType, debtType, transactionDate, dateTo, dateFrom, pisNumber, email string) ReportRequest {
 	download := ReportRequest{
 		ReportType:             ParseReportsType(reportType),
 		JournalType:            ParseJournalType(journalType),
@@ -35,6 +38,10 @@ func NewReportRequest(reportType, journalType, scheduleType, accountsReceivableT
 	if dateFrom != "" {
 		endDateFormatted := NewDate(dateFrom)
 		download.FromDate = &endDateFormatted
+	}
+
+	if pisNumber != "" {
+		download.PisNumber, _ = strconv.Atoi(pisNumber)
 	}
 
 	return download
