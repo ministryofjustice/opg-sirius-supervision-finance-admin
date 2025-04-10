@@ -12,7 +12,7 @@ type ReportRequest struct {
 	ToDate                 *Date                   `json:"toDate,omitempty"`
 	FromDate               *Date                   `json:"fromDate,omitempty"`
 	Email                  string                  `json:"email"`
-	PisNumber              *int                    `json:"pisNumber,omitempty"`
+	PisNumber              int                     `json:"pisNumber"`
 }
 
 func NewReportRequest(reportType, journalType, scheduleType, accountsReceivableType, debtType, transactionDate, dateTo, dateFrom, pisNumber, email string) ReportRequest {
@@ -41,8 +41,7 @@ func NewReportRequest(reportType, journalType, scheduleType, accountsReceivableT
 	}
 
 	if pisNumber != "" {
-		pisNumberFormatted, _ := strconv.Atoi(pisNumber)
-		download.PisNumber = &pisNumberFormatted
+		download.PisNumber, _ = strconv.Atoi(pisNumber)
 	}
 
 	return download
