@@ -16,6 +16,7 @@ func TestNewReportRequest(t *testing.T) {
 		dateOfTransaction            string
 		dateTo                       string
 		dateFrom                     string
+		pisNumber                    string
 		email                        string
 	}
 
@@ -39,6 +40,7 @@ func TestNewReportRequest(t *testing.T) {
 				dateOfTransaction:            "11/05/2024",
 				dateTo:                       "15/06/2025",
 				dateFrom:                     "21/07/2022",
+				pisNumber:                    "123456",
 				email:                        "Something@example.com",
 			},
 			want: ReportRequest{
@@ -50,6 +52,7 @@ func TestNewReportRequest(t *testing.T) {
 				TransactionDate:        &Date{Time: dateOfTransaction},
 				ToDate:                 &Date{Time: dateTo},
 				FromDate:               &Date{Time: dateFrom},
+				PisNumber:              toPtr(123456),
 				Email:                  "Something@example.com",
 			},
 		},
@@ -64,6 +67,7 @@ func TestNewReportRequest(t *testing.T) {
 				dateOfTransaction:            "",
 				dateTo:                       "",
 				dateFrom:                     "",
+				pisNumber:                    "",
 				email:                        "Something@example.com",
 			},
 			want: ReportRequest{
@@ -75,6 +79,7 @@ func TestNewReportRequest(t *testing.T) {
 				TransactionDate:        nil,
 				ToDate:                 nil,
 				FromDate:               nil,
+				PisNumber:              nil,
 				Email:                  "Something@example.com",
 			},
 		},
@@ -91,7 +96,7 @@ func TestNewReportRequest(t *testing.T) {
 				tt.args.dateOfTransaction,
 				tt.args.dateTo,
 				tt.args.dateFrom,
-				"",
+				tt.args.pisNumber,
 				tt.args.email,
 			)
 			assert.Equal(t, tt.want, got)
