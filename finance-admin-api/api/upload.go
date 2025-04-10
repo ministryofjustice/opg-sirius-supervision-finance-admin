@@ -93,21 +93,18 @@ func cleanString(s string) string {
 func (s *Server) upload(w http.ResponseWriter, r *http.Request) error {
 	ctx := r.Context()
 
-	var err error
 	var upload shared.Upload
 	defer r.Body.Close()
 
-	if err = json.NewDecoder(r.Body).Decode(&upload); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&upload); err != nil {
 		return err
 	}
 
 	useStrictHeaderComparison := upload.ReportUploadType != shared.ReportTypeUploadPaymentsSupervisionCheque
 
-	if upload.ReportUploadType != shared.ReportTypeUploadDirectDebitsCollections {
-		err = validateCSVHeaders(upload.File, upload.ReportUploadType, useStrictHeaderComparison)
-		if err != nil {
-			return err
-		}
+	err := validateCSVHeaders(upload.File, upload.ReportUploadType, useStrictHeaderComparison)
+	if err != nil {
+		return err
 	}
 
 	_, err = s.filestorage.PutFile(
