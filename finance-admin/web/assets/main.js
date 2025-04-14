@@ -93,7 +93,7 @@ htmx.onLoad(content => {
             const reportType = reportTypeEl.value;
             const subTypeEl = document.getElementById('account-types');
             const subType = subTypeEl.value;
-            resetFieldInputs();
+            toggle.resetAll();
             document.querySelector("form").reset();
             reportTypeEl.value =  reportType;
             subTypeEl.value =  subType;
