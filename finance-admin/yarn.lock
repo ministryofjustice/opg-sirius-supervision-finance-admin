@@ -277,10 +277,10 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/retry/-/retry-0.4.1.tgz#9a96ce501bc62df46c4031fbd970e3cc6b10f07b"
   integrity sha512-c7hNEllBlenFTHBky65mhq8WD2kbN9Q6gk0bTk8lSBvc554jpXSkST1iePudpt7+A/AQvuHs9EMqjHDXMY1lrA==
 
-"@ministryofjustice/frontend@^4.0.1":
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/@ministryofjustice/frontend/-/frontend-4.0.1.tgz#5e9ed308e208982179e26e7884173bce553eec87"
-  integrity sha512-LljgnzLtTIw9z8mw/pK1xLIyR3TtHrFa9Z/i7X+6odzN5MlQ0dYLDXunoAhniXeOlXz5sNbdsmGuf/iNxv0keA==
+"@ministryofjustice/frontend@^5.0.0":
+  version "5.1.2"
+  resolved "https://registry.yarnpkg.com/@ministryofjustice/frontend/-/frontend-5.1.2.tgz#0eb44cd9f1e2e322dd24792f1e2bd66f8f4b56da"
+  integrity sha512-ZpxmefOMLdm4CQGctz4KLIlbgJGHTjhJXohKAygZoA+/pP+paGmbeGIDkdjW7wRF5etld+ERZ9yqNeoMmm+VAw==
 
 "@parcel/watcher-android-arm64@2.5.0":
   version "2.5.0"
