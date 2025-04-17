@@ -123,6 +123,7 @@ htmx.onLoad(content => {
                 switch (reportUploadTypeSelect.value) {
                     case "PAYMENTS_SUPERVISION_CHEQUE":
                         toggle.show("pis-number");
+                        toggle.show("upload-date");
                         toggle.show("file-upload");
                         toggle.show("email-field");
                         break;
