@@ -124,6 +124,7 @@ htmx.onLoad(content => {
                     case "PAYMENTS_SUPERVISION_CHEQUE":
                         toggle.show("pis-number");
                         toggle.show("file-upload");
+                        toggle.show("upload-date");
                         toggle.show("email-field");
                         break;
                     case "PAYMENTS_MOTO_CARD":
