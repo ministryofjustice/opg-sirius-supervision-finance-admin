@@ -49,4 +49,27 @@ describe("Uploading Files", () => {
             cy.get('#f-FileUpload').should('have.class', 'govuk-form-group--error');
         });
     });
+
+    describe("Form fields", () => {
+        const selections = {
+            "PAYMENTS_MOTO_CARD": ['#file-upload', '#upload-date', '#email-field'],
+            "PAYMENTS_ONLINE_CARD": ['#file-upload', '#upload-date', '#email-field'],
+            "PAYMENTS_OPG_BACS": ['#file-upload', '#upload-date', '#email-field'],
+            "PAYMENTS_SUPERVISION_BACS": ['#file-upload', '#upload-date', '#email-field'],
+            "PAYMENTS_SUPERVISION_CHEQUE": ['#file-upload', '#upload-date', '#pis-number', '#email-field'],
+            "DEBT_CHASE": ['#file-upload', '#email-field'],
+            "DEPUTY_SCHEDULE": ['#file-upload', '#email-field'],
+            "DIRECT_DEBITS_COLLECTIONS": ['#file-upload', '#upload-date', '#email-field'],
+            "MISAPPLIED_PAYMENTS": ['#file-upload', '#email-field'],
+        }
+
+        it("Displays the correct fields for selection", () => {
+            for (const [upload, fields] of Object.entries(selections)) {
+                cy.get('[data-cy=\"report-upload-type\"]').select(upload);
+                fields.forEach((field) => {
+                   cy.get(field).should('be.visible');
+                });
+            }
+        });
+    });
 });
