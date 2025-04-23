@@ -1,6 +1,8 @@
 package shared
 
-import "strconv"
+import (
+	"strconv"
+)
 
 type ReportRequest struct {
 	ReportType             ReportsType             `json:"reportType"`
@@ -15,7 +17,7 @@ type ReportRequest struct {
 	PisNumber              int                     `json:"pisNumber"`
 }
 
-func NewReportRequest(reportType, journalType, scheduleType, accountsReceivableType, debtType, transactionDate, dateTo, dateFrom, pisNumber, email string) ReportRequest {
+func NewReportRequest(reportType, journalType, scheduleType, accountsReceivableType, debtType, transactionDate, dateTo, dateFrom, email, pisNumber string) ReportRequest {
 	download := ReportRequest{
 		ReportType:             ParseReportsType(reportType),
 		JournalType:            ParseJournalType(journalType),

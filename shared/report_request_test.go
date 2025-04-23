@@ -16,8 +16,8 @@ func TestNewReportRequest(t *testing.T) {
 		dateOfTransaction            string
 		dateTo                       string
 		dateFrom                     string
-		pisNumber                    string
 		email                        string
+		pisNumber                    string
 	}
 
 	dateOfTransaction, _ := time.Parse("02/01/2006", "11/05/2024")
@@ -40,8 +40,8 @@ func TestNewReportRequest(t *testing.T) {
 				dateOfTransaction:            "11/05/2024",
 				dateTo:                       "15/06/2025",
 				dateFrom:                     "21/07/2022",
-				pisNumber:                    "123456",
 				email:                        "Something@example.com",
+				pisNumber:                    "123456",
 			},
 			want: ReportRequest{
 				ReportType:             ReportsTypeSchedule,
@@ -52,8 +52,8 @@ func TestNewReportRequest(t *testing.T) {
 				TransactionDate:        &Date{Time: dateOfTransaction},
 				ToDate:                 &Date{Time: dateTo},
 				FromDate:               &Date{Time: dateFrom},
-				PisNumber:              123456,
 				Email:                  "Something@example.com",
+				PisNumber:              123456,
 			},
 		},
 		{
@@ -67,8 +67,8 @@ func TestNewReportRequest(t *testing.T) {
 				dateOfTransaction:            "",
 				dateTo:                       "",
 				dateFrom:                     "",
-				pisNumber:                    "",
 				email:                        "Something@example.com",
+				pisNumber:                    "",
 			},
 			want: ReportRequest{
 				ReportType:             ReportsTypeSchedule,
@@ -79,8 +79,8 @@ func TestNewReportRequest(t *testing.T) {
 				TransactionDate:        nil,
 				ToDate:                 nil,
 				FromDate:               nil,
-				PisNumber:              0,
 				Email:                  "Something@example.com",
+				PisNumber:              0,
 			},
 		},
 	}
@@ -96,8 +96,8 @@ func TestNewReportRequest(t *testing.T) {
 				tt.args.dateOfTransaction,
 				tt.args.dateTo,
 				tt.args.dateFrom,
-				tt.args.pisNumber,
 				tt.args.email,
+				tt.args.pisNumber,
 			)
 			assert.Equal(t, tt.want, got)
 		})

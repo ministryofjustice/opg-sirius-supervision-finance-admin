@@ -31,11 +31,6 @@ func (h *RequestReportHandler) render(v AppVars, w http.ResponseWriter, r *http.
 	)
 
 	data := shared.NewReportRequest(reportType, journalType, scheduleType, accountsReceivableType, debtType, transactionDate, dateTo, dateFrom, email, pisNumber)
-
-	fmt.Println("Report request: ")
-	stringRequest := fmt.Sprintf("%v", data)
-	fmt.Println(stringRequest)
-
 	err = h.Client().RequestReport(ctx, data)
 
 	if err != nil {

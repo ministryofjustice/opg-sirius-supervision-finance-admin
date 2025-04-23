@@ -93,6 +93,7 @@ htmx.onLoad(content => {
             const reportType = reportTypeEl.value;
             const subTypeEl = document.getElementById('account-types');
             const subType = subTypeEl.value;
+
             toggle.resetAll();
             document.querySelector("form").reset();
             reportTypeEl.value =  reportType;
@@ -108,15 +109,23 @@ htmx.onLoad(content => {
         });
 
         htmx.find('#schedule-types').addEventListener("change", () => {
+            const reportTypeEl = document.getElementById('reports-type');
+            const reportType = reportTypeEl.value;
             const subTypeEl = document.getElementById('schedule-types');
             const subType = subTypeEl.value;
 
+            toggle.resetAll();
+            document.querySelector("form").reset();
+            reportTypeEl.value =  reportType;
+            subTypeEl.value =  subType;
+
+            toggle.show("schedule-types");
+            toggle.show("date");
+            toggle.show("email");
+            setMaxDate("date", yesterday());
+
             if (subType === 'ChequePayments') {
-                document.querySelector('#pis-number').removeAttribute("disabled")
-                htmx.removeClass(htmx.find("#pis-number-input"), "hide")
-            } else {
-                document.querySelector('#pis-number').setAttribute("disabled", "true")
-                htmx.addClass(htmx.find("#pis-number-input"), "hide")
+                toggle.show("pis-number")
             }
         });
     }
