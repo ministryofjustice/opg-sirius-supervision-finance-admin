@@ -45,6 +45,7 @@ COPY go.mod go.sum ./
 COPY healthcheck healthcheck
 COPY shared shared
 COPY finance-admin-api finance-admin-api
+COPY apierror apierror
 
 RUN go mod download
 

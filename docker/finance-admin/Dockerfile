@@ -59,6 +59,7 @@ COPY go.sum .
 COPY healthcheck healthcheck
 COPY shared shared
 COPY finance-admin finance-admin
+COPY apierror apierror
 
 RUN go mod download
 
