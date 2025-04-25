@@ -56,9 +56,12 @@ WORKDIR /app
 COPY go.mod .
 COPY go.sum .
 
-RUN go mod download
+COPY healthcheck healthcheck
+COPY shared shared
+COPY finance-admin finance-admin
+COPY apierror apierror
 
-COPY . .
+RUN go mod download
 
 WORKDIR /app/finance-admin
 
