@@ -41,9 +41,12 @@ FROM base AS app-build
 WORKDIR /app
 
 COPY go.mod go.sum ./
-RUN go mod download
 
-COPY . .
+COPY healthcheck healthcheck
+COPY shared shared
+COPY finance-admin-api finance-admin-api
+
+RUN go mod download
 
 WORKDIR /app/finance-admin-api
 
