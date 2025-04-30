@@ -161,6 +161,7 @@ htmx.onLoad(content => {
                     case "DEBT_CHASE":
                     case "DEPUTY_SCHEDULE":
                     case "MISAPPLIED_PAYMENTS":
+                    case "DUPLICATED_PAYMENTS":
                         toggle.show("file-upload");
                         toggle.show("email-field");
                         break
