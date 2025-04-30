@@ -125,8 +125,10 @@ func (i ReportUploadType) CSVHeaders() []string {
 		return []string{"Client_no", "Deputy_name", "Total_debt"}
 	case ReportTypeUploadDirectDebitsCollections:
 		return []string{""}
-	case ReportTypeUploadMisappliedPayments, ReportTypeUploadDuplicatedPayments:
+	case ReportTypeUploadMisappliedPayments:
 		return []string{"Payment type", "Current (errored) court reference", "New (correct) court reference", "Bank date", "Received date", "Amount", "PIS number (cheque only)"}
+	case ReportTypeUploadDuplicatedPayments:
+		return []string{"Payment type", "Current (errored) court reference", "Bank date", "Received date", "Amount", "PIS number (cheque only)"}
 	}
 
 	return []string{"Unknown report type"}
