@@ -16,25 +16,6 @@ services:
       - ./finance-admin/web/static:/app/finance-admin/web/static
       - ./finance-admin/web/template:/app/finance-admin/web/template
 
-  finance-admin-api:
-    build:
-      target: dev
-    ports:
-      - '3456:2345'
-    volumes:
-      - ./go.mod:/app/go.mod
-      - ./go.sum:/app/go.sum
-      - ./apierror:/app/apierror
-      - ./migrations:/app/migrations
-      - ./shared:/app/shared
-      - ./finance-admin-api/.air.toml:/app/finance-admin-api/.air.toml
-      - ./finance-admin-api/api:/app/finance-admin-api/api
-      - ./finance-admin-api/filestorage:/app/finance-admin-api/filestorage
-      - ./finance-admin-api/event:/app/finance-admin-api/event
-      - ./finance-admin-api/db:/app/finance-admin-api/db
-      - ./finance-admin-api/reports:/app/finance-admin-api/reports
-      - ./finance-admin-api/main.go:/app/finance-admin-api/main.go
-
   yarn:
     command: watch
 
