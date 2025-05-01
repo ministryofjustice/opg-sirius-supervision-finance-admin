@@ -130,9 +130,6 @@ jobs:
             - image_name: 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-admin
               service_name: finance-admin
               build_options: --file docker/finance-admin/Dockerfile
-            - image_name: 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-admin-api
-              service_name: finance-admin-api
-              build_options: --file docker/finance-admin-api/Dockerfile
     name: Build ${{ matrix.service_name }}
     uses: ministryofjustice/opg-github-workflows/.github/workflows/build-multi-architecture-image.yml@6bc0246b5cca2f4c85d06986c82a9a42643f6851 # v3.13.0
     with:
@@ -187,7 +184,6 @@ jobs:
       - name: Load Images
         run: |
           docker load -i /tmp/images/finance-admin-multi-arch.tar
-          docker load -i /tmp/images/finance-admin-api-multi-arch.tar
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@ececac1a45f3b08a01d2dd070d28d111c5fe6722 # v4.1.0
@@ -233,18 +229,13 @@ jobs:
       - name: Push Container
         run: |
           docker tag 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-admin:latest 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-admin:${{ steps.bump_version.outputs.tag }}
-          docker tag 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-admin-api:latest 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-admin-api:${{ steps.bump_version.outputs.tag }}
           if [ $BRANCH_NAME == "main" ]; then
             docker tag 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-admin:latest 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-admin:main-${{ steps.bump_version.outputs.tag }}
-            docker tag 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-admin-api:latest 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-admin-api:main-${{ steps.bump_version.outputs.tag }}
             docker tag 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-admin:latest 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-admin:main-${{ steps.bump_version.outputs.tag }}-$TIMESTAMP
-            docker tag 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-admin-api:latest 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-admin-api:main-${{ steps.bump_version.outputs.tag }}-$TIMESTAMP
             # We want all of the tags pushed
             docker push  --all-tags 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-admin
-            docker push  --all-tags 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-admin-api
           else
             docker push 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-admin:${{ steps.bump_version.outputs.tag }}
-            docker push 311462405659.dkr.ecr.eu-west-1.amazonaws.com/sirius/sirius-finance-admin-api:${{ steps.bump_version.outputs.tag }}
           fi
 
   end_of_pr_workflow:

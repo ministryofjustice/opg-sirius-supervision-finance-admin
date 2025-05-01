@@ -2,6 +2,7 @@ package api
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/model"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/shared"
@@ -18,10 +19,10 @@ func TestUploadUrlSwitching(t *testing.T) {
 	client := NewClient(mockClient, mockJwtClient, EnvVars{"http://localhost:3000", "", ""})
 
 	data := shared.Upload{
-		ReportUploadType: shared.ParseReportUploadType("reportUploadType"),
-		UploadDate:       shared.NewDate("2025-06-15"),
-		Email:            "Something@example.com",
-		File:             []byte("file content"),
+		UploadType:   shared.ParseReportUploadType("reportUploadType"),
+		UploadDate:   shared.NewDate("2025-06-15"),
+		EmailAddress: "Something@example.com",
+		Base64Data:   base64.StdEncoding.EncodeToString([]byte("col1, col2\nabc,1")),
 	}
 
 	GetDoFunc = func(req *http.Request) (*http.Response, error) {
