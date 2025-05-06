@@ -1,11 +1,13 @@
 package server
 
 import (
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/api"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/model"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/shared"
+	"io"
 	"net/http"
 	"strconv"
 	"strings"
@@ -52,7 +54,7 @@ func (h *UploadFormHandler) render(v AppVars, w http.ResponseWriter, r *http.Req
 			return h.handleError(w, r, "UploadDate", "Could not parse upload date", http.StatusBadRequest)
 		}
 	} else {
-		return h.handleError(w, r, "UploadDate", "Upload date required", http.StatusBadRequest)
+		return h.handleError(w, r, "UploadDate", "EventUpload date required", http.StatusBadRequest)
 	}
 
 	if shared.NewDate(uploadDate).After(shared.Date{Time: time.Now()}) {
@@ -69,9 +71,17 @@ func (h *UploadFormHandler) render(v AppVars, w http.ResponseWriter, r *http.Req
 		return h.handleError(w, r, "FileUpload", fmt.Sprintf("Filename should be \"%s\"", expectedFilename), http.StatusBadRequest)
 	}
 
-	data, err := shared.NewUpload(reportUploadType, pisNumber, uploadDate, email, file, handler.Filename)
+	fileData, err := io.ReadAll(file)
 	if err != nil {
 		return h.handleError(w, r, "FileUpload", "Failed to read file", http.StatusBadRequest)
+	}
+
+	data := shared.Upload{
+		UploadType:   reportUploadType,
+		EmailAddress: email,
+		Base64Data:   base64.StdEncoding.EncodeToString(fileData),
+		UploadDate:   shared.NewDate(uploadDate),
+		PisNumber:    pisNumber,
 	}
 
 	// Upload the file
