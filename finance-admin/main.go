@@ -23,7 +23,6 @@ type Envs struct {
 	webDir          string
 	siriusURL       string
 	siriusPublicURL string
-	backendURL      string
 	hubURL          string
 	prefix          string
 	port            string
@@ -35,7 +34,6 @@ func parseEnvs() (*Envs, error) {
 		"SIRIUS_URL":        os.Getenv("SIRIUS_URL"),
 		"SIRIUS_PUBLIC_URL": os.Getenv("SIRIUS_PUBLIC_URL"),
 		"PREFIX":            os.Getenv("PREFIX"),
-		"BACKEND_URL":       os.Getenv("BACKEND_URL"),
 		"HUB_URL":           os.Getenv("HUB_URL"),
 		"JWT_SECRET":        os.Getenv("JWT_SECRET"),
 		"PORT":              os.Getenv("PORT"),
@@ -56,7 +54,6 @@ func parseEnvs() (*Envs, error) {
 		siriusURL:       envs["SIRIUS_URL"],
 		siriusPublicURL: envs["SIRIUS_PUBLIC_URL"],
 		prefix:          envs["PREFIX"],
-		backendURL:      envs["BACKEND_URL"],
 		hubURL:          envs["HUB_URL"],
 		jwtSecret:       envs["JWT_SECRET"],
 		webDir:          "web",
@@ -95,9 +92,8 @@ func run(ctx context.Context, logger *slog.Logger) error {
 			Secret: envs.jwtSecret,
 		},
 		api.EnvVars{
-			SiriusURL:  envs.siriusURL,
-			BackendURL: envs.backendURL,
-			HubURL:     envs.hubURL,
+			SiriusURL: envs.siriusURL,
+			HubURL:    envs.hubURL,
 		})
 
 	templates := createTemplates(envs)
