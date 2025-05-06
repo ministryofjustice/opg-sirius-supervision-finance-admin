@@ -93,6 +93,7 @@ services:
       - "8282:8080"
     environment:
       PORT: 8080
+      HEALTHCHECK: /health-check
       POSTGRES_CONN: sirius-db:5432
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
@@ -112,6 +113,6 @@ services:
       FINANCE_HUB_LIVE_DATE: 01/01/2024
       REPORTS_S3_BUCKET: opg-backoffice-reports-local
       ASYNC_S3_BUCKET: opg-backoffice-async-uploads-local
+      NOTIFY_URL: http://json-server:3000
       OPG_NOTIFY_API_KEY: test
       OPG_SUPERVISION_SYSTEM_USER_ID: 1
-      HEALTHCHECK: /health-check
