@@ -17,7 +17,7 @@ func (c *Client) Upload(ctx context.Context, data shared.Upload) error {
 		return err
 	}
 
-	req, err := c.newBackendRequest(ctx, http.MethodPost, "/uploads", &body)
+	req, err := c.newHubRequest(ctx, http.MethodPost, "/uploads", &body)
 
 	if err != nil {
 		return err
