@@ -13,7 +13,7 @@ import (
 	"testing"
 )
 
-func TestUploadUrlSwitching(t *testing.T) {
+func TestUploadSuccess(t *testing.T) {
 	mockClient := &MockClient{}
 	mockJwtClient := &mockJWTClient{}
 	client := NewClient(mockClient, mockJwtClient, EnvVars{"http://localhost:3000", ""})
@@ -27,7 +27,7 @@ func TestUploadUrlSwitching(t *testing.T) {
 
 	GetDoFunc = func(req *http.Request) (*http.Response, error) {
 		return &http.Response{
-			StatusCode: http.StatusCreated,
+			StatusCode: http.StatusOK,
 			Body:       io.NopCloser(bytes.NewReader([]byte{})),
 		}, nil
 	}
