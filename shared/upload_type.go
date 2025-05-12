@@ -155,6 +155,10 @@ func (i ReportUploadType) Filename(date string) (string, error) {
 	}
 }
 
+func (i ReportUploadType) HasHeader() bool {
+	return i != ReportTypeUploadDirectDebitsCollections
+}
+
 func ParseReportUploadType(s string) ReportUploadType {
 	value, ok := reportTypeUploadMap[s]
 	if !ok {
