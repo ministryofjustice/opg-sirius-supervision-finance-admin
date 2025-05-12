@@ -100,14 +100,16 @@ func (s *Server) upload(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	useStrictHeaderComparison := upload.ReportUploadType != shared.ReportTypeUploadPaymentsSupervisionCheque
+	if upload.ReportUploadType.HasHeader() {
+		useStrictHeaderComparison := upload.ReportUploadType != shared.ReportTypeUploadPaymentsSupervisionCheque
 
-	err := validateCSVHeaders(upload.File, upload.ReportUploadType, useStrictHeaderComparison)
-	if err != nil {
-		return err
+		err := validateCSVHeaders(upload.File, upload.ReportUploadType, useStrictHeaderComparison)
+		if err != nil {
+			return err
+		}
 	}
 
-	_, err = s.filestorage.PutFile(
+	_, err := s.filestorage.PutFile(
 		ctx,
 		os.Getenv("ASYNC_S3_BUCKET"),
 		fmt.Sprintf("%s/%s", s3Directory, upload.Filename),
