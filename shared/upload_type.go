@@ -21,6 +21,10 @@ var PaymentUploadTypes = []ReportUploadType{
 	ReportTypeUploadMisappliedPayments,
 }
 
+var reportUploadNoHeaderTypes = []ReportUploadType{
+	ReportTypeUploadDirectDebitsCollections,
+}
+
 type ReportUploadType int
 
 const (
@@ -117,8 +121,6 @@ func (i ReportUploadType) CSVHeaders() []string {
 		return []string{"Deputy number", "Deputy name", "Case number", "Client forename", "Client surname", "Do not invoice", "Total outstanding"}
 	case ReportTypeUploadDebtChase:
 		return []string{"Client_no", "Deputy_name", "Total_debt"}
-	case ReportTypeUploadDirectDebitsCollections:
-		return []string{""}
 	case ReportTypeUploadMisappliedPayments:
 		return []string{"Payment type", "Current (errored) court reference", "New (correct) court reference", "Bank date", "Received date", "Amount", "PIS number (cheque only)"}
 	}
@@ -165,6 +167,15 @@ func ParseReportUploadType(s string) ReportUploadType {
 
 func (i ReportUploadType) Valid() bool {
 	return i != ReportTypeUploadUnknown
+}
+
+func (u ReportUploadType) HasHeader() bool {
+	for _, t := range reportUploadNoHeaderTypes {
+		if u == t {
+			return false
+		}
+	}
+	return true
 }
 
 func (i ReportUploadType) MarshalJSON() ([]byte, error) {

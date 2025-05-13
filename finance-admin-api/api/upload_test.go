@@ -15,7 +15,7 @@ func Test_upload(t *testing.T) {
 	var b bytes.Buffer
 
 	uploadForm := &shared.Upload{
-		ReportUploadType: shared.ParseReportUploadType("DEBT_CHASE"),
+		ReportUploadType: shared.ReportTypeUploadDebtChase,
 		Email:            "joseph@test.com",
 		Filename:         "file.txt",
 		File:             []byte("client_no,deputy_name,Total_debt"),
@@ -45,7 +45,7 @@ func TestUploadIncorrectCSVHeaders(t *testing.T) {
 	var b bytes.Buffer
 
 	uploadForm := &shared.Upload{
-		ReportUploadType: shared.ParseReportUploadType("DEBT_CHASE"),
+		ReportUploadType: shared.ReportTypeUploadDebtChase,
 		Email:            "joseph@test.com",
 		Filename:         "file.txt",
 		File:             []byte("blarg"),
@@ -73,7 +73,7 @@ func TestUploadFailedToReadCSVHeaders(t *testing.T) {
 	var b bytes.Buffer
 
 	uploadForm := &shared.Upload{
-		ReportUploadType: shared.ParseReportUploadType("DEBT_CHASE"),
+		ReportUploadType: shared.ReportTypeUploadDebtChase,
 		Email:            "joseph@test.com",
 		Filename:         "file.txt",
 		File:             []byte(""),
@@ -95,6 +95,36 @@ func TestUploadFailedToReadCSVHeaders(t *testing.T) {
 		},
 	}}
 	assert.Equal(t, expected, err)
+}
+
+func TestUploadSkipHeaderValidation(t *testing.T) {
+	var b bytes.Buffer
+
+	uploadForm := &shared.Upload{
+		ReportUploadType: shared.ReportTypeUploadDirectDebitsCollections,
+		Email:            "joseph@test.com",
+		Filename:         "file.txt",
+		File:             []byte(""),
+	}
+
+	_ = json.NewEncoder(&b).Encode(uploadForm)
+	req := httptest.NewRequest(http.MethodPost, "/uploads", &b)
+	w := httptest.NewRecorder()
+
+	mockHttpClient := MockHttpClient{}
+	mockDispatch := MockDispatch{}
+	mockFileStorage := MockFileStorage{}
+
+	server := Server{&mockHttpClient, &mockDispatch, &mockFileStorage}
+	_ = server.upload(w, req)
+
+	res := w.Result()
+	defer res.Body.Close()
+
+	expected := ""
+
+	assert.Equal(t, expected, w.Body.String())
+	assert.Equal(t, http.StatusCreated, w.Code)
 }
 
 func TestValidateCSVHeaders(t *testing.T) {
@@ -137,13 +167,6 @@ func TestValidateCSVHeaders(t *testing.T) {
 			"Ignores blank fields",
 			[]byte("Line, Type,,,\nTest"),
 			shared.ReportTypeUploadPaymentsOPGBACS,
-			true,
-			false,
-		},
-		{
-			"Returns nil for empty headers",
-			[]byte(","),
-			shared.ReportTypeUploadDirectDebitsCollections,
 			true,
 			false,
 		},
