@@ -17,7 +17,7 @@ func (c *Client) Upload(ctx context.Context, data shared.Upload) error {
 		return err
 	}
 
-	req, err := c.newBackendRequest(ctx, http.MethodPost, "/uploads", &body)
+	req, err := c.newHubRequest(ctx, http.MethodPost, "/uploads", &body)
 
 	if err != nil {
 		return err
@@ -31,7 +31,7 @@ func (c *Client) Upload(ctx context.Context, data shared.Upload) error {
 	defer resp.Body.Close()
 
 	switch resp.StatusCode {
-	case http.StatusCreated:
+	case http.StatusOK:
 		return nil
 
 	case http.StatusUnauthorized:
