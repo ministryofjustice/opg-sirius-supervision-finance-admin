@@ -51,6 +51,17 @@ var reportTypeUploadMap = map[string]ReportUploadType{
 	"DUPLICATED_PAYMENTS":         ReportTypeUploadDuplicatedPayments,
 }
 
+func (i ReportUploadType) RequiresUploadDate() bool {
+	switch i {
+	case ReportTypeUploadDuplicatedPayments:
+		return false
+	case ReportTypeUploadMisappliedPayments:
+		return false
+	default:
+		return true
+	}
+}
+
 func (i ReportUploadType) String() string {
 	return i.Key()
 }
