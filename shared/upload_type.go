@@ -53,9 +53,7 @@ var reportTypeUploadMap = map[string]ReportUploadType{
 
 func (i ReportUploadType) RequiresUploadDate() bool {
 	switch i {
-	case ReportTypeUploadDuplicatedPayments:
-		return false
-	case ReportTypeUploadMisappliedPayments:
+	case ReportTypeUploadDuplicatedPayments, ReportTypeUploadMisappliedPayments:
 		return false
 	default:
 		return true
