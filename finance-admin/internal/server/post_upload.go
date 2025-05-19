@@ -1,10 +1,10 @@
 package server
 
 import (
+	"bytes"
 	"encoding/base64"
-	"errors"
+	"encoding/csv"
 	"fmt"
-	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/api"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/model"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/shared"
 	"io"
@@ -12,6 +12,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unicode"
 )
 
 type UploadFormHandler struct {
@@ -23,16 +24,16 @@ func (h *UploadFormHandler) render(v AppVars, w http.ResponseWriter, r *http.Req
 
 	var err error
 	var pisNumber int
-	reportUploadType := shared.ParseReportUploadType(r.PostFormValue("reportUploadType"))
+	uploadType := shared.ParseUploadType(r.PostFormValue("uploadType"))
 
-	if reportUploadType == shared.ReportTypeUploadPaymentsSupervisionCheque {
+	if uploadType == shared.ReportTypeUploadPaymentsSupervisionCheque {
 		pisNumberForm := strings.ReplaceAll(r.PostFormValue("pisNumber"), " ", "")
 		pisNumber, err = strconv.Atoi(pisNumberForm)
 		if len([]rune(pisNumberForm)) != 6 {
-			return h.handleError(w, r, "PisNumber", "PIS number must be 6 digits", http.StatusBadRequest)
+			return h.handleError(w, r, "PisNumber", "PIS number must be 6 digits", http.StatusUnprocessableEntity)
 		}
 		if err != nil {
-			return h.handleError(w, r, "PisNumber", "Error parsing PIS number", http.StatusBadRequest)
+			return h.handleError(w, r, "PisNumber", "Error parsing PIS number", http.StatusUnprocessableEntity)
 		}
 	}
 
@@ -42,19 +43,19 @@ func (h *UploadFormHandler) render(v AppVars, w http.ResponseWriter, r *http.Req
 	// Handle file upload
 	file, handler, err := r.FormFile("fileUpload")
 	if err != nil {
-		return h.handleError(w, r, "FileUpload", "No file uploaded", http.StatusBadRequest)
+		return h.handleError(w, r, "FileUpload", "No file uploaded", http.StatusUnprocessableEntity)
 	}
 
 	defer file.Close()
 
 	var expectedFilename string
-	if uploadDate != "" || reportUploadType == shared.ReportTypeUploadMisappliedPayments {
-		expectedFilename, err = reportUploadType.Filename(uploadDate)
+	if uploadDate != "" || uploadType == shared.ReportTypeUploadMisappliedPayments {
+		expectedFilename, err = uploadType.Filename(uploadDate)
 		if err != nil {
-			return h.handleError(w, r, "UploadDate", "Could not parse upload date", http.StatusBadRequest)
+			return h.handleError(w, r, "UploadDate", "Could not parse upload date", http.StatusUnprocessableEntity)
 		}
 	} else {
-		return h.handleError(w, r, "UploadDate", "EventUpload date required", http.StatusBadRequest)
+		return h.handleError(w, r, "UploadDate", "Upload date required", http.StatusUnprocessableEntity)
 	}
 
 	if shared.NewDate(uploadDate).After(shared.Date{Time: time.Now()}) {
@@ -62,22 +63,31 @@ func (h *UploadFormHandler) render(v AppVars, w http.ResponseWriter, r *http.Req
 			"UploadDate": map[string]string{"date-in-the-future": "Can not upload for a date in the future"},
 		}
 		data := AppVars{ValidationErrors: RenameErrors(fileError)}
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusUnprocessableEntity)
 		return h.execute(w, r, data)
 	}
 
 	if handler.Filename != expectedFilename && expectedFilename != "" {
 		expectedFilename := strings.ReplaceAll(expectedFilename, ":", "/")
-		return h.handleError(w, r, "FileUpload", fmt.Sprintf("Filename should be \"%s\"", expectedFilename), http.StatusBadRequest)
+		return h.handleError(w, r, "FileUpload", fmt.Sprintf("Filename should be \"%s\"", expectedFilename), http.StatusUnprocessableEntity)
 	}
 
 	fileData, err := io.ReadAll(file)
 	if err != nil {
-		return h.handleError(w, r, "FileUpload", "Failed to read file", http.StatusBadRequest)
+		return h.handleError(w, r, "FileUpload", "Failed to read file", http.StatusUnprocessableEntity)
+	}
+
+	if ok, field, reason := validateCSVHeaders(fileData, uploadType); !ok {
+		fileError := model.ValidationErrors{
+			"FileUpload": map[string]string{field: reason},
+		}
+		data := AppVars{ValidationErrors: RenameErrors(fileError)}
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		return h.execute(w, r, data)
 	}
 
 	data := shared.Upload{
-		UploadType:   reportUploadType,
+		UploadType:   uploadType,
 		EmailAddress: email,
 		Base64Data:   base64.StdEncoding.EncodeToString(fileData),
 		UploadDate:   shared.NewDate(uploadDate),
@@ -86,7 +96,7 @@ func (h *UploadFormHandler) render(v AppVars, w http.ResponseWriter, r *http.Req
 
 	// Upload the file
 	if err := h.Client().Upload(ctx, data); err != nil {
-		return h.handleUploadError(w, r, err)
+		return err
 	}
 
 	w.Header().Add("HX-Redirect", fmt.Sprintf("%s/uploads?success=upload", v.EnvironmentVars.Prefix))
@@ -104,21 +114,55 @@ func (h *UploadFormHandler) handleError(w http.ResponseWriter, r *http.Request, 
 	return h.execute(w, r, data)
 }
 
-// handleUploadError processes specific upload-related errors.
-func (h *UploadFormHandler) handleUploadError(w http.ResponseWriter, r *http.Request, err error) error {
-	var (
-		valErr model.ValidationError
-		stErr  api.StatusError
-	)
-	if errors.As(err, &valErr) {
-		data := AppVars{ValidationErrors: RenameErrors(valErr.Errors)}
-		w.WriteHeader(http.StatusUnprocessableEntity)
-		return h.execute(w, r, data)
-	} else if errors.As(err, &stErr) {
-		data := AppVars{Error: stErr.Error()}
-		w.WriteHeader(stErr.Code)
-		return h.execute(w, r, data)
+func validateCSVHeaders(file []byte, uploadType shared.ReportUploadType) (ok bool, field string, reason string) {
+	if !uploadType.HasHeader() {
+		return true, "", ""
 	}
 
-	return err
+	fileReader := bytes.NewReader(file)
+	csvReader := csv.NewReader(fileReader)
+
+	expectedHeaders := uploadType.CSVHeaders()
+
+	readHeaders, err := csvReader.Read()
+	if err != nil {
+		return false, "read-failed", "Failed to read CSV headers"
+	}
+
+	for i, header := range readHeaders {
+		cleanedHeader := cleanString(header)
+		if cleanedHeader == "" {
+			continue
+		}
+		if i >= len(expectedHeaders) {
+			return false, "incorrect-headers", "CSV headers do not match for the file being uploaded"
+		}
+		if uploadType.StrictHeaderComparison() {
+			if cleanString(readHeaders[i]) != cleanString(expectedHeaders[i]) {
+				return false, "incorrect-headers", "CSV headers do not match for the file being uploaded"
+			}
+		} else {
+			if !strings.Contains(cleanString(readHeaders[i]), cleanString(expectedHeaders[i])) {
+				return false, "incorrect-headers", "CSV headers do not match for the file being uploaded"
+			}
+		}
+	}
+
+	return true, "", ""
+}
+
+func cleanString(s string) string {
+	s = strings.TrimSpace(s)
+
+	// Replace double-spaces in headers with single spaces (BACS uploads have double spaces)
+	s = strings.ReplaceAll(s, "  ", " ")
+
+	s = strings.ToLower(s)
+
+	return strings.Map(func(r rune) rune {
+		if unicode.IsPrint(r) {
+			return r
+		}
+		return -1
+	}, s)
 }

@@ -19,7 +19,7 @@ func TestUploadSuccess(t *testing.T) {
 	client := NewClient(mockClient, mockJwtClient, EnvVars{"http://localhost:3000", ""})
 
 	data := shared.Upload{
-		UploadType:   shared.ParseReportUploadType("reportUploadType"),
+		UploadType:   shared.ParseUploadType("reportUploadType"),
 		UploadDate:   shared.NewDate("2025-06-15"),
 		EmailAddress: "Something@example.com",
 		Base64Data:   base64.StdEncoding.EncodeToString([]byte("col1, col2\nabc,1")),
