@@ -34,7 +34,7 @@ func TestUploadFormHandlerNoFileUploaded(t *testing.T) {
 	err := sut.render(appVars, w, r)
 	_, _ = w.Write([]byte("No file uploaded"))
 
-	assert.Equal(t, http.StatusBadRequest, w.Code)
+	assert.Equal(t, http.StatusUnprocessableEntity, w.Code)
 	assert.Contains(t, w.Body.String(), "No file uploaded")
 	assert.Nil(t, err)
 }
@@ -89,7 +89,7 @@ func TestUploadFormHandlerValidationErrors(t *testing.T) {
 	sut := UploadFormHandler{ro}
 	err := sut.render(appVars, w, r)
 	assert.Nil(err)
-	assert.Equal("400 Bad Request", w.Result().Status)
+	assert.Equal(http.StatusUnprocessableEntity, w.Code)
 }
 
 func TestUploadDateNotInTheFutureValidationErrors(t *testing.T) {
@@ -118,5 +118,5 @@ func TestUploadDateNotInTheFutureValidationErrors(t *testing.T) {
 	sut := UploadFormHandler{ro}
 	err := sut.render(appVars, w, r)
 	assert.Nil(err)
-	assert.Equal("400 Bad Request", w.Result().Status)
+	assert.Equal(http.StatusUnprocessableEntity, w.Code)
 }

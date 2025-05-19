@@ -15,7 +15,7 @@ import (
 func TestRequestReport(t *testing.T) {
 	mockClient := &MockClient{}
 	mockJwtClient := &mockJWTClient{}
-	client := NewClient(mockClient, mockJwtClient, EnvVars{"http://localhost:3000", "", ""})
+	client := NewClient(mockClient, mockJwtClient, EnvVars{"http://localhost:3000", ""})
 	dateOfTransaction := shared.NewDate("2024-05-11")
 	dateTo := shared.NewDate("2025-06-15")
 	dateFrom := shared.NewDate("2022-07-21")
@@ -46,7 +46,7 @@ func TestRequestReport(t *testing.T) {
 func TestRequestReportUnauthorised(t *testing.T) {
 	mockClient := &MockClient{}
 	mockJwtClient := &mockJWTClient{}
-	client := NewClient(mockClient, mockJwtClient, EnvVars{"http://localhost:3000", "", ""})
+	client := NewClient(mockClient, mockJwtClient, EnvVars{"http://localhost:3000", ""})
 
 	GetDoFunc = func(*http.Request) (*http.Response, error) {
 		return &http.Response{
@@ -63,7 +63,7 @@ func TestRequestReportUnauthorised(t *testing.T) {
 func TestRequestReportReturnsBadRequestError(t *testing.T) {
 	mockClient := &MockClient{}
 	mockJwtClient := &mockJWTClient{}
-	client := NewClient(mockClient, mockJwtClient, EnvVars{"http://localhost:3000", "", ""})
+	client := NewClient(mockClient, mockJwtClient, EnvVars{"http://localhost:3000", ""})
 
 	json := `{"reasons":["StartDate","EndDate"]}`
 
@@ -99,7 +99,7 @@ func TestRequestReportReturnsValidationError(t *testing.T) {
 	defer svr.Close()
 
 	mockJwtClient := &mockJWTClient{}
-	client := NewClient(http.DefaultClient, mockJwtClient, EnvVars{svr.URL, svr.URL, svr.URL})
+	client := NewClient(http.DefaultClient, mockJwtClient, EnvVars{svr.URL, svr.URL})
 
 	err := client.RequestReport(testContext(), shared.ReportRequest{})
 	expectedError := model.ValidationError{Message: "", Errors: model.ValidationErrors{"ReportType": map[string]string{"required": "Please select a report type"}}}

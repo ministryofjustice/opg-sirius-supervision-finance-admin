@@ -6,7 +6,7 @@ describe("Role-based permissions", () => {
     it("checks permissions for all access", () => {
         cy.setCookie("x-test-user-id", allAccess);
         cy.visit("/uploads");
-        cy.get('[data-cy="report-upload-type"]').find("option")
+        cy.get('[data-cy="upload-type"]').find("option")
             .should("have.length", 10);
 
         cy.visit("/downloads");
@@ -16,7 +16,7 @@ describe("Role-based permissions", () => {
     it("checks permissions for Finance Reporting only", () => {
         cy.setCookie("x-test-user-id", financeReportingOnly);
         cy.visit("/uploads");
-        cy.get('[data-cy="report-upload-type"]').find("option")
+        cy.get('[data-cy="upload-type"]').find("option")
             .should("have.length", 3);
 
         cy.visit("/downloads");
