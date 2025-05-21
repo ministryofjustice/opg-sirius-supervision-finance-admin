@@ -18,7 +18,7 @@
   "dependencies": {
     "@ministryofjustice/frontend": "^4.0.1",
     "govuk-frontend": "^5.4.1",
-    "opg-sirius-header": "ministryofjustice/opg-sirius-header#semver:v0.28.0",
+    "opg-sirius-header": "ministryofjustice/opg-sirius-header#semver:v0.45.0",
     "htmx.org": "^2.0.0"
   },
   "devDependencies": {
@@ -27,7 +27,7 @@
     "cypress-axe": "^1.5.0",
     "cypress-failed-log": "^2.10.0",
     "typescript": "^5.5.3",
-    "esbuild": "^0.24.0",
+    "esbuild": "^0.25.0",
     "eslint": "^9.8.0",
     "prettier": "^3.3.3",
     "sass": "^1.77.8"
