@@ -116,31 +116,26 @@ services:
     ports:
       - "8282:8080"
     environment:
-      PORT: 8080
-      POSTGRES_CONN: sirius-db:5432
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: finance
-      AWS_REGION: eu-west-1
-      AWS_BASE_URL: http://localstack:4566
-      AWS_ACCESS_KEY_ID: localstack
-      AWS_SECRET_ACCESS_KEY: localstack
-      AWS_IAM_ROLE: arn:aws:iam::000000000000:role/role
-      EVENT_BUS_NAME: local-main
-      EVENT_BRIDGE_API_KEY: test
-      S3_ENCRYPTION_KEY: alias/aws/s3
-      AWS_S3_ENDPOINT: http://localstack:4566
-      SIRIUS_PUBLIC_URL: http://localhost:8080
-      FINANCE_ADMIN_PREFIX: /supervision/finance-admin
-      JWT_SECRET: mysupersecrettestkeythatis128bits
-      FINANCE_HUB_LIVE_DATE: 01/01/2024
-      REPORTS_S3_BUCKET: opg-backoffice-reports-local
       ASYNC_S3_BUCKET: opg-backoffice-async-uploads-local
+      AWS_ACCESS_KEY_ID: localstack
+      AWS_BASE_URL: http://localstack:4566
+      AWS_IAM_ROLE: arn:aws:iam::000000000000:role/role
+      AWS_REGION: eu-west-1
+      AWS_S3_ENDPOINT: http://localstack:4566
+      AWS_SECRET_ACCESS_KEY: localstack
+      EVENT_BRIDGE_API_KEY: test
+      EVENT_BUS_NAME: local-main
+      FINANCE_ADMIN_PREFIX: /supervision/finance-admin
+      FINANCE_HUB_LIVE_DATE: 01/01/2024
+      HEALTHCHECK: /health-check
+      JWT_SECRET: mysupersecrettestkeythatis128bits
       OPG_NOTIFY_API_KEY: test
       OPG_SUPERVISION_SYSTEM_USER_ID: 1
-    healthcheck:
-      test: wget -O /dev/null -S 'http://localhost:8080/health-check' 2>&1 | grep 'HTTP/1.1 200 OK' || exit 1
-      interval: 5s
-      timeout: 10s
-      retries: 5
-      start_period: 5s
+      PORT: 8080
+      POSTGRES_CONN: sirius-db:5432
+      POSTGRES_DB: finance
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: user
+      REPORTS_S3_BUCKET: opg-backoffice-reports-local
+      S3_ENCRYPTION_KEY: alias/aws/s3
+      SIRIUS_PUBLIC_URL: http://localhost:8080
