@@ -61,6 +61,7 @@ describe("Uploading Files", () => {
             "DEPUTY_SCHEDULE": ['#file-upload', '#email-field'],
             "DIRECT_DEBITS_COLLECTIONS": ['#file-upload', '#upload-date', '#email-field'],
             "MISAPPLIED_PAYMENTS": ['#file-upload', '#email-field'],
+            "BOUNCED_CHEQUE": ['#file-upload', '#email-field'],
             "DUPLICATED_PAYMENTS": ['#file-upload', '#email-field'],
         }
 
