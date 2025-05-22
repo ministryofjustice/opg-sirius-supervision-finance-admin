@@ -131,4 +131,3 @@ services:
       JWT_SECRET: mysupersecrettestkeythatis128bits
       OPG_NOTIFY_API_KEY: test
       OPG_SUPERVISION_SYSTEM_USER_ID: 1
-      HEALTHCHECK: /health-check
