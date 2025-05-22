@@ -131,11 +131,4 @@ services:
       JWT_SECRET: mysupersecrettestkeythatis128bits
       OPG_NOTIFY_API_KEY: test
       OPG_SUPERVISION_SYSTEM_USER_ID: 1
-      PORT: 8080
-      POSTGRES_CONN: sirius-db:5432
-      POSTGRES_DB: finance
-      POSTGRES_PASSWORD: password
-      POSTGRES_USER: user
-      REPORTS_S3_BUCKET: opg-backoffice-reports-local
-      S3_ENCRYPTION_KEY: alias/aws/s3
-      SIRIUS_PUBLIC_URL: http://localhost:8080
+      HEALTHCHECK: /health-check
