@@ -138,9 +138,4 @@ services:
       ASYNC_S3_BUCKET: opg-backoffice-async-uploads-local
       OPG_NOTIFY_API_KEY: test
       OPG_SUPERVISION_SYSTEM_USER_ID: 1
-    healthcheck:
-      test: wget -O /dev/null -S 'http://localhost:8080/health-check' 2>&1 | grep 'HTTP/1.1 200 OK' || exit 1
-      interval: 5s
-      timeout: 10s
-      retries: 5
-      start_period: 5s
+      HEALTHCHECK: /health-check
