@@ -51,7 +51,7 @@ var reportTypeUploadMap = map[string]ReportUploadType{
 	"DIRECT_DEBITS_COLLECTIONS":   ReportTypeUploadDirectDebitsCollections,
 	"MISAPPLIED_PAYMENTS":         ReportTypeUploadMisappliedPayments,
 	"DUPLICATED_PAYMENTS":         ReportTypeUploadDuplicatedPayments,
-  "BOUNCED_CHEQUE":              ReportTypeUploadBouncedCheque,
+	"BOUNCED_CHEQUE":              ReportTypeUploadBouncedCheque,
 }
 
 func (i ReportUploadType) String() string {
@@ -198,7 +198,7 @@ func (i ReportUploadType) NoDateRequired() bool {
 	case ReportTypeUploadDebtChase,
 		ReportTypeUploadDeputySchedule,
 		ReportTypeUploadMisappliedPayments,
-    ReportTypeUploadDuplicatedPayments,
+		ReportTypeUploadDuplicatedPayments,
 		ReportTypeUploadBouncedCheque:
 		return true
 	default:
