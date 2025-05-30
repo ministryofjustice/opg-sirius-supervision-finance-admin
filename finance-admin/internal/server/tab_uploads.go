@@ -7,7 +7,7 @@ import (
 )
 
 type GetUploadsVars struct {
-	ReportsUploadTypes []shared.ReportUploadType
+	UploadTypes []shared.ReportUploadType
 	AppVars
 }
 

@@ -7,7 +7,7 @@
         <div id="error-summary"></div>
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
-                <h1 class="govuk-heading-m  govuk-!-margin-bottom-1">Upload a report</h1>
+                <h1 class="govuk-heading-m  govuk-!-margin-bottom-1">Upload a file</h1>
                 <div class="govuk-grid-row">
                     <form
                             class="govuk-grid-column-one-third"
@@ -18,14 +18,14 @@
                     >
                         <input type="hidden" name="xsrfToken" value="{{ .AppVars.XSRFToken }}"/>
                         <div class="govuk-form-group">
-                            <div class="govuk-form-group" id="f-ReportUploadType">
-                                <label class="govuk-label" for="reports-upload-type">
+                            <div class="govuk-form-group" id="f-UploadType">
+                                <label class="govuk-label" for="upload-type">
                                     Select a report type
-                                    <span id="error-message__ReportUploadType"></span>
+                                    <span id="error-message__UploadType"></span>
                                 </label>
-                                <select data-cy="report-upload-type" class="govuk-select" id="reports-upload-type" name="reportUploadType">
+                                <select data-cy="upload-type" class="govuk-select" id="upload-type" name="uploadType">
                                     <option value=""></option>
-                                    {{ range .ReportsUploadTypes }}
+                                    {{ range .UploadTypes }}
                                         <option value="{{ .Key }}" id="{{.Key}}">{{.Translation}}</option>
                                     {{end}}
                                 </select>
@@ -68,7 +68,7 @@
                                         <span id="error-message__Email"></span>
                                     </label>
                                     <div id="email-hint" class="govuk-hint">
-                                        We’ll only use this to send you the finished report
+                                        We’ll only use this to send you confirmation once the upload has been processed.
                                     </div>
                                     <input disabled class="govuk-input" id="email-field" name="email" type="email" spellcheck="false" aria-describedby="email-hint" autocomplete="email">
                                 </div>
@@ -76,7 +76,7 @@
 
                             <div class="govuk-button-group govuk-!-margin-top-5">
                                 <button class="govuk-button" data-module="govuk-button">
-                                    Upload report
+                                    Upload file
                                 </button>
                                 <a class="govuk-link" href="{{ prefix "/uploads" }}">Cancel</a>
                             </div>

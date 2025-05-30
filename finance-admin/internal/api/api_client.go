@@ -25,9 +25,8 @@ type JWTClient interface {
 }
 
 type EnvVars struct {
-	SiriusURL  string
-	BackendURL string
-	HubURL     string
+	SiriusURL string
+	HubURL    string
 }
 
 type Client struct {
@@ -56,18 +55,6 @@ func (e StatusError) Error() string {
 
 func (e StatusError) Data() interface{} {
 	return e
-}
-
-// Deprecated: newBackendRequest will be removed once backend is migrated to the Hub
-func (c *Client) newBackendRequest(ctx context.Context, method, path string, body io.Reader) (*http.Request, error) {
-	req, err := http.NewRequestWithContext(ctx, method, c.BackendURL+path, body)
-	if err != nil {
-		return nil, err
-	}
-
-	addCookiesFromContext(ctx, req)
-
-	return req, err
 }
 
 func (c *Client) newHubRequest(ctx context.Context, method, path string, body io.Reader) (*http.Request, error) {

@@ -130,13 +130,13 @@ htmx.onLoad(content => {
         });
     }
 
-    if (document.getElementById('reports-upload-type')) {
-        htmx.findAll("#reports-upload-type").forEach((element) => {
+    if (document.getElementById('upload-type')) {
+        htmx.findAll("#upload-type").forEach((element) => {
             const toggle = formToggler("input");
             element.addEventListener("change", function() {
                 toggle.resetAll();
                 const form = document.querySelector('form');
-                const reportUploadTypeSelect = document.getElementById('reports-upload-type');
+                const reportUploadTypeSelect = document.getElementById('upload-type');
                 const reportUploadTypeSelectValue = reportUploadTypeSelect.value;
                 form.reset();
 
