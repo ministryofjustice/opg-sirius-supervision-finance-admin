@@ -5,6 +5,7 @@ import "encoding/json"
 var DebtTypes = []DebtType{
 	DebtTypeFeeChase,
 	DebtTypeFinalFee,
+	DebtTypeApprovedRefunds,
 }
 
 type DebtType int
@@ -13,11 +14,13 @@ const (
 	DebtTypeUnknown DebtType = iota
 	DebtTypeFeeChase
 	DebtTypeFinalFee
+	DebtTypeApprovedRefunds
 )
 
 var debtTypeMap = map[string]DebtType{
-	"FeeChase": DebtTypeFeeChase,
-	"FinalFee": DebtTypeFinalFee,
+	"FeeChase":        DebtTypeFeeChase,
+	"FinalFee":        DebtTypeFinalFee,
+	"ApprovedRefunds": DebtTypeApprovedRefunds,
 }
 
 func (d DebtType) String() string {
@@ -30,6 +33,8 @@ func (d DebtType) Translation() string {
 		return "Fee Chase"
 	case DebtTypeFinalFee:
 		return "Final Fee"
+	case DebtTypeApprovedRefunds:
+		return "Approved Refunds"
 	default:
 		return ""
 	}
@@ -41,6 +46,8 @@ func (d DebtType) Key() string {
 		return "FeeChase"
 	case DebtTypeFinalFee:
 		return "FinalFee"
+	case DebtTypeApprovedRefunds:
+		return "ApprovedRefunds"
 	default:
 		return ""
 	}
