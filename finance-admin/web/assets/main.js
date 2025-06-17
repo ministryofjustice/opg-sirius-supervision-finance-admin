@@ -154,6 +154,7 @@ htmx.onLoad(content => {
                     case "PAYMENTS_OPG_BACS":
                     case "PAYMENTS_SUPERVISION_BACS":
                     case "DIRECT_DEBITS_COLLECTIONS":
+                    case "FULFILLED_REFUNDS":
                         toggle.show("upload-date");
                         toggle.show("file-upload");
                         toggle.show("email-field");
