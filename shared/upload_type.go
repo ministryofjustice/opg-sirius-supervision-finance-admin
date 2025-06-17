@@ -21,6 +21,7 @@ var PaymentUploadTypes = []ReportUploadType{
 	ReportTypeUploadMisappliedPayments,
 	ReportTypeUploadDuplicatedPayments,
 	ReportTypeUploadBouncedCheque,
+	ReportTypeUploadFulfilledRefunds,
 }
 
 var noHeaderTypes = []ReportUploadType{
@@ -46,6 +47,7 @@ const (
 	ReportTypeUploadMisappliedPayments
 	ReportTypeUploadDuplicatedPayments
 	ReportTypeUploadBouncedCheque
+	ReportTypeUploadFulfilledRefunds
 )
 
 var reportTypeUploadMap = map[string]ReportUploadType{
@@ -60,6 +62,7 @@ var reportTypeUploadMap = map[string]ReportUploadType{
 	"MISAPPLIED_PAYMENTS":         ReportTypeUploadMisappliedPayments,
 	"DUPLICATED_PAYMENTS":         ReportTypeUploadDuplicatedPayments,
 	"BOUNCED_CHEQUE":              ReportTypeUploadBouncedCheque,
+	"FULFILLED_REFUNDS":           ReportTypeUploadFulfilledRefunds,
 }
 
 func (u ReportUploadType) String() string {
@@ -90,6 +93,8 @@ func (u ReportUploadType) Translation() string {
 		return "Payment Reversals - Duplicated payments"
 	case ReportTypeUploadBouncedCheque:
 		return "Payment Reversals - Bounced cheque"
+	case ReportTypeUploadFulfilledRefunds:
+		return "Fulfilled refunds"
 	default:
 		return ""
 	}
@@ -119,6 +124,8 @@ func (u ReportUploadType) Key() string {
 		return "DUPLICATED_PAYMENTS"
 	case ReportTypeUploadBouncedCheque:
 		return "BOUNCED_CHEQUE"
+	case ReportTypeUploadFulfilledRefunds:
+		return "FULFILLED_REFUNDS"
 	default:
 		return ""
 	}
@@ -146,6 +153,8 @@ func (u ReportUploadType) CSVHeaders() []string {
 		return []string{"Payment type", "Current (errored) court reference", "Bank date", "Received date", "Amount", "PIS number (cheque only)"}
 	case ReportTypeUploadBouncedCheque:
 		return []string{"Court reference", "Bank date", "Received date", "Amount", "PIS number"}
+	case ReportTypeUploadFulfilledRefunds:
+		return []string{"Court reference", "Amount", "Bank account name", "Bank account number", "Bank account sort code", "Created by", "Approved by"}
 	}
 
 	return []string{"Unknown report type"}
@@ -179,6 +188,8 @@ func (u ReportUploadType) Filename(date string) (string, error) {
 		return fmt.Sprintf("supervisioncheques_%s.csv", parsedDate.Format("02012006")), nil
 	case ReportTypeUploadDirectDebitsCollections:
 		return fmt.Sprintf("directdebitscollections_%s.csv", parsedDate.Format("02012006")), nil
+	case ReportTypeUploadFulfilledRefunds:
+		return fmt.Sprintf("Fulfilledrefunds_%s.csv", parsedDate.Format("02012006")), nil
 	default:
 		return "", nil
 	}
