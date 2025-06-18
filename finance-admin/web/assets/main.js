@@ -43,7 +43,7 @@ const setMaxDate = (idName, date) => {
     document.getElementById(idName).setAttribute("max", date);
 }
 
-const dateRangeRequired = ["AgedDebt", "ARPaidInvoice", "TotalReceipts", "BadDebtWriteOff", "InvoiceAdjustments", "UnappliedReceipts"];
+const dateRangeRequired = ["AgedDebt", "ARPaidInvoice", "TotalReceipts", "BadDebtWriteOff", "InvoiceAdjustments", "UnappliedReceipts", "AllRefunds"];
 
 // adding event listeners inside the onLoad function will ensure they are re-added to partial content when loaded back in
 htmx.onLoad(content => {
