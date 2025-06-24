@@ -5,6 +5,7 @@ import "encoding/json"
 var DebtTypes = []DebtType{
 	DebtTypeFeeChase,
 	DebtTypeApprovedRefunds,
+	DebtTypeAllRefunds,
 }
 
 type DebtType int
