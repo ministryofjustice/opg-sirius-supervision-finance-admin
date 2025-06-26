@@ -168,6 +168,8 @@ func (u ReportUploadType) Filename(date string) (string, error) {
 		return "bouncedcheque.csv", nil
 	case ReportTypeUploadDuplicatedPayments:
 		return "duplicatedpayments.csv", nil
+	case ReportTypeUploadDebtChase:
+		return "debtchase.csv", nil
 	}
 
 	parsedDate, err := time.Parse("2006-01-02", date)

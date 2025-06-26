@@ -58,7 +58,7 @@ func (h *UploadFormHandler) render(v AppVars, w http.ResponseWriter, r *http.Req
 		return h.handleError(w, r, "UploadDate", "Upload date required", http.StatusUnprocessableEntity)
 	}
 
-	if shared.NewDate(uploadDate).After(shared.Date{Time: time.Now()}) {
+	if !uploadType.NoDateRequired() && shared.NewDate(uploadDate).After(shared.Date{Time: time.Now()}) {
 		fileError := model.ValidationErrors{
 			"UploadDate": map[string]string{"date-in-the-future": "Can not upload for a date in the future"},
 		}
