@@ -28,7 +28,8 @@ func (c *Client) RequestReport(ctx context.Context, data shared.ReportRequest) e
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+
+	defer unchecked(resp.Body.Close)
 
 	switch resp.StatusCode {
 	case http.StatusCreated:

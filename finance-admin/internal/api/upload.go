@@ -28,7 +28,8 @@ func (c *Client) Upload(ctx context.Context, data shared.Upload) error {
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+
+	defer unchecked(resp.Body.Close)
 
 	switch resp.StatusCode {
 	case http.StatusOK:
