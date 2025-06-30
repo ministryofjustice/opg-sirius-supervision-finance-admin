@@ -16,7 +16,7 @@ func downloadCallback(client ApiClient) http.Handler {
 			http.Error(w, "Failed to stream file", http.StatusInternalServerError)
 		}
 
-		defer resp.Body.Close()
+		defer unchecked(resp.Body.Close)
 
 		for key, values := range resp.Header {
 			for _, value := range values {
