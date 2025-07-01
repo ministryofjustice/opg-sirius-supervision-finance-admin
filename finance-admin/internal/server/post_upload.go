@@ -67,7 +67,7 @@ func (h *UploadFormHandler) render(v AppVars, w http.ResponseWriter, r *http.Req
 		return h.execute(w, r, data)
 	}
 
-	if handler.Filename != expectedFilename && expectedFilename != "" {
+	if expectedFilename != "" && !matchFilenameWithWildcard(handler.Filename, expectedFilename) {
 		expectedFilename := strings.ReplaceAll(expectedFilename, ":", "/")
 		return h.handleError(w, r, "FileUpload", fmt.Sprintf("Filename should be \"%s\"", expectedFilename), http.StatusUnprocessableEntity)
 	}
@@ -135,6 +135,9 @@ func validateCSVHeaders(file []byte, uploadType shared.ReportUploadType) (ok boo
 			continue
 		}
 		if i >= len(expectedHeaders) {
+			if uploadType.HasOptionalExtraHeaders() {
+				continue
+			}
 			return false, "incorrect-headers", "CSV headers do not match for the file being uploaded"
 		}
 		if uploadType.StrictHeaderComparison() {
@@ -165,4 +168,24 @@ func cleanString(s string) string {
 		}
 		return -1
 	}, s)
+}
+
+func matchFilenameWithWildcard(actualFilename, expectedFilename string) bool {
+	// If no wildcard, do a direct comparison
+	if !strings.Contains(expectedFilename, "*") {
+		return actualFilename == expectedFilename
+	}
+
+	regexPattern := strings.ReplaceAll(expectedFilename, "*", ".*")
+	regexPattern = "^" + regexPattern + "$"
+
+	if strings.Count(expectedFilename, "*") == 1 {
+		parts := strings.Split(expectedFilename, "*")
+		prefix := parts[0]
+		suffix := parts[1]
+		return strings.HasPrefix(actualFilename, prefix) &&
+			strings.HasSuffix(actualFilename, suffix)
+	}
+
+	return false
 }

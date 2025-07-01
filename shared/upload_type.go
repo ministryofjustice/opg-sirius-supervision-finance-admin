@@ -32,6 +32,10 @@ var noStrictHeaders = []ReportUploadType{
 	ReportTypeUploadPaymentsSupervisionCheque,
 }
 
+var optionalExtraHeaders = []ReportUploadType{
+	ReportTypeUploadDebtChase,
+}
+
 type ReportUploadType int
 
 const (
@@ -144,7 +148,7 @@ func (u ReportUploadType) CSVHeaders() []string {
 	case ReportTypeUploadDeputySchedule:
 		return []string{"Deputy number", "Deputy name", "Case number", "Client forename", "Client surname", "Do not invoice", "Total outstanding"}
 	case ReportTypeUploadDebtChase:
-		return []string{"Client_no", "Deputy_name", "Total_debt"}
+		return []string{"Case_no", "Client_no", "Client_title", "Client_forename", "Client_surname", "Do_not_chase", "Payment_method", "Deputy_type", "Deputy_no", "Airmail", "Deputy_title", "Deputy_Welsh", "Deputy_Large_Print", "Deputy_name", "Email", "Address1", "Address2", "Address3", "City_Town", "County", "Postcode", "Total_debt", "Invoice1", "Amount1"}
 	case ReportTypeUploadDirectDebitsCollections:
 		return []string{""}
 	case ReportTypeUploadMisappliedPayments:
@@ -169,7 +173,7 @@ func (u ReportUploadType) Filename(date string) (string, error) {
 	case ReportTypeUploadDuplicatedPayments:
 		return "duplicatedpayments.csv", nil
 	case ReportTypeUploadDebtChase:
-		return "debtchase.csv", nil
+		return "debt_FeeChase_*.csv", nil
 	}
 
 	parsedDate, err := time.Parse("2006-01-02", date)
@@ -225,6 +229,15 @@ func (u ReportUploadType) StrictHeaderComparison() bool {
 		}
 	}
 	return true
+}
+
+func (u ReportUploadType) HasOptionalExtraHeaders() bool {
+	for _, t := range optionalExtraHeaders {
+		if u == t {
+			return true
+		}
+	}
+	return false
 }
 
 func (u ReportUploadType) NoDateRequired() bool {
