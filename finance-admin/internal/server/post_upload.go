@@ -176,9 +176,6 @@ func matchFilenameWithWildcard(actualFilename, expectedFilename string) bool {
 		return actualFilename == expectedFilename
 	}
 
-	regexPattern := strings.ReplaceAll(expectedFilename, "*", ".*")
-	regexPattern = "^" + regexPattern + "$"
-
 	if strings.Count(expectedFilename, "*") == 1 {
 		parts := strings.Split(expectedFilename, "*")
 		prefix := parts[0]
