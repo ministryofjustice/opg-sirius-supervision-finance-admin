@@ -90,6 +90,7 @@ func (h *UploadFormHandler) render(v AppVars, w http.ResponseWriter, r *http.Req
 		UploadType:   uploadType,
 		EmailAddress: email,
 		Base64Data:   base64.StdEncoding.EncodeToString(fileData),
+		Filename:     handler.Filename,
 		UploadDate:   shared.NewDate(uploadDate),
 		PisNumber:    pisNumber,
 	}
