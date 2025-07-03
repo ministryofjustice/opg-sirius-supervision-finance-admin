@@ -46,7 +46,7 @@ func (h *UploadFormHandler) render(v AppVars, w http.ResponseWriter, r *http.Req
 		return h.handleError(w, r, "FileUpload", "No file uploaded", http.StatusUnprocessableEntity)
 	}
 
-	defer file.Close()
+	unchecked(file.Close)
 
 	var expectedFilename string
 	if uploadDate != "" || uploadType.NoDateRequired() {
