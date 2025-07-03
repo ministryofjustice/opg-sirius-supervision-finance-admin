@@ -120,3 +120,45 @@ func TestUploadDateNotInTheFutureValidationErrors(t *testing.T) {
 	assert.Nil(err)
 	assert.Equal(http.StatusUnprocessableEntity, w.Code)
 }
+
+func TestMatchFilenameWithWildcard(t *testing.T) {
+	tests := []struct {
+		name               string
+		actualFilename     string
+		comparisonFilename string
+		expected           bool
+	}{
+		{
+			name:               "Exact match",
+			actualFilename:     "debt_FeeChase.csv",
+			comparisonFilename: "debt_FeeChase.csv",
+			expected:           true,
+		},
+		{
+			name:               "No match",
+			actualFilename:     "debt_FeeChase.csv",
+			comparisonFilename: "debt_FeeChase_report.csv",
+			expected:           false,
+		},
+		{
+			name:               "Wildcard in middle",
+			actualFilename:     "debt_FeeChase_01_07_2025.csv",
+			comparisonFilename: "debt_*_2025.csv",
+			expected:           true,
+		},
+		{
+			name:               "No match with wildcard",
+			actualFilename:     "something_else.csv",
+			comparisonFilename: "debt_*.csv",
+			expected:           false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := matchFilenameWithWildcard(tt.actualFilename, tt.comparisonFilename)
+			assert.Equal(t, tt.expected, result, "Expected match result %v for pattern %s and filename %s",
+				tt.expected, tt.comparisonFilename, tt.actualFilename)
+		})
+	}
+}

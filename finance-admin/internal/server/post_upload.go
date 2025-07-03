@@ -58,7 +58,7 @@ func (h *UploadFormHandler) render(v AppVars, w http.ResponseWriter, r *http.Req
 		return h.handleError(w, r, "UploadDate", "Upload date required", http.StatusUnprocessableEntity)
 	}
 
-	if shared.NewDate(uploadDate).After(shared.Date{Time: time.Now()}) {
+	if !uploadType.NoDateRequired() && shared.NewDate(uploadDate).After(shared.Date{Time: time.Now()}) {
 		fileError := model.ValidationErrors{
 			"UploadDate": map[string]string{"date-in-the-future": "Can not upload for a date in the future"},
 		}
@@ -67,7 +67,7 @@ func (h *UploadFormHandler) render(v AppVars, w http.ResponseWriter, r *http.Req
 		return h.execute(w, r, data)
 	}
 
-	if handler.Filename != expectedFilename && expectedFilename != "" {
+	if expectedFilename != "" && !matchFilenameWithWildcard(handler.Filename, expectedFilename) {
 		expectedFilename := strings.ReplaceAll(expectedFilename, ":", "/")
 		return h.handleError(w, r, "FileUpload", fmt.Sprintf("Filename should be \"%s\"", expectedFilename), http.StatusUnprocessableEntity)
 	}
@@ -90,6 +90,7 @@ func (h *UploadFormHandler) render(v AppVars, w http.ResponseWriter, r *http.Req
 		UploadType:   uploadType,
 		EmailAddress: email,
 		Base64Data:   base64.StdEncoding.EncodeToString(fileData),
+		Filename:     handler.Filename,
 		UploadDate:   shared.NewDate(uploadDate),
 		PisNumber:    pisNumber,
 	}
@@ -135,6 +136,9 @@ func validateCSVHeaders(file []byte, uploadType shared.ReportUploadType) (ok boo
 			continue
 		}
 		if i >= len(expectedHeaders) {
+			if uploadType.HasOptionalExtraHeaders() {
+				continue
+			}
 			return false, "incorrect-headers", "CSV headers do not match for the file being uploaded"
 		}
 		if uploadType.StrictHeaderComparison() {
@@ -165,4 +169,21 @@ func cleanString(s string) string {
 		}
 		return -1
 	}, s)
+}
+
+func matchFilenameWithWildcard(actualFilename, expectedFilename string) bool {
+	// If no wildcard, do a direct comparison
+	if !strings.Contains(expectedFilename, "*") {
+		return actualFilename == expectedFilename
+	}
+
+	if strings.Count(expectedFilename, "*") == 1 {
+		parts := strings.Split(expectedFilename, "*")
+		prefix := parts[0]
+		suffix := parts[1]
+		return strings.HasPrefix(actualFilename, prefix) &&
+			strings.HasSuffix(actualFilename, suffix)
+	}
+
+	return false
 }
