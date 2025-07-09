@@ -7,7 +7,7 @@ describe("Role-based permissions", () => {
         cy.setCookie("x-test-user-id", allAccess);
         cy.visit("/uploads");
         cy.get('[data-cy="upload-type"]').find("option")
-            .should("have.length", 13);
+            .should("have.length", 14);
 
         cy.visit("/downloads");
         cy.contains(".govuk-heading-m", "Download a report");
