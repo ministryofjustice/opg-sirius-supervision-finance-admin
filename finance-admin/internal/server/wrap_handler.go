@@ -1,6 +1,7 @@
 package server
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"github.com/ministryofjustice/opg-go-common/telemetry"
@@ -66,16 +67,19 @@ func wrapHandler(errTmpl Template, errPartial string, envVars Envs) func(next Ht
 					return
 				}
 
-				logger.Error("Page Error", "error", err)
-
 				code := http.StatusInternalServerError
 				var serverStatusError StatusError
 				if errors.As(err, &serverStatusError) {
+					logger.Error("server error", "error", err)
 					code = serverStatusError.Code()
 				}
 				var siriusStatusError api.StatusError
 				if errors.As(err, &siriusStatusError) {
+					logger.Error("sirius error", "error", err)
 					code = siriusStatusError.Code
+				}
+				if errors.Is(err, context.Canceled) {
+					code = 499 // Client Closed Request
 				}
 
 				w.Header().Add("HX-Retarget", "#main-container")
