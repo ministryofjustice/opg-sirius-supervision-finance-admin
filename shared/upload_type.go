@@ -22,6 +22,7 @@ var PaymentUploadTypes = []ReportUploadType{
 	ReportTypeUploadDuplicatedPayments,
 	ReportTypeUploadBouncedCheque,
 	ReportTypeUploadFailedDirectDebitCollections,
+	ReportTypeUploadFulfilledRefunds,
 }
 
 var noHeaderTypes = []ReportUploadType{
