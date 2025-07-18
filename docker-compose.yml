@@ -20,7 +20,7 @@ services:
         condition: service_started
 
   localstack:
-    image: localstack/localstack:4.0
+    image: localstack/localstack:4.6
     volumes:
       - "./scripts/localstack/init:/etc/localstack/init/ready.d"
       - "./scripts/localstack/wait:/scripts/wait"
@@ -47,7 +47,7 @@ services:
         condition: service_healthy
 
   go-lint:
-    image: golangci/golangci-lint:v2.2.1
+    image: golangci/golangci-lint:v2.2.2
     working_dir: /go/src/app
     volumes:
       - ./:/go/src/app
