@@ -9,6 +9,7 @@ import (
 var ReportUploadTypes = []ReportUploadType{
 	ReportTypeUploadDebtChase,
 	ReportTypeUploadDeputySchedule,
+	ReportTypeUploadFulfilledRefunds,
 }
 
 var PaymentUploadTypes = []ReportUploadType{
@@ -22,7 +23,6 @@ var PaymentUploadTypes = []ReportUploadType{
 	ReportTypeUploadDuplicatedPayments,
 	ReportTypeUploadBouncedCheque,
 	ReportTypeUploadFailedDirectDebitCollections,
-	ReportTypeUploadFulfilledRefunds,
 }
 
 var noHeaderTypes = []ReportUploadType{
