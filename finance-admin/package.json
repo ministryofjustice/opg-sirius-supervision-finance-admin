@@ -19,7 +19,7 @@
   "dependencies": {
     "@ministryofjustice/frontend": "^5.0.0",
     "govuk-frontend": "^5.4.1",
-    "opg-sirius-header": "ministryofjustice/opg-sirius-header#bcb6f45",
+    "opg-sirius-header": "ministryofjustice/opg-sirius-header#17cc267",
     "htmx.org": "^2.0.0"
   },
   "devDependencies": {
