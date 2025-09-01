@@ -17,7 +17,7 @@ describe("Role-based permissions", () => {
         cy.setCookie("x-test-user-id", financeReportingOnly);
         cy.visit("/uploads");
         cy.get('[data-cy="upload-type"]').find("option")
-            .should("have.length", 3);
+            .should("have.length", 4);
 
         cy.visit("/downloads");
         cy.contains(".govuk-heading-m", "Download a report");
