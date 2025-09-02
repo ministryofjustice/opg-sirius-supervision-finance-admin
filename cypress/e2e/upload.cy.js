@@ -1,3 +1,5 @@
+const allAccess = "1"
+
 describe("Uploading Files", () => {
     beforeEach(() => {
         cy.visit("/uploads");
@@ -5,6 +7,7 @@ describe("Uploading Files", () => {
 
     describe("Upload file", () => {
         it("Uploads file successfully", () => {
+            cy.setCookie("x-test-user-id", allAccess);
             cy.get('[data-cy=\"upload-type\"]').select('PAYMENTS_MOTO_CARD');
             cy.get('#file-upload').selectFile('cypress/fixtures/feemoto_01102024normal.csv');
             cy.get('#upload-date').type("2024-10-01");
