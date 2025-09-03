@@ -5,12 +5,13 @@
       "displayName": "Super User",
       "roles": [
         "Finance Reporting",
+        "Finance Manager",
         "Corporate Finance"
       ]
     },
     {
       "id": 2,
-      "displayName": "Mandy Manager",
+      "displayName": "Rebecca Reporting",
       "roles": [
         "Finance Reporting"
       ]
@@ -20,6 +21,13 @@
       "displayName": "Colin Corporate",
       "roles": [
         "Corporate Finance"
+      ]
+    },
+    {
+      "id": 4,
+      "displayName": "Mandy Manager",
+      "roles": [
+        "Finance Manager"
       ]
     }
   ]
