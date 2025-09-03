@@ -28,9 +28,14 @@ is also provided via a Yarn watch command.
 
 `make test`
 
-## Run the Cypress tests
+## Run Cypress tests headless
 
 `make cypress`
+
+## Run Cypress tests with UI
+
+`make up`
+`npx cypress open -c baseUrl=https://localhost:8888/supervision/finance-admin`
 
 ## Run Trivy scanning
 

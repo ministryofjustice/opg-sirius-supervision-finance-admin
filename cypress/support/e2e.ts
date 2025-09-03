@@ -47,7 +47,8 @@ Cypress.Commands.add("setUser", (id: string) => {
 
 Cypress.Commands.add("login", (email: string): void => {
     let url = window.location.href;
-    if (!(url.indexOf("localhost") > -1)) {
+
+    if (!(url.indexOf("localhost") > -1) && !(url.indexOf("finance-admin") > -1)) {
         cy.visit("/uploads")
         cy.get('a[href*="oauth/login"]').click();
 
