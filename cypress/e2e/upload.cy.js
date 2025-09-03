@@ -1,4 +1,4 @@
-const financeManager = "4"
+const allAccess = "1"
 
 describe("Uploading Files", () => {
     beforeEach(() => {
@@ -8,7 +8,7 @@ describe("Uploading Files", () => {
 
     describe("Upload file", () => {
         it("Uploads file successfully", () => {
-            cy.setCookie("x-test-user-id", financeManager);
+            cy.setCookie("x-test-user-id", allAccess);
             cy.url().should("include", "/uploads");
 
             cy.get('[data-cy=\"upload-type\"]').select('PAYMENTS_MOTO_CARD');
