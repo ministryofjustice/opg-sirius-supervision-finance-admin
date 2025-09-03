@@ -1,5 +1,6 @@
 describe("Downloads", () => {
     beforeEach(() => {
+        cy.loginAs("Finance User Testing");
         cy.visit("/downloads");
     });
 
