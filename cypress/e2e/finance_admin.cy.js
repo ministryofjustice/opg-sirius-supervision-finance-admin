@@ -1,6 +1,5 @@
 describe("Finance Admin", () => {
     beforeEach(() => {
-        cy.loginAs("Finance User Testing");
         cy.visit("/uploads");
     });
 

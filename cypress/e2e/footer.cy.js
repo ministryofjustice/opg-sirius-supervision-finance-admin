@@ -1,6 +1,5 @@
 describe("Footer", () => {
     beforeEach(() => {
-        cy.loginAs("Finance User Testing");
         cy.visit("/uploads");
     });
 

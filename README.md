@@ -37,7 +37,7 @@ Finance admin pulls in the finance hub container to run the cypress tests, so if
 ## Run Cypress tests with UI
 
 `make up`
-`npx cypress open -c baseUrl=https://localhost:8888/supervision/finance-admin`
+`npx cypress open -c baseUrl=http://localhost:8889/finance-admin'
 
 ## Run Trivy scanning
 
