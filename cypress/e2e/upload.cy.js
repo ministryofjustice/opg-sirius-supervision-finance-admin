@@ -1,15 +1,17 @@
 describe("Uploading Files", () => {
     beforeEach(() => {
-        cy.visit("/uploads");
+        cy.visit("/uploads")
     });
 
     describe("Upload file", () => {
         it("Uploads file successfully", () => {
+            cy.url().should("include", "/uploads");
+
             cy.get('[data-cy=\"upload-type\"]').select('PAYMENTS_MOTO_CARD');
-            cy.get('#file-upload').selectFile('cypress/fixtures/feemoto_01102024normal.csv');
+            cy.get('#file-upload').selectFile("cypress/fixtures/feemoto_01102024normal.csv");
             cy.get('#upload-date').type("2024-10-01");
             cy.get('.govuk-button').contains('Upload file').click();
-            cy.url().should("include","/uploads?success=upload");
+            cy.url().should("include", "/uploads?success=upload");
             cy.get('.moj-banner').contains('File successfully uploaded');
         });
 
