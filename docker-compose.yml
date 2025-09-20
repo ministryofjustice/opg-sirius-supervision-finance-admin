@@ -20,7 +20,7 @@ services:
         condition: service_started
 
   localstack:
-    image: localstack/localstack:4.7
+    image: localstack/localstack:4.8
     volumes:
       - "./scripts/localstack/init:/etc/localstack/init/ready.d"
       - "./scripts/localstack/wait:/scripts/wait"
