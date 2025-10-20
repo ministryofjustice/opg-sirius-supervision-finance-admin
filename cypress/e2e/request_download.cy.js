@@ -33,7 +33,7 @@ describe("Downloads", () => {
         });
 
         const ARSelections = {
-            "AgedDebt": ["#date-from", "#date-to", "#email"],
+            "AgedDebt": ["#date-to", "#email"],
             "AgedDebtByCustomer": ["#email"],
             "UnappliedReceipts": ["#date-from", "#date-to", "#email"],
             "ARPaidInvoice": ["#date-from", "#date-to", "#email"],
