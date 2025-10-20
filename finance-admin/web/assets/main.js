@@ -43,7 +43,8 @@ const setMaxDate = (idName, date) => {
     document.getElementById(idName).setAttribute("max", date);
 }
 
-const dateRangeRequired = ["AgedDebt", "ARPaidInvoice", "TotalReceipts", "BadDebtWriteOff", "InvoiceAdjustments", "UnappliedReceipts", "AllRefunds"];
+const showFromDate = ["ARPaidInvoice", "TotalReceipts", "BadDebtWriteOff", "InvoiceAdjustments", "UnappliedReceipts", "AllRefunds"];
+const showToDate = ["AgedDebt", "ARPaidInvoice", "TotalReceipts", "BadDebtWriteOff", "InvoiceAdjustments", "UnappliedReceipts", "AllRefunds"];
 
 // adding event listeners inside the onLoad function will ensure they are re-added to partial content when loaded back in
 htmx.onLoad(content => {
@@ -102,9 +103,12 @@ htmx.onLoad(content => {
             toggle.show("account-types");
             toggle.show("email");
 
-            if (dateRangeRequired.includes(subType)) {
-                toggle.show("date-to");
+            if (showFromDate.includes(subType)) {
                 toggle.show("date-from");
+            }
+
+            if (showToDate.includes(subType)) {
+                toggle.show("date-to");
             }
         });
 
