@@ -172,9 +172,9 @@
     eslint-visitor-keys "^3.4.3"
 
 "@eslint-community/regexpp@^4.12.1":
-  version "4.12.1"
-  resolved "https://registry.yarnpkg.com/@eslint-community/regexpp/-/regexpp-4.12.1.tgz#cfc6cffe39df390a3841cde2abccf92eaa7ae0e0"
-  integrity sha512-CCZCDJuduB9OUkFkY2IgppNZMi2lBQgD2qzwXkEia16cge2pijY/aXi96CJMquDMn3nJdlPV1A5KrJEXwfLNzQ==
+  version "4.12.2"
+  resolved "https://registry.yarnpkg.com/@eslint-community/regexpp/-/regexpp-4.12.2.tgz#bccdf615bcf7b6e8db830ec0b8d21c9a25de597b"
+  integrity sha512-EriSTlt5OC9/7SXkRSCAhfSxxoSUgBm33OH+IkwbdpgoqsSsUg7y3uh+IICI/Qg4BBWr3U2i39RpmycbxMq4ew==
 
 "@eslint/config-array@^0.21.1":
   version "0.21.1"
@@ -1278,9 +1278,9 @@ hasown@^2.0.2:
     function-bind "^1.1.2"
 
 htmx.org@^2.0.0:
-  version "2.0.7"
-  resolved "https://registry.yarnpkg.com/htmx.org/-/htmx.org-2.0.7.tgz#991571e009a2ea4cb60e7af8bb4c1c8c0de32ecd"
-  integrity sha512-YiJqF3U5KyO28VC5mPfehKJPF+n1Gni+cupK+D69TF0nm7wY6AXn3a4mPWIikfAXtl1u1F1+ZhSCS7KT8pVmqA==
+  version "2.0.8"
+  resolved "https://registry.yarnpkg.com/htmx.org/-/htmx.org-2.0.8.tgz#8ac8ba87c141b7bfda7576117476062eeb4aceda"
+  integrity sha512-fm297iru0iWsNJlBrjvtN7V9zjaxd+69Oqjh4F/Vq9Wwi2kFisLcrLCiv5oBX0KLfOX/zG8AUo9ROMU5XUB44Q==
 
 http-signature@~1.4.0:
   version "1.4.0"
@@ -1619,10 +1619,10 @@ onetime@^5.1.0:
   dependencies:
     mimic-fn "^2.1.0"
 
-"opg-sirius-header@ministryofjustice/opg-sirius-header#semver:v0.52.5":
+"opg-sirius-header@ministryofjustice/opg-sirius-header#semver:v0.52.6":
   version "1.0.0"
-  uid "817d84fe0af9d15f8333006ca018b2e51c16ec75"
-  resolved "https://codeload.github.com/ministryofjustice/opg-sirius-header/tar.gz/817d84fe0af9d15f8333006ca018b2e51c16ec75"
+  uid "3ed74d110f09861eefb1519b18c1ae1ae4ec8646"
+  resolved "https://codeload.github.com/ministryofjustice/opg-sirius-header/tar.gz/3ed74d110f09861eefb1519b18c1ae1ae4ec8646"
 
 optionator@^0.9.3:
   version "0.9.4"
