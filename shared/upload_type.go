@@ -269,7 +269,8 @@ func (u ReportUploadType) NoDateRequired() bool {
 		ReportTypeUploadMisappliedPayments,
 		ReportTypeUploadDuplicatedPayments,
 		ReportTypeUploadBouncedCheque,
-		ReportTypeUploadFailedDirectDebitCollections:
+		ReportTypeUploadFailedDirectDebitCollections,
+		ReportTypeUploadSOPUnallocated:
 		return true
 	default:
 		return false
