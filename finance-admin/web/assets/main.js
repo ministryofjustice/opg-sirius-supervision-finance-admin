@@ -160,7 +160,6 @@ htmx.onLoad(content => {
                     case "DIRECT_DEBITS_COLLECTIONS":
                     case "FULFILLED_REFUNDS":
                     case "REVERSE_FULFILLED_REFUNDS":
-                    case "SOP_UNALLOCATED":
                         toggle.show("upload-date");
                         toggle.show("file-upload");
                         toggle.show("email-field");
@@ -171,6 +170,7 @@ htmx.onLoad(content => {
                     case "DUPLICATED_PAYMENTS":
                     case "BOUNCED_CHEQUE":
                     case "FAILED_DIRECT_DEBITS_COLLECTIONS":
+                    case "SOP_UNALLOCATED":
                         toggle.show("file-upload");
                         toggle.show("email-field");
                         break
