@@ -6,6 +6,8 @@ var JournalTypes = []JournalType{
 	JournalTypeReceiptTransactions,
 	JournalTypeNonReceiptTransactions,
 	JournalTypeUnappliedTransactions,
+	JournalTypeNonReceiptTransactionsHistoric,
+	JournalTypeReceiptTransactionsHistoric,
 }
 
 const (
