@@ -37,7 +37,7 @@ func (d DebtType) Translation() string {
 	case DebtTypeFinalFee:
 		return "Final Fee Debt"
 	case DebtTypeApprovedRefunds:
-		return "Approved Refunds"
+		return "Approved Refunds (Billing only)"
 	case DebtTypeAllRefunds:
 		return "All Refunds"
 	default:
