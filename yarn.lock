@@ -1316,9 +1316,9 @@ supports-color@^8.1.1:
     has-flag "^4.0.0"
 
 systeminformation@^5.27.14:
-  version "5.27.14"
-  resolved "https://registry.yarnpkg.com/systeminformation/-/systeminformation-5.27.14.tgz#9f2b181521c151dad4972d47936ebb49a3271e9d"
-  integrity sha512-3DoNDYSZBLxBwaJtQGWNpq0fonga/VZ47HY1+7/G3YoIPaPz93Df6egSzzTKbEMmlzUpy3eQ0nR9REuYIycXGg==
+  version "5.29.0"
+  resolved "https://registry.yarnpkg.com/systeminformation/-/systeminformation-5.29.0.tgz#0938c649abac9322c27c21b4053df299548b982c"
+  integrity sha512-d4H5A/8uuK/w1Ee6Rpp0HuelXv5TTcyyqikPlPUiIREDwDWmXxRMLQAE90jL09fejuIxwHcn1fxlpNiAhNpy6A==
 
 throttleit@^1.0.0:
   version "1.0.1"
