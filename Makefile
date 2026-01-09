@@ -53,3 +53,7 @@ compile-assets:
 cypress: setup-directories
 	docker compose up -d localstack
 	docker compose run --build cypress
+
+cypress-single: setup-directories
+	docker compose up -d localstack
+	docker compose run cypress --spec cypress/e2e/$(spec)

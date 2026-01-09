@@ -33,7 +33,7 @@ is also provided via a Yarn watch command.
 `make cypress`
 
 ## Run *one* Cypress test headless
-`docker compose run --build cypress --spec cypress/e2e/footer.cy.js`
+`make cypress-single spec=permissions.cy.js`
 
 Finance admin pulls in the finance hub container to run the cypress tests, so if behaviour differs with your tests across your local environment and build pipeline then you might need to run `docker compose pull finance-hub-api` to pull in the latest changes.
 
@@ -43,7 +43,6 @@ Finance admin pulls in the finance hub container to run the cypress tests, so if
 `npx cypress open -c baseUrl=http://localhost:8889/finance-admin'
 
 ## Run Trivy scanning
-
 `make scan`
 
 -----
