@@ -29,7 +29,7 @@ is also provided via a Yarn watch command.
 `make test`
 
 ## Run *all* Cypress tests headless
-`make build-all`
+`make build-all` (optional)
 `make cypress`
 
 ## Run *one* Cypress test headless
