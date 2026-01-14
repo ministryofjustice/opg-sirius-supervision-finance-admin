@@ -8,7 +8,7 @@ initAll();
 
 window.htmx = htmx;
 htmx.logAll();
-htmx.config.responseHandling = [{code:".*", swap: true}];
+htmx.config.responseHandling = [{code: ".*", swap: true}];
 
 const formToggler = (suffix) => {
     return {
@@ -44,7 +44,7 @@ const setMaxDate = (idName, date) => {
 }
 
 const showFromDate = ["ARPaidInvoice", "TotalReceipts", "BadDebtWriteOff", "InvoiceAdjustments", "UnappliedReceipts", "AllRefunds"];
-const showToDate = ["AgedDebt", "ARPaidInvoice", "TotalReceipts", "BadDebtWriteOff", "InvoiceAdjustments", "UnappliedReceipts", "AllRefunds", "AgedDebtByCustomer"];
+const showToDate = ["AgedDebt", "ARPaidInvoice", "TotalReceipts", "BadDebtWriteOff", "InvoiceAdjustments", "UnappliedReceipts", "AllRefunds"];
 
 // adding event listeners inside the onLoad function will ensure they are re-added to partial content when loaded back in
 htmx.onLoad(content => {
