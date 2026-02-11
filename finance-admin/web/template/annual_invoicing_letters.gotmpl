@@ -4,11 +4,33 @@
 {{ define "main-content" }}
     {{ block "annual-invoicing-letters" .Data }}
         {{ template "navigation" . }}
-        <div>
+        <tbody>
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-full">
+                    <table class="govuk-table__body">
+                        <tr class="govuk-table__row">
+                            <td class="govuk-heading-m govuk-!-margin-bottom-1"> Direct debit</td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <td class="govuk-heading-s govuk-!-margin-bottom-0"> Count: </td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <td class="govuk-heading-s govuk-!-margin-bottom-5"> Issue: </td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <td class="govuk-heading-m govuk-!-margin-bottom-1"> Non-direct debits</td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <td class="govuk-heading-s govuk-!-margin-bottom-0"> Count: </td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <td class="govuk-heading-s govuk-!-margin-bottom-0"> Issue: </td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <td class="govuk-heading-s govuk-!-margin-bottom-5"> Skipped: </td>
+                        </tr>
+                    </table>
                 </div>
-            </div>
         </div>
     {{ end }}
 {{ end }}

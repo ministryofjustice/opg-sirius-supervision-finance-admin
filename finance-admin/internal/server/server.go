@@ -2,16 +2,17 @@ package server
 
 import (
 	"context"
+	"html/template"
+	"io"
+	"log/slog"
+	"net/http"
+
 	"github.com/ministryofjustice/opg-go-common/securityheaders"
 	"github.com/ministryofjustice/opg-go-common/telemetry"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/api"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/auth"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/shared"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
-	"html/template"
-	"io"
-	"log/slog"
-	"net/http"
 )
 
 type Envs struct {
@@ -26,6 +27,7 @@ type ApiClient interface {
 	Upload(context.Context, shared.Upload) error
 	CheckDownload(context.Context, string) error
 	Download(context.Context, string) (*http.Response, error)
+	AnnualBillingLetters(context.Context) (*http.Response, error)
 }
 
 type router interface {
