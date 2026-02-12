@@ -18,10 +18,12 @@ func TestAnnualBillingLetters(t *testing.T) {
 	}
 
 	dataFromApiCall := shared.AnnualBillingInformation{
-		AnnualBillingYear: "",
-		ExpectedCount:     0,
-		IssuedCount:       0,
-		SkippedCount:      0,
+		AnnualBillingYear:        "",
+		DemandedExpectedCount:    0,
+		DemandedIssuedCount:      0,
+		DemandedSkippedCount:     0,
+		DirectDebitExpectedCount: 0,
+		DirectDebitIssuedCount:   0,
 	}
 
 	var body bytes.Buffer
