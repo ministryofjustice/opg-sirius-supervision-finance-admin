@@ -70,6 +70,6 @@ func (m mockApiClient) CheckDownload(ctx context.Context, uid string) error {
 	return m.error
 }
 
-func (m mockApiClient) AnnualBillingLetters(ctx context.Context) (*http.Response, error) {
-	return nil, m.error
+func (m mockApiClient) AnnualBillingLetters(ctx context.Context) (shared.AnnualBillingInformation, error) {
+	return shared.AnnualBillingInformation{}, m.error
 }
