@@ -21,7 +21,7 @@ func (h *AnnualInvoicingLettersTabHandler) render(v AppVars, w http.ResponseWrit
 	annualBillingInfo, err := h.Client().AnnualBillingLetters(r.Context())
 	if err != nil {
 		log.Printf("Error calling download API: %v", err)
-		http.Error(w, "Failed to stream file", http.StatusInternalServerError)
+		http.Error(w, "Failed to call api", http.StatusInternalServerError)
 	}
 	fmt.Print("resp")
 	fmt.Print(annualBillingInfo)

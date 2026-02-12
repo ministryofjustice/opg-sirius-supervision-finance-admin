@@ -12,22 +12,22 @@
                             <td class="govuk-heading-m govuk-!-margin-bottom-1"> Direct debit</td>
                         </tr>
                         <tr class="govuk-table__row">
-                            <td class="govuk-heading-s govuk-!-margin-bottom-0"> Count: </td>
+                            <td class="govuk-heading-s govuk-!-margin-bottom-0"> Count: {{ .AnnualBillingInformation.DirectDebitExpectedCount }} </td>
                         </tr>
                         <tr class="govuk-table__row">
-                            <td class="govuk-heading-s govuk-!-margin-bottom-5"> Issue: </td>
+                            <td class="govuk-heading-s govuk-!-margin-bottom-5"> Issue: {{ .AnnualBillingInformation.DirectDebitIssuedCount }} </td>
                         </tr>
                         <tr class="govuk-table__row">
                             <td class="govuk-heading-m govuk-!-margin-bottom-1"> Non-direct debits</td>
                         </tr>
                         <tr class="govuk-table__row">
-                            <td class="govuk-heading-s govuk-!-margin-bottom-0"> Count: </td>
+                            <td class="govuk-heading-s govuk-!-margin-bottom-0"> Count: {{ .AnnualBillingInformation.DemandedExpectedCount }} </td>
                         </tr>
                         <tr class="govuk-table__row">
-                            <td class="govuk-heading-s govuk-!-margin-bottom-0"> Issue: </td>
+                            <td class="govuk-heading-s govuk-!-margin-bottom-0"> Issue: {{ .AnnualBillingInformation.DemandedIssuedCount }} </td>
                         </tr>
                         <tr class="govuk-table__row">
-                            <td class="govuk-heading-s govuk-!-margin-bottom-5"> Skipped: </td>
+                            <td class="govuk-heading-s govuk-!-margin-bottom-5"> Skipped: {{ .AnnualBillingInformation.DemandedSkippedCount }} </td>
                         </tr>
                     </table>
                 </div>
