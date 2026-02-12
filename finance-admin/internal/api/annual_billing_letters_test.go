@@ -18,10 +18,12 @@ func TestAnnualBillingLetters(t *testing.T) {
 	}
 
 	dataFromApiCall := shared.AnnualBillingInformation{
-		AnnualBillingYear: "",
-		ExpectedCount:     0,
-		IssuedCount:       0,
-		SkippedCount:      0,
+		AnnualBillingYear:        "2025",
+		DemandedExpectedCount:    13,
+		DemandedIssuedCount:      1,
+		DemandedSkippedCount:     3,
+		DirectDebitExpectedCount: 55,
+		DirectDebitIssuedCount:   3,
 	}
 
 	var body bytes.Buffer
@@ -31,17 +33,26 @@ func TestAnnualBillingLetters(t *testing.T) {
 	}
 
 	tests := []struct {
-		name       string
-		uid        string
-		statusCode int
-		wantErr    bool
-		errType    error
+		name         string
+		uid          string
+		statusCode   int
+		wantErr      bool
+		wantResponse shared.AnnualBillingInformation
+		errType      error
 	}{
 		{
 			name:       "successful request",
 			uid:        "valid-uid",
 			statusCode: http.StatusOK,
 			wantErr:    false,
+			wantResponse: shared.AnnualBillingInformation{
+				AnnualBillingYear:        "2025",
+				DemandedExpectedCount:    13,
+				DemandedIssuedCount:      1,
+				DemandedSkippedCount:     3,
+				DirectDebitExpectedCount: 55,
+				DirectDebitIssuedCount:   3,
+			},
 		},
 		{
 			name:       "internal server error",
@@ -62,13 +73,14 @@ func TestAnnualBillingLetters(t *testing.T) {
 				}, nil
 			}
 
-			_, err := client.AnnualBillingLetters(testContext())
+			resp, err := client.AnnualBillingLetters(testContext())
 
 			if tt.wantErr {
 				assert.Error(t, err)
 				assert.IsType(t, tt.errType, err)
 			} else {
 				assert.NoError(t, err)
+				assert.Equal(t, tt.wantResponse, resp)
 			}
 		})
 	}

@@ -12,7 +12,7 @@ import (
 func (c *Client) AnnualBillingLetters(ctx context.Context) (shared.AnnualBillingInformation, error) {
 
 	abi := shared.AnnualBillingInformation{}
-	req, err := c.newHubRequest(ctx, http.MethodGet, "/annual-billing-letters", nil)
+	req, err := c.newHubRequest(ctx, http.MethodGet, "/annual-billing-letters-information", nil)
 
 	if err != nil {
 		return abi, err
