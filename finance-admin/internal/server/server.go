@@ -27,7 +27,7 @@ type ApiClient interface {
 	Upload(context.Context, shared.Upload) error
 	CheckDownload(context.Context, string) error
 	Download(context.Context, string) (*http.Response, error)
-	AnnualBillingLetters(context.Context) (*http.Response, error)
+	AnnualBillingLetters(context.Context) (shared.AnnualBillingInformation, error)
 }
 
 type router interface {
