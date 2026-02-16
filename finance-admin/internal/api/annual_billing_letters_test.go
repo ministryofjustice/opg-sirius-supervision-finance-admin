@@ -18,7 +18,7 @@ func TestAnnualBillingLetters(t *testing.T) {
 	}
 
 	dataFromApiCall := shared.AnnualBillingInformation{
-		AnnualBillingYear:        "2025",
+		AnnualBillingYear:        2025,
 		DemandedExpectedCount:    13,
 		DemandedIssuedCount:      1,
 		DemandedSkippedCount:     3,
@@ -46,7 +46,7 @@ func TestAnnualBillingLetters(t *testing.T) {
 			statusCode: http.StatusOK,
 			wantErr:    false,
 			wantResponse: shared.AnnualBillingInformation{
-				AnnualBillingYear:        "2025",
+				AnnualBillingYear:        2025,
 				DemandedExpectedCount:    13,
 				DemandedIssuedCount:      1,
 				DemandedSkippedCount:     3,
