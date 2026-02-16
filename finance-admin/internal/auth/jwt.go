@@ -2,8 +2,6 @@ package auth
 
 import (
 	"context"
-	"github.com/golang-jwt/jwt/v5"
-	"github.com/ministryofjustice/opg-go-common/telemetry"
 	"strconv"
 	"time"
 
