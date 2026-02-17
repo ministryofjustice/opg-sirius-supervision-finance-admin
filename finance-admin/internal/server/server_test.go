@@ -2,9 +2,10 @@ package server
 
 import (
 	"context"
-	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/shared"
 	"io"
 	"net/http"
+
+	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/shared"
 )
 
 type mockTemplate struct {
@@ -67,4 +68,8 @@ func (m mockApiClient) Download(ctx context.Context, uid string) (*http.Response
 
 func (m mockApiClient) CheckDownload(ctx context.Context, uid string) error {
 	return m.error
+}
+
+func (m mockApiClient) AnnualBillingLetters(ctx context.Context) (shared.AnnualBillingInformation, error) {
+	return shared.AnnualBillingInformation{}, m.error
 }
