@@ -12,7 +12,11 @@ import (
 const expiry = 5
 
 type JWT struct {
-	Secret string `json:"-"`
+	secret string
+}
+
+func NewJWT(secret string) *JWT {
+	return &JWT{secret: secret}
 }
 
 type Claims struct {
@@ -35,7 +39,7 @@ func (j *JWT) CreateJWT(ctx context.Context) string {
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	t, err := token.SignedString([]byte(j.Secret))
+	t, err := token.SignedString([]byte(j.secret))
 	if err != nil {
 		telemetry.LoggerFromContext(ctx).Error("Error creating JWT", "error", err)
 		return ""
