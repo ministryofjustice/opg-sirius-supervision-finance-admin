@@ -47,7 +47,7 @@ services:
         condition: service_healthy
 
   go-lint:
-    image: golangci/golangci-lint:v2.9.0
+    image: golangci/golangci-lint:v2.10.1
     working_dir: /go/src/app
     volumes:
       - ./:/go/src/app
@@ -55,7 +55,7 @@ services:
     command: golangci-lint run -v --timeout 5m
 
   gosec:
-    image: securego/gosec:2.22.11
+    image: securego/gosec:2.23.0
     working_dir: /app
     volumes:
       - .:/app
