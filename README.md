@@ -42,9 +42,6 @@ Finance admin pulls in the finance hub container to run the cypress tests, so if
 `make up`
 `npx cypress open -c baseUrl=http://localhost:8889/finance-admin'
 
-## Run Trivy scanning
-`make scan`
-
 -----
 ## Architectural Decision Records
 
@@ -54,7 +51,7 @@ in the first ADR.
 -----
 ## HTMX & JS
 
-This project uses [HTMX](https://htmx.org/) to render partial HTML instead of reloading the whole page on each request. However, this can 
+This project uses [HTMX](https://htmx.org/) to render partial HTML instead of reloading the whole page on each request. However, this can
 mean that event listeners added on page load may fail to register/get deregistered when a partial is loaded. To avoid this,
 you can force event listeners to register on every HTMX load event by putting them within the `htmx.onLoad` function.
 
