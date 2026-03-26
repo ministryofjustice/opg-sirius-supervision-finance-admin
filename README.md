@@ -1,5 +1,7 @@
 # OPG SIRIUS SUPERVISION FINANCE ADMIN
 
+for workflow trigger
+
 ### Major dependencies
 
 - [Go](https://golang.org/) (>= 1.22)
