@@ -58,12 +58,6 @@ jobs:
       - name: Run tests
         run: make test
 
-      - name: Test Summary
-        uses: test-summary/action@31493c76ec9e7aa675f1585d3ed6f1da69269a86 # v2.4
-        with:
-          paths: "test-results/unit-tests.xml"
-        if: always()
-
       - name: Upload Code Coverage
         uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
         with:
