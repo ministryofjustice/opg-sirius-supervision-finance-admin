@@ -24,7 +24,7 @@ COPY finance-admin/web/assets web/assets
 COPY finance-admin/package.json .
 COPY finance-admin/yarn.lock .
 
-RUN yarn install
+RUN yarn install --frozen-lockfile --ignore-scripts
 RUN yarn build
 
 FROM base AS healthcheck-build
