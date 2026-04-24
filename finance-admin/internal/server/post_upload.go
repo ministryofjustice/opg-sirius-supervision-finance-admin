@@ -5,14 +5,15 @@ import (
 	"encoding/base64"
 	"encoding/csv"
 	"fmt"
-	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/model"
-	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/shared"
 	"io"
 	"net/http"
 	"strconv"
 	"strings"
 	"time"
 	"unicode"
+
+	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/model"
+	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/shared"
 )
 
 type UploadFormHandler struct {
@@ -41,6 +42,8 @@ func (h *UploadFormHandler) render(v AppVars, w http.ResponseWriter, r *http.Req
 	email := r.PostFormValue("email")
 
 	// Handle file upload
+    // Limit upload size to 10MB to prevent memory exhaustion
+    r.Body = http.MaxBytesReader(w, r.Body, 10<<20)
 	file, handler, err := r.FormFile("fileUpload")
 	if err != nil {
 		return h.handleError(w, r, "FileUpload", "No file uploaded", http.StatusUnprocessableEntity)
