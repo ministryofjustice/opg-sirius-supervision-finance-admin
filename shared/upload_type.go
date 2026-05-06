@@ -25,6 +25,7 @@ var PaymentUploadTypes = []ReportUploadType{
 	ReportTypeUploadFailedDirectDebitCollections,
 	ReportTypeUploadSOPUnallocated,
 	ReportTypeUploadReverseFulfilledRefunds,
+	ReportTypeUploadRemoveSchedules,
 }
 
 var noHeaderTypes = []ReportUploadType{
@@ -58,6 +59,7 @@ const (
 	ReportTypeUploadFailedDirectDebitCollections
 	ReportTypeUploadSOPUnallocated
 	ReportTypeUploadReverseFulfilledRefunds
+	ReportTypeUploadRemoveSchedules
 )
 
 var reportTypeUploadMap = map[string]ReportUploadType{
@@ -76,6 +78,7 @@ var reportTypeUploadMap = map[string]ReportUploadType{
 	"FAILED_DIRECT_DEBITS_COLLECTIONS": ReportTypeUploadFailedDirectDebitCollections,
 	"SOP_UNALLOCATED":                  ReportTypeUploadSOPUnallocated,
 	"REVERSE_FULFILLED_REFUNDS":        ReportTypeUploadReverseFulfilledRefunds,
+	"REMOVE_SCHEDULES":                 ReportTypeUploadRemoveSchedules,
 }
 
 func (u ReportUploadType) String() string {
@@ -114,6 +117,8 @@ func (u ReportUploadType) Translation() string {
 		return "SOP Unallocated"
 	case ReportTypeUploadReverseFulfilledRefunds:
 		return "Reverse fulfilled refunds"
+	case ReportTypeUploadRemoveSchedules:
+		return "Remove Schedules"
 	default:
 		return ""
 	}
@@ -151,6 +156,8 @@ func (u ReportUploadType) Key() string {
 		return "SOP_UNALLOCATED"
 	case ReportTypeUploadReverseFulfilledRefunds:
 		return "REVERSE_FULFILLED_REFUNDS"
+	case ReportTypeUploadRemoveSchedules:
+		return "REMOVE_SCHEDULES"
 	default:
 		return ""
 	}
@@ -186,6 +193,8 @@ func (u ReportUploadType) CSVHeaders() []string {
 		return []string{"Reference", "Amount"}
 	case ReportTypeUploadReverseFulfilledRefunds:
 		return []string{"Court reference", "Amount", "Bank date (of original refund)"}
+	case ReportTypeUploadRemoveSchedules:
+		return []string{"Court reference", "Surname", "Amount"}
 	}
 
 	return []string{"Unknown report type"}
@@ -229,6 +238,8 @@ func (u ReportUploadType) Filename(date string) (string, error) {
 		return fmt.Sprintf("Fulfilledrefunds_%s.csv", parsedDate.Format("02012006")), nil
 	case ReportTypeUploadReverseFulfilledRefunds:
 		return fmt.Sprintf("rejectedrefunds_%s.csv", parsedDate.Format("02012006")), nil
+	case ReportTypeUploadRemoveSchedules:
+		return fmt.Sprintf("removeschedules_%s.csv", parsedDate.Format("02012006")), nil
 	default:
 		return "", nil
 	}
