@@ -42,8 +42,8 @@ func (h *UploadFormHandler) render(v AppVars, w http.ResponseWriter, r *http.Req
 	email := r.PostFormValue("email")
 
 	// Handle file upload
-    // Limit upload size to 10MB to prevent memory exhaustion
-    r.Body = http.MaxBytesReader(w, r.Body, 10<<20)
+	// Limit upload size to 10MB to prevent memory exhaustion
+	r.Body = http.MaxBytesReader(w, r.Body, 10<<20)
 	file, handler, err := r.FormFile("fileUpload")
 	if err != nil {
 		return h.handleError(w, r, "FileUpload", "No file uploaded", http.StatusUnprocessableEntity)
@@ -61,9 +61,18 @@ func (h *UploadFormHandler) render(v AppVars, w http.ResponseWriter, r *http.Req
 		return h.handleError(w, r, "UploadDate", "Upload date required", http.StatusUnprocessableEntity)
 	}
 
-	if !uploadType.NoDateRequired() && shared.NewDate(uploadDate).After(shared.Date{Time: time.Now()}) {
+	if uploadType.PastDateRequired() && shared.NewDate(uploadDate).After(shared.Date{Time: time.Now()}) {
 		fileError := model.ValidationErrors{
 			"UploadDate": map[string]string{"date-in-the-future": "Can not upload for a date in the future"},
+		}
+		data := AppVars{ValidationErrors: RenameErrors(fileError)}
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		return h.execute(w, r, data)
+	}
+
+	if uploadType.FutureDateRequired() && !shared.NewDate(uploadDate).After(shared.Date{Time: time.Now()}) {
+		fileError := model.ValidationErrors{
+			"UploadDate": map[string]string{"date-in-the-past": "Must upload for a date in the future"},
 		}
 		data := AppVars{ValidationErrors: RenameErrors(fileError)}
 		w.WriteHeader(http.StatusUnprocessableEntity)

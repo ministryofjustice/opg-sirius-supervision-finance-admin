@@ -160,6 +160,7 @@ htmx.onLoad(() => {
                     case "DIRECT_DEBITS_COLLECTIONS":
                     case "FULFILLED_REFUNDS":
                     case "REVERSE_FULFILLED_REFUNDS":
+                    case "REMOVE_SCHEDULES":
                         toggle.show("upload-date");
                         toggle.show("file-upload");
                         toggle.show("email-field");
