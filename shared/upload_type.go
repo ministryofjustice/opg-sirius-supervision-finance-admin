@@ -299,6 +299,31 @@ func (u ReportUploadType) NoDateRequired() bool {
 	}
 }
 
+func (u ReportUploadType) PastDateRequired() bool {
+	switch u {
+	case ReportTypeUploadPaymentsMOTOCard,
+		ReportTypeUploadPaymentsOnlineCard,
+		ReportTypeUploadPaymentsOPGBACS,
+		ReportTypeUploadPaymentsSupervisionBACS,
+		ReportTypeUploadPaymentsSupervisionCheque,
+		ReportTypeUploadDirectDebitsCollections,
+		ReportTypeUploadFulfilledRefunds,
+		ReportTypeUploadReverseFulfilledRefunds:
+		return true
+	default:
+		return false
+	}
+}
+
+func (u ReportUploadType) FutureDateRequired() bool {
+	switch u {
+	case ReportTypeUploadRemoveSchedules:
+		return true
+	default:
+		return false
+	}
+}
+
 func (u ReportUploadType) MarshalJSON() ([]byte, error) {
 	return json.Marshal(u.Key())
 }
