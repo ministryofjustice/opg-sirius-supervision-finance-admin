@@ -36,7 +36,7 @@ Cypress.Commands.add("checkAccessibility", () => {
             {id: "aria-allowed-attr", selector: "*:not(input[type='radio'][aria-expanded])"},
         ],
     })
-    cy.checkA11y(null, null, terminalLog);
+    cy.checkA11y(undefined, undefined, terminalLog);
 });
 
 Cypress.Commands.add("setUser", (id: string) => {
