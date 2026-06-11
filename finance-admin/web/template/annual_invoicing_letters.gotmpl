@@ -4,11 +4,36 @@
 {{ define "main-content" }}
     {{ block "annual-invoicing-letters" .Data }}
         {{ template "navigation" . }}
-        <div>
+        <tbody>
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-full">
+                    <table class="govuk-table__body">
+                        <tr class="govuk-table__row">
+                            <td class="govuk-heading-m govuk-!-margin-bottom-1"> Direct Debits</td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <td class="govuk-heading-s govuk-!-margin-bottom-0"> Count: {{ .AnnualBillingInformation.DirectDebitExpectedCount }} </td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <td class="govuk-heading-s govuk-!-margin-bottom-5"> Issue: {{ .AnnualBillingInformation.DirectDebitIssuedCount }} </td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <td class="govuk-heading-m govuk-!-margin-bottom-1"> Non-Direct Debits</td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <td class="govuk-heading-s govuk-!-margin-bottom-0"> Count: {{ .AnnualBillingInformation.DemandedExpectedCount }} </td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <td class="govuk-heading-s govuk-!-margin-bottom-0"> Issue: {{ .AnnualBillingInformation.DemandedIssuedCount }} </td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <td class="govuk-heading-s govuk-!-margin-bottom-5"> Skipped: {{ .AnnualBillingInformation.DemandedSkippedCount }} </td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <td class="govuk-heading-m govuk-!-margin-bottom-5"> Annual billing year: {{ .AnnualBillingInformation.AnnualBillingYear }} </td>
+                        </tr>
+                    </table>
                 </div>
-            </div>
         </div>
     {{ end }}
 {{ end }}

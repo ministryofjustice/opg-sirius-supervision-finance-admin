@@ -13,13 +13,13 @@
     "cypress": "cypress open",
     "cypress-ci": "cypress open -c baseUrl=http://localhost:8080",
     "prettier": "prettier --write ./web",
-    "lint": "eslint ./web/assets/javascript",
+    "lint": "eslint web/assets",
     "watch": "yarn build:js --watch=forever"
   },
   "dependencies": {
     "@ministryofjustice/frontend": "^5.0.0",
     "govuk-frontend": "^5.4.1",
-    "opg-sirius-header": "ministryofjustice/opg-sirius-header#semver:v0.52.11",
+    "opg-sirius-header": "ministryofjustice/opg-sirius-header#semver:v0.53.8",
     "htmx.org": "^2.0.0"
   },
   "devDependencies": {
@@ -28,8 +28,10 @@
     "cypress-axe": "^1.5.0",
     "cypress-failed-log": "^2.10.0",
     "typescript": "^5.5.3",
-    "esbuild": "^0.27.0",
-    "eslint": "^9.8.0",
+    "esbuild": "^0.28.0",
+    "eslint": "^10.0.0",
+    "@eslint/eslintrc": "^3.3.3",
+    "@eslint/js": "^10.0.1",
     "prettier": "^3.3.3",
     "sass": "^1.77.8"
   },

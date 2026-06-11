@@ -3,11 +3,6 @@ package main
 import (
 	"context"
 	"errors"
-	"github.com/ministryofjustice/opg-go-common/paginate"
-	"github.com/ministryofjustice/opg-go-common/telemetry"
-	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/api"
-	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/auth"
-	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/server"
 	"html/template"
 	"log/slog"
 	"net/http"
@@ -17,6 +12,12 @@ import (
 	"syscall"
 	"time"
 	"unicode"
+
+	"github.com/ministryofjustice/opg-go-common/paginate"
+	"github.com/ministryofjustice/opg-go-common/telemetry"
+	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/api"
+	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/auth"
+	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/server"
 )
 
 type Envs struct {
@@ -88,9 +89,7 @@ func run(ctx context.Context, logger *slog.Logger) error {
 
 	client := api.NewClient(
 		http.DefaultClient,
-		&auth.JWT{
-			Secret: envs.jwtSecret,
-		},
+		auth.NewJWT(envs.jwtSecret),
 		api.EnvVars{
 			SiriusURL: envs.siriusURL,
 			HubURL:    envs.hubURL,

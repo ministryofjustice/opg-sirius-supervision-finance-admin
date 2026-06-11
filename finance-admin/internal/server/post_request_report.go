@@ -3,10 +3,11 @@ package server
 import (
 	"errors"
 	"fmt"
+	"net/http"
+
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/api"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/finance-admin/internal/model"
 	"github.com/ministryofjustice/opg-sirius-supervision-finance-admin/shared"
-	"net/http"
 )
 
 type RequestReportHandler struct {
@@ -16,6 +17,9 @@ type RequestReportHandler struct {
 func (h *RequestReportHandler) render(v AppVars, w http.ResponseWriter, r *http.Request) error {
 	var err error
 	ctx := r.Context()
+
+	// Limit request body size to 10MB to prevent memory exhaustion
+	r.Body = http.MaxBytesReader(w, r.Body, 10<<20)
 
 	var (
 		reportType             = r.PostFormValue("reportType")

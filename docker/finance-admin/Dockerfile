@@ -1,4 +1,4 @@
-FROM golang:1.25-alpine AS base
+FROM golang:1.26-alpine AS base
 
 RUN adduser \
     --disabled-password \
@@ -15,7 +15,7 @@ ENV CGO_ENABLED=0 GOOS=linux
 
 RUN update-ca-certificates
 
-FROM node:22-alpine3.19 AS asset-env
+FROM node:24-alpine3.23 AS asset-env
 WORKDIR /app
 
 RUN mkdir -p web/static
@@ -24,7 +24,7 @@ COPY finance-admin/web/assets web/assets
 COPY finance-admin/package.json .
 COPY finance-admin/yarn.lock .
 
-RUN yarn install
+RUN yarn install --frozen-lockfile --ignore-scripts
 RUN yarn build
 
 FROM base AS healthcheck-build

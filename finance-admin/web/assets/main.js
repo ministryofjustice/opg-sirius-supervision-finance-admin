@@ -47,7 +47,7 @@ const showFromDate = ["ARPaidInvoice", "TotalReceipts", "BadDebtWriteOff", "Invo
 const showToDate = ["AgedDebt", "ARPaidInvoice", "TotalReceipts", "BadDebtWriteOff", "InvoiceAdjustments", "UnappliedReceipts", "AllRefunds"];
 
 // adding event listeners inside the onLoad function will ensure they are re-added to partial content when loaded back in
-htmx.onLoad(content => {
+htmx.onLoad(() => {
     initAll();
 
     htmx.findAll(".moj-banner--success").forEach((element) => {
@@ -160,6 +160,7 @@ htmx.onLoad(content => {
                     case "DIRECT_DEBITS_COLLECTIONS":
                     case "FULFILLED_REFUNDS":
                     case "REVERSE_FULFILLED_REFUNDS":
+                    case "REMOVE_SCHEDULES":
                         toggle.show("upload-date");
                         toggle.show("file-upload");
                         toggle.show("email-field");

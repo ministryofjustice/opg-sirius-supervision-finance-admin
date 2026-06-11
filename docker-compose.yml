@@ -20,7 +20,7 @@ services:
         condition: service_started
 
   localstack:
-    image: localstack/localstack:4.12
+    image: localstack/localstack:4.14
     volumes:
       - "./scripts/localstack/init:/etc/localstack/init/ready.d"
       - "./scripts/localstack/wait:/scripts/wait"
@@ -47,7 +47,7 @@ services:
         condition: service_healthy
 
   go-lint:
-    image: golangci/golangci-lint:v2.8.0
+    image: golangci/golangci-lint:v2.12.2
     working_dir: /go/src/app
     volumes:
       - ./:/go/src/app
@@ -55,27 +55,14 @@ services:
     command: golangci-lint run -v --timeout 5m
 
   gosec:
-    image: securego/gosec:latest
+    image: securego/gosec:2.24.6
     working_dir: /app
     volumes:
       - .:/app
     command: -exclude-dir=.gocache -fmt=sarif -out=/app/test-results/gosec.sarif -stdout -verbose=text /app/...
 
-  trivy:
-    image: aquasec/trivy:latest
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./.trivy-cache:/root/.cache
-      - ./test-results:/test-results
-      - ./.trivyignore:/.trivyignore
-    environment:
-      - TRIVY_DB_REPOSITORY=${TRIVY_DB_REPOSITORY}
-      - TRIVY_JAVA_DB_REPOSITORY=${TRIVY_JAVA_DB_REPOSITORY}
-      - TRIVY_USERNAME=${DOCKER_USERNAME}
-      - TRIVY_PASSWORD=${DOCKER_PASSWORD}
-
   yarn:
-    image: node:22-alpine3.19
+    image: node:24-alpine3.23
     working_dir: /home/node/app
     entrypoint: yarn
     volumes:
