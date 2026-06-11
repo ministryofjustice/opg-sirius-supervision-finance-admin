@@ -169,7 +169,7 @@ func (u ReportUploadType) CSVHeaders() []string {
 	case ReportTypeUploadDeputySchedule:
 		return []string{"Deputy number", "Deputy name", "Case number", "Client forename", "Client surname", "Do not invoice", "Total outstanding"}
 	case ReportTypeUploadDebtChase:
-		return []string{"Case_no", "Client_no", "Client_title", "Client_forename", "Client_surname", "Do_not_chase", "Payment_method", "Deputy_type", "Deputy_no", "Airmail", "Deputy_title", "Deputy_Welsh", "Deputy_Large_Print", "Deputy_name", "Email", "Address1", "Address2", "Address3", "City_Town", "County", "Postcode", "Total_debt", "Invoice1", "Amount1"}
+		return []string{"Case_no", "Client_no", "Client_title", "Client_forename", "Client_surname", "Do_not_chase", "Payment_method", "Deputy_type", "Appt_type", "Billing_preference", "Deputy_no", "Airmail", "Deputy_title", "Deputy_Welsh", "Deputy_Large_Print", "Deputy_name", "Email", "Address1", "Address2", "Address3", "City_Town", "County", "Postcode", "Total_debt", "Invoice1", "Amount1"}
 	case ReportTypeUploadDirectDebitsCollections:
 		return []string{""}
 	case ReportTypeUploadMisappliedPayments:
