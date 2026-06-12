@@ -6,6 +6,6 @@ EXPOSE 3000
 
 COPY json-server .
 
-RUN npm install
+RUN npm ci --ignore-scripts
 
 ENTRYPOINT ["npm", "run", "serve"]
