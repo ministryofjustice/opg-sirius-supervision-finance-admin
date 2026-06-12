@@ -40,7 +40,8 @@ Finance admin pulls in the finance hub container to run the cypress tests, so if
 ## Run Cypress tests with UI
 
 `make up`
-`npx cypress open -c baseUrl=http://localhost:8889/finance-admin'
+`npm install`
+`npm exec --workspace cypress cypress open -c baseUrl=http://localhost:8889/finance-admin`
 
 -----
 ## Architectural Decision Records
