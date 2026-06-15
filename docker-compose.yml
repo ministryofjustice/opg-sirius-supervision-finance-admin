@@ -37,6 +37,7 @@ services:
 
   cypress:
     build:
+      context: .
       dockerfile: docker/cypress/Dockerfile
     command: [ "--headless", "-b", "electron" ]
     volumes:

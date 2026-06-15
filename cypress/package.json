@@ -1,0 +1,14 @@
+{
+  "name": "@opg/finance-admin-cypress",
+  "version": "1.0.0",
+  "private": true,
+  "devDependencies": {
+    "@aws-sdk/client-s3": "^3.1067.0",
+    "axe-core": "^4.10.3",
+    "cypress": "15.17.0",
+    "cypress-axe": "^1.7.0",
+    "cypress-failed-log": "^2.10.0",
+    "typescript": "^6.0.3"
+  }
+}
+
