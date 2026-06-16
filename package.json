@@ -1,9 +1,10 @@
 {
   "devDependencies": {
+    "aws-sdk": "^2.113.0",
     "cypress": "^15.15.0",
     "cypress-axe": "^1.7.0",
     "cypress-failed-log": "^2.10.0",
     "typescript": "^6.0.3",
-    "aws-sdk": "^2.113.0"
+    "axe-core": "4.12.0"
   }
 }

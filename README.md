@@ -5,11 +5,6 @@
 - [Go](https://golang.org/) (>= 1.22)
 - [docker compose](https://docs.docker.com/compose/install/) (>= 2.26.0)
 
-#### Installing dependencies locally:
-(This is only necessary if running without docker)
-
-- `yarn install`
-- `go mod download`
 ---
 
 ## Local development
