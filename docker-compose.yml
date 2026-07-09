@@ -5,6 +5,8 @@ services:
       dockerfile: docker/finance-admin/Dockerfile
     ports:
       - "8889:8888"
+    privileged: false
+    user: app
     environment:
       PORT: 8888
       PREFIX: /finance-admin
