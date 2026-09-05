@@ -23,7 +23,7 @@ services:
         condition: service_started
 
   localstack:
-    image: localstack/localstack:4.14
+    image: localstack/localstack:4.14@sha256:3ebc37595918b8accb852f8048fef2aff047d465167edd655528065b07bc364a
     volumes:
       - "./scripts/localstack/init:/etc/localstack/init/ready.d"
       - "./scripts/localstack/wait:/scripts/wait"
@@ -50,7 +50,7 @@ services:
         condition: service_healthy
 
   go-lint:
-    image: golangci/golangci-lint:v2.12.2
+    image: golangci/golangci-lint:v2.12.2@sha256:5cceeef04e53efe1470638d4b4b4f5ceefd574955ab3941b2d9a68a8c9ad5240
     working_dir: /go/src/app
     volumes:
       - ./:/go/src/app
@@ -65,7 +65,7 @@ services:
     command: -exclude-dir=.gocache -fmt=sarif -out=/app/test-results/gosec.sarif -stdout -verbose=text /app/...
 
   yarn:
-    image: node:24-alpine3.23
+    image: node:24-alpine3.23@sha256:0388af2af070cd4736a1567cfed02469ba117848845b4165d87a333edb53d2ca
     working_dir: /home/node/app
     entrypoint: yarn
     volumes:
