@@ -15,7 +15,7 @@ ENV CGO_ENABLED=0 GOOS=linux
 
 RUN update-ca-certificates
 
-FROM node:24-alpine3.23 AS asset-env
+FROM node:24-alpine3.23@sha256:0388af2af070cd4736a1567cfed02469ba117848845b4165d87a333edb53d2ca AS asset-env
 WORKDIR /app
 
 RUN mkdir -p web/static
