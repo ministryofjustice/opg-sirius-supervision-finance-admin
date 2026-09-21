@@ -20,12 +20,14 @@ WORKDIR /app
 
 RUN mkdir -p web/static
 
+RUN apk add git
+
 COPY finance-admin/web/assets web/assets
 COPY finance-admin/package.json .
-COPY finance-admin/yarn.lock .
+COPY finance-admin/package-lock.json .
 
-RUN yarn install --frozen-lockfile --ignore-scripts
-RUN yarn build
+RUN npm ci --ignore-scripts
+RUN npm run build
 
 FROM base AS healthcheck-build
 WORKDIR /app

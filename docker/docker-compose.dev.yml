@@ -16,8 +16,8 @@ services:
       - ./finance-admin/web/static:/app/finance-admin/web/static
       - ./finance-admin/web/template:/app/finance-admin/web/template
 
-  yarn:
-    command: watch
+  npm:
+    command: ["run", "watch"]
 
   json-server:
     volumes:

@@ -17,26 +17,26 @@ build:
 	docker compose build --no-cache --parallel finance-admin
 
 build-dev:
-	docker compose -f docker-compose.yml -f docker/docker-compose.dev.yml build --parallel finance-admin yarn json-server finance-hub-api
+	docker compose -f docker-compose.yml -f docker/docker-compose.dev.yml build --parallel finance-admin npm json-server finance-hub-api
 
 build-all:
-	docker compose build --parallel finance-admin yarn cypress
+	docker compose build --parallel finance-admin npm cypress
 
 test: setup-directories
 	go run gotest.tools/gotestsum@latest --format testname  --junitfile test-results/unit-tests.xml -- ./... -coverprofile=test-results/test-coverage.txt
 
 clean:
 	docker compose down
-	docker compose run --rm yarn
+	docker compose run --rm npm
 
 up: clean compile-assets build-dev
-	docker compose -f docker-compose.yml -f docker/docker-compose.dev.yml up finance-admin finance-hub-api yarn
+	docker compose -f docker-compose.yml -f docker/docker-compose.dev.yml up finance-admin finance-hub-api npm
 
 down:
 	docker compose down
 
 compile-assets:
-	docker compose run --rm yarn build
+	docker compose run --rm npm run build
 
 cypress: setup-directories
 	docker compose up -d localstack
