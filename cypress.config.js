@@ -1,5 +1,5 @@
 const { defineConfig } = require("cypress");
-const AWS = require("aws-sdk");
+const AWS = require("@aws-sdk/client-s3");
 const localstackEndpoint = "http://localstack:4566";
 
 module.exports = defineConfig({
