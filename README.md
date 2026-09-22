@@ -16,7 +16,7 @@ To enable debugging and hot-reloading of Go files:
 `make up`
 
 Hot-reloading is managed independently for both apps and should happen seamlessly. Hot-reloading for web assets (JS, CSS, etc.)
-is also provided via a Yarn watch command.
+is also provided via an npm watch command.
 
 -----
 ## Run the unit/integration tests
