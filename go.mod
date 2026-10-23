@@ -1,6 +1,6 @@
 module github.com/ministryofjustice/opg-sirius-supervision-finance-admin
 
-go 1.26.0
+go 1.27.3
 
 require (
 	github.com/golang-jwt/jwt/v5 v5.3.1
