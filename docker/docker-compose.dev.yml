@@ -4,6 +4,9 @@ services:
       target: dev
     ports:
       - '2345:2345'
+    privileged: false
+    user: root
+    read_only: false
     volumes:
       - ./go.mod:/app/go.mod
       - ./go.sum:/app/go.sum
